@@ -1,32 +1,36 @@
-// chat.js - '@refine' Chat Participant (P6): 확인형(승인 게이트) 정제.
+// chat.js - '@refine' Chat Participant: 확인형(승인 게이트) 정제. (확장 단독 구조)
 //
 // 우측 Copilot Chat에서 `@refine <프롬프트>`를 치면 정제본을 미리 보여주고, 5버튼으로
-// 승인/재생성/원본전송/수정/취소를 묻는다. 전송은 네이티브 Copilot에 위임하고
-// (workbench.action.chat.open), '정제 건너뛰기' 전송엔 bypass 마커를 붙여 자동 프록시가
-// 이중 정제하지 않게 한다. 기존 전역 자동 Refiner(켜짐/꺼짐)와 충돌 없이 공존한다.
+// 승인/재생성/원본전송/수정/취소를 묻는다. 승인 시 '최종 텍스트(정제본/원본/수정본)'를 그대로
+// 네이티브 Copilot에 보낸다(workbench.action.chat.open). 답은 네이티브 Copilot 스레드에 남는다(평소대로).
 //
-// 슬래시 컨벤션(확정): 기본은 슬래시 없는 `@refine <프롬프트>`. '정제 건너뛰고 전송'은 `@refine /bypass`
-// 하나. allow/use-original은 확장이 마커를 직접 붙여 프로그램적으로 전송(슬래시 안 보임).
-// modify만 입력창에 `@refine /bypass <정제본>`을 시드해 유저가 보고 편집한다. cancel은 `@refine <원본>` 시드.
+// 프록시가 없으므로 bypass 마커/슬래시가 없다. '평범하게 친(=@refine 없는) 프롬프트'는 애초에
+// 가로채지 않는다 - 정제는 오직 @refine로 명시 호출했을 때만 일어난다.
 const vscode = require("vscode");
-const { refine, attachBypass } = require("./refiner");
+const { refine } = require("./refiner");
+const logger = require("./logger");
+const config = require("./config");
 
 const PARTICIPANT_ID = "swbc.refine";
 
-// 정제본/원본을 네이티브 Copilot에 '바로 전송'(정제 건너뜀: 마커 부착 -> 프록시 통과).
-async function sendBypassed(text) {
+// 최종 텍스트를 네이티브 Copilot에 '자동 전송'한다(평범 메시지로 제출 -> 평소 Copilot이 답).
+async function sendToCopilot(text) {
   try {
-    const query = attachBypass(text);
-    await vscode.commands.executeCommand("workbench.action.chat.open", { query });
+    await vscode.commands.executeCommand("workbench.action.chat.open", {
+      query: String(text == null ? "" : text),
+    });
   } catch (e) {
     vscode.window.showWarningMessage("Copilot 전송에 실패했습니다.");
   }
 }
 
-// 입력창에 채우기만 하고 전송은 안 함(유저가 보고 엔터 치게). isPartialQuery=true.
-async function seedInput(query) {
+// 입력창에 '채우기만' 하고 전송은 안 한다(유저가 보고 엔터). isPartialQuery=true.
+async function seedInput(text) {
   try {
-    await vscode.commands.executeCommand("workbench.action.chat.open", { query, isPartialQuery: true });
+    await vscode.commands.executeCommand("workbench.action.chat.open", {
+      query: String(text == null ? "" : text),
+      isPartialQuery: true,
+    });
   } catch (e) {
     vscode.window.showWarningMessage("입력창 채우기에 실패했습니다.");
   }
@@ -37,7 +41,8 @@ function renderPreview(stream, original, refined) {
   stream.markdown("> " + String(refined).replace(/\n/g, "\n> ") + "\n\n");
   stream.markdown("_원본_: " + String(original).replace(/\n/g, " ") + "\n\n");
   // 버튼 5개. 각 버튼은 명령을 인자와 함께 호출한다(아래 registerChat에서 등록).
-  stream.button({ command: "swbcPromptRefiner.refineAllow", title: "전송 (allow)", arguments: [refined] });
+  // allow는 로깅을 위해 [원본, 정제본] 둘 다 넘긴다.
+  stream.button({ command: "swbcPromptRefiner.refineAllow", title: "전송 (allow)", arguments: [original, refined] });
   stream.button({ command: "swbcPromptRefiner.refineTryAgain", title: "다시 정제 (try again)", arguments: [original] });
   stream.button({ command: "swbcPromptRefiner.refineUseOriginal", title: "원본 전송 (use original)", arguments: [original] });
   stream.button({ command: "swbcPromptRefiner.refineModify", title: "수정 (modify)", arguments: [refined] });
@@ -47,18 +52,6 @@ function renderPreview(stream, original, refined) {
 async function handler(request, context, stream, token) {
   try {
     const text = (request.prompt || "").trim();
-
-    // '/bypass': modify 입력창 시드 등 '이미 확정된' 텍스트 -> 정제 없이 마커 붙여 전송.
-    if (request.command === "bypass") {
-      if (!text) {
-        stream.markdown("보낼 내용이 없습니다.");
-        return;
-      }
-      await sendBypassed(text);
-      stream.markdown("정제 없이 그대로 전송했습니다.");
-      return;
-    }
-
     // 기본: 정제 -> 미리보기 + 버튼.
     if (!text) {
       stream.markdown("정제할 프롬프트를 함께 입력하세요. 예: `@refine 1+1이 뭐야?`");
@@ -87,18 +80,32 @@ function registerChat(context) {
   }
   context.subscriptions.push(
     participant,
-    // allow / use original: 확정 텍스트를 마커 붙여 네이티브 Copilot에 바로 전송.
-    vscode.commands.registerCommand("swbcPromptRefiner.refineAllow", (refined) => sendBypassed(refined)),
-    vscode.commands.registerCommand("swbcPromptRefiner.refineUseOriginal", (original) => sendBypassed(original)),
-    // modify: 입력창에 `@refine /bypass <정제본>` 시드 -> 유저 편집 후 엔터 시 위 '/bypass' 핸들러로.
+    // allow: 정제본을 네이티브 Copilot에 자동 전송 + 교체 1건 기록(원본 -> 정제본).
+    vscode.commands.registerCommand("swbcPromptRefiner.refineAllow", async (original, refined) => {
+      try {
+        logger.appendRewrite(config.resolveLogDir(context), {
+          channel: "@refine",
+          before: String(original),
+          after: String(refined),
+        });
+      } catch (e) {
+        /* 로깅 실패는 무시(fail-open) */
+      }
+      await sendToCopilot(refined);
+    }),
+    // use original: 원본을 그대로 자동 전송(정제 없음, 교체 아님 -> 미기록).
+    vscode.commands.registerCommand("swbcPromptRefiner.refineUseOriginal", (original) =>
+      sendToCopilot(original)
+    ),
+    // modify: 정제본을 입력창에 시드(평범 텍스트, 슬래시/마커 없음) -> 유저 편집 후 엔터 시 네이티브 Copilot로 직행.
     vscode.commands.registerCommand("swbcPromptRefiner.refineModify", (refined) =>
-      seedInput("@refine /bypass " + String(refined))
+      seedInput(refined)
     ),
-    // cancel: 입력창에 `@refine <원본>`(슬래시 없음) 시드 -> 엔터 시 기본 흐름 재진입(자연히 재정제).
+    // cancel: 원본을 입력창에 시드(정제 취소, 원본 돌려줌) -> 유저가 그대로 보내거나 편집.
     vscode.commands.registerCommand("swbcPromptRefiner.refineCancel", (original) =>
-      seedInput("@refine " + String(original))
+      seedInput(original)
     ),
-    // try again: 원본으로 다시 정제. 기본 흐름을 재진입시켜 새 미리보기 턴을 만든다.
+    // try again: 원본으로 재정제. @refine 자동 전송으로 핸들러를 재진입시켜 새 미리보기 턴을 만든다.
     vscode.commands.registerCommand("swbcPromptRefiner.refineTryAgain", async (original) => {
       try {
         await vscode.commands.executeCommand("workbench.action.chat.open", {
