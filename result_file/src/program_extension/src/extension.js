@@ -1,17 +1,15 @@
-// extension.js - swbc Prompt Refiner 확장의 진입점.
+// extension.js - swbc Prompt Refiner 확장의 진입점. (확장 단독 구조)
 //
 // 역할:
-//   (1) 좌측 Activity Bar 사이드바(WebviewView) 등록 + 로그 폴더 감시 -> 교체 내역 카드 표시. (P1)
-//   (2) 엔진(mitmdump + refine_copilot.py)을 확장이 직접 spawn/종료 + 상태바 토글. (P2, engine.js)
-//   (3) 최초 1회 셋업 마법사(CA 신뢰 + http.proxy + 재시작 안내) + 되돌리기/상태. (P3, setup.js)
+//   (1) '@refine' Chat Participant 등록 - 우측 Copilot Chat에서 정제 미리보기 + 확인 게이트. (chat.js)
+//   (2) 좌측 Activity Bar 사이드바(WebviewView) 등록 + 로그 폴더 감시 -> 정제 내역 카드 표시.
 //
-// 뷰어와 엔진은 config.resolveLogDir()로 '같은 로그 폴더'를 공유한다(엔진이 쓰고, 뷰어가 읽음).
+// 정제 내역을 '쓰는' 곳(@refine allow, logger.js)과 '읽는' 곳(이 뷰어)은 config.resolveLogDir()로
+// '같은 로그 폴더'를 공유한다. (옛 프록시/엔진/셋업은 폐기 -> legacy/ 참고.)
 const vscode = require("vscode");
 const fs = require("fs");
 const { readEntries } = require("./logReader");
 const config = require("./config");
-const { EngineController } = require("./engine");
-const { SetupWizard } = require("./setup");
 const { registerChat } = require("./chat");
 
 const VIEW_ID = "swbcPromptRefiner.rewrites";
@@ -169,28 +167,6 @@ function makeNonce() {
 
 function activate(context) {
   const provider = new RewritesViewProvider(context);
-  const engine = new EngineController(context);
-  const wizard = new SetupWizard(context, engine);
-
-  // 사용자가 직접 엔진을 끌 때(토글/끄기)만, http.proxy가 남아 Copilot이 먹통이 되지 않게 경고한다.
-  // (확장 종료 시 dispose()의 stop()은 이 경고를 거치지 않는다 - 그땐 어차피 VS Code가 닫히는 중.)
-  async function maybeWarnProxy() {
-    if (!wizard.isProxyConfigured()) return;
-    const sel = await vscode.window.showWarningMessage(
-      "엔진을 껐습니다. http.proxy가 설정돼 있어 Copilot이 응답하지 않을 수 있습니다.",
-      "프록시 해제",
-      "유지"
-    );
-    if (sel === "프록시 해제") await wizard.clearProxyOnly();
-  }
-  async function userStopEngine() {
-    engine.stop();
-    await maybeWarnProxy();
-  }
-  function userToggleEngine() {
-    if (engine.isRunning()) return userStopEngine();
-    engine.start();
-  }
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(VIEW_ID, provider, {
@@ -200,28 +176,13 @@ function activate(context) {
     vscode.commands.registerCommand("swbcPromptRefiner.openLogFolder", () =>
       openLogFolder(provider.logDir)
     ),
-    vscode.commands.registerCommand("swbcPromptRefiner.toggleEngine", () => userToggleEngine()),
-    vscode.commands.registerCommand("swbcPromptRefiner.startEngine", () => engine.start()),
-    vscode.commands.registerCommand("swbcPromptRefiner.stopEngine", () => userStopEngine()),
-    vscode.commands.registerCommand("swbcPromptRefiner.showEngineOutput", () => engine.output.show()),
-    vscode.commands.registerCommand("swbcPromptRefiner.setup", () => wizard.run()),
-    vscode.commands.registerCommand("swbcPromptRefiner.cleanupSetup", () => wizard.cleanup()),
-    vscode.commands.registerCommand("swbcPromptRefiner.setupStatus", () => wizard.showStatus()),
-    engine, // dispose()에서 엔진 프로세스를 정리
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("swbcPromptRefiner")) provider.refresh();
     })
   );
 
-  // '@refine' Chat Participant 등록(P6). chat API가 없는 구버전 VS Code면 내부에서 조용히 비활성.
+  // '@refine' Chat Participant 등록. chat API가 없는 구버전 VS Code면 내부에서 조용히 비활성.
   registerChat(context);
-
-  // 자동 시작(기본 on): 워크스페이스 로드/경로 탐색이 안정된 뒤 잠깐 늦춰 기동.
-  if (config.getAutoStart()) {
-    setTimeout(() => engine.start(), 800);
-  }
-  // 최초 1회 셋업 안내(아직 셋업 안 했고, '다시 보지 않기'를 누르지 않았을 때만).
-  setTimeout(() => wizard.maybePromptFirstRun(), 1500);
 }
 
 function deactivate() {}
