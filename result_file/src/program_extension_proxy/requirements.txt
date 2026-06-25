@@ -1,0 +1,9 @@
+# swbc-proxy 런타임 의존성 (.venv 위에서 설치)
+#
+# 최초 1회 설치 (git bash):
+#   python -m venv .venv
+#   ./.venv/Scripts/python.exe -m pip install -r requirements.txt
+#
+# 정제 서버 호출은 표준 라이브러리(urllib)만 사용하므로 추가 의존성이 없습니다.
+# (transitive 의존성 cryptography/h2/wsproto 등은 pip가 자동 해석)
+mitmproxy==12.2.3
