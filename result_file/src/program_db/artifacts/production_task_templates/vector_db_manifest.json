@@ -1,0 +1,10 @@
+{
+  "vector_db": "chroma",
+  "record_count": 651,
+  "embedding_dim": 4096,
+  "embedding_model": "Qwen/Qwen3-Embedding-8B",
+  "embedding_base_url": "http://127.0.0.1:4001/v1",
+  "collection_name": "production_task_prompt_templates",
+  "chroma_dir": "artifacts/production_chroma_qwen3_8b",
+  "artifact_dir": "artifacts/production_task_templates"
+}

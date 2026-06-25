@@ -1,0 +1,32 @@
+# Local secrets and runtime overrides
+.env
+.env.*
+!.env.example
+!.env.production.example
+
+# Python local state
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+hr_venv/
+
+# Notebooks and local scratch files
+*.ipynb
+.ipynb_checkpoints/
+
+# Local backups / corrupted DB snapshots
+codex_backup*/
+codex backup/
+artifacts/*.malformed-*/
+artifacts/production_chroma_qwen3_8b.malformed-*/
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/
