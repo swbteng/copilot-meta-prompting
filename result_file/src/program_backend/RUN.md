@@ -1,15 +1,14 @@
-# program_endpoint 실행 / 배포 가이드
+# program_backend 실행 / 배포 가이드
 
 ## 1. 설치
 
-백엔드 = endpoint + db 이므로 두 모듈의 의존성을 같이 설치합니다.
+백엔드는 자족 모듈이라 requirements.txt 하나면 됩니다(검색/리랭킹 retrieval 포함).
 
 ```bash
-cd result_file/src/program_endpoint
+cd result_file/src/program_backend
 python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
-.venv/bin/pip install -r requirements.txt                       # fastapi, uvicorn, requests
-.venv/bin/pip install -r ../program_db/requirements.deploy.txt  # chromadb, openai, requests, tqdm
+.venv/bin/pip install -r requirements.txt   # fastapi, uvicorn, requests, chromadb, openai
 ```
 
 ## 2. 설정
@@ -27,7 +26,7 @@ cp .env.example .env
 ## 3. 실행
 
 ```bash
-cd result_file/src/program_endpoint
+cd result_file/src/program_backend
 .venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000
 ```
 

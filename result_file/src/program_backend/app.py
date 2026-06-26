@@ -63,7 +63,7 @@ class GenerateIn(BaseModel):
 # ============================ 라우트 ============================
 @app.get("/health")
 def health() -> dict[str, str]:
-    return {"status": "ok", "llm_model": config.LLM_MODEL}
+    return {"status": "ok"}
 
 
 @app.post("/refine")

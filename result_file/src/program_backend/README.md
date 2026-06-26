@@ -1,4 +1,4 @@
-# program_endpoint — 메타 프롬프팅 API 서버
+# program_backend — 메타 프롬프팅 API 서버
 
 사용자 프롬프트를 받아 **정제 → 벡터 검색 → 리랭킹 → 최종 프롬프트 생성** 파이프라인을 실행하고
 결과를 돌려주는 FastAPI 서버입니다. VSCode 확장(프록시)이 이 서버로 요청을 보냅니다.
@@ -9,16 +9,16 @@
    ▼  (1) LLM 정제      /rewrite   rewrite_prompt 로직
 translated_input · rewritten_prompt
    │
-   ▼  (2) 벡터 검색      /search    program_db search_chroma (Chroma top-k)
-   ▼  (3) 리랭킹         /rerank    program_db rerank_candidates (top-n)
+   ▼  (2) 벡터 검색      /search    retrieval.search_chroma (Chroma top-k)
+   ▼  (3) 리랭킹         /rerank    retrieval.rerank_candidates (top-n)
 top-n 템플릿
    │
    ▼  (4) LLM 최종 생성  /generate  pick_prompt 로직
 최종 정제 프롬프트  →  /refine 응답의 "refined"
 ```
 
-- **백엔드 = program_endpoint + program_db** 를 한 서버에 함께 배포합니다. 검색/리랭킹은
-  `program_db/scripts/rerank_vector_db.py` 의 함수를 그대로 import 해서 씁니다(중복 구현 없음).
+- **백엔드는 자족 모듈**입니다: API·파이프라인·검색/리랭킹(`retrieval.py`)·Chroma 데이터(`artifacts/`)가
+  한 폴더에 있습니다. DB 구축 도구는 오프라인용이라 `indexing/` 으로 분리했습니다(런타임 서빙엔 불필요).
 - 모델 추론(LLM/임베딩/리랭커)은 별도 서버(로컬 vLLM 또는 RunPod)의 OpenAI 호환 엔드포인트가 담당하고,
   이 서버는 그 주소/모델명을 `.env` 로만 받습니다(코드 하드코딩 없음).
 

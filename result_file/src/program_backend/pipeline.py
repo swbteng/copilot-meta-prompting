@@ -5,26 +5,19 @@
 각 단계는 독립 함수라 엔드포인트에서 따로 호출할 수 있고, run_full()이 전부 이어 붙인다.
 - (1) rewrite / (4) generate: 루트 데모 스크립트(rewrite_prompt.py, pick_prompt.py)의 프롬프트와
   파싱 로직을 그대로 옮겨 온 것. 데모의 파일 저장/하드코딩 입력 같은 부작용은 제거했다.
-- (2) search / (3) rerank: program_db의 rerank_vector_db.py 함수를 그대로 재사용한다(중복 구현 안 함).
+- (2) search / (3) rerank: retrieval.py 의 자족 함수(program_db 에서 흡수)를 호출한다.
 """
 
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
 from typing import Any, Optional
 
 import requests
 
 import config
-
-# program_db/scripts 를 import 경로에 추가해 검색/리랭킹 함수를 재사용한다.
-_DB_SCRIPTS = config.PROGRAM_DB_DIR / "scripts"
-if str(_DB_SCRIPTS) not in sys.path:
-    sys.path.insert(0, str(_DB_SCRIPTS))
-
-from rerank_vector_db import rerank_candidates, search_chroma  # noqa: E402
+from retrieval import rerank_candidates, search_chroma
 
 
 def _require(**values: str) -> None:
@@ -32,7 +25,7 @@ def _require(**values: str) -> None:
     missing = [name for name, value in values.items() if not value]
     if missing:
         raise RuntimeError(
-            f"설정값이 비어 있습니다: {', '.join(missing)}. program_endpoint/.env 를 채우세요."
+            f"설정값이 비어 있습니다: {', '.join(missing)}. program_backend/.env 를 채우세요."
         )
 
 
