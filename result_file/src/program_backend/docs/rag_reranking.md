@@ -2,6 +2,12 @@
 
 This document explains the current implementation at a handoff level. It covers template collection, Chroma DB build, vector search, and reranker top-3 selection.
 
+> 구조 변경 메모: 이 모듈은 `program_db` 에서 `program_backend` 로 흡수됐습니다. 아래 설명의 경로 매핑:
+> - 런타임 검색/리랭킹 `scripts/search_vector_db.py` · `scripts/rerank_vector_db.py` → 자족 모듈 `../retrieval.py`
+>   (`search_chroma`, `rerank_candidates`). 엔드포인트는 이 함수를 호출합니다.
+> - 오프라인 구축/수집 `scripts/build_vector_db.py` · `scripts/collect_production_templates.py` → `../indexing/`
+> - Chroma 데이터 `artifacts/` → `../artifacts/` (그대로). 동작/로직은 동일하며 경로만 바뀌었습니다.
+
 ## Data flow
 
 1. `scripts/collect_production_templates.py` collects prompt templates from GitHub and `selected_prompts.csv`.
