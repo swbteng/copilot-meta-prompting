@@ -1,0 +1,6 @@
+# program_endpoint 전용 의존성 (API 서버 레이어).
+# 백엔드 = endpoint + db 로 함께 배포하므로, 검색/리랭킹(Chroma 등) 의존성은
+# program_db/requirements.deploy.txt 를 같이 설치한다(RUN.md 참고).
+fastapi
+uvicorn[standard]
+requests
