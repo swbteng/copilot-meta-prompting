@@ -1,0 +1,4 @@
+# program_infra 전용 의존성 (GPU 서버에서 vLLM 모델 서빙).
+# serve_*.sh 가 vllm 을 띄우고, scripts/test_apis.py 가 requests 로 세 엔드포인트를 점검한다.
+vllm
+requests
