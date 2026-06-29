@@ -7,9 +7,19 @@
 // 프록시가 없으므로 bypass 마커/슬래시가 없다. '평범하게 친(=@refine 없는) 프롬프트'는 애초에
 // 가로채지 않는다 - 정제는 오직 @refine로 명시 호출했을 때만 일어난다.
 const vscode = require("vscode");
-const { refine } = require("./refiner");
+const refinerMod = require("./refiner");
 const logger = require("./logger");
 const config = require("./config");
+
+// refine를 '성공/실패 구분'해서 부른다. refineDetailed가 있으면 그걸 쓰고(서버 실패를 ok:false로 구분),
+// 없으면(구버전/주입된 refiner) 기존 refine를 호출해 성공으로 취급한다(하위호환).
+async function refinePrompt(text) {
+  if (typeof refinerMod.refineDetailed === "function") {
+    return await refinerMod.refineDetailed(text);
+  }
+  const out = await refinerMod.refine(text);
+  return { text: out, ok: true, reason: "legacy" };
+}
 
 const PARTICIPANT_ID = "swbc.refine";
 
@@ -52,6 +62,39 @@ function actionLink(icon, label, command, args) {
   return "[$(" + icon + ") " + label + "](command:" + command + "?" + q + ")";
 }
 
+// R-EX-11 통신 실패 시 쓰는 축소 액션 집합(원본 전송 / 취소). 신뢰 명령 목록으로도 쓴다.
+const FALLBACK_COMMANDS = [
+  "swbcPromptRefiner.refineUseOriginal",
+  "swbcPromptRefiner.refineTryAgain",
+  "swbcPromptRefiner.refineCancel",
+];
+
+// [폴백의 폴백] 커맨드 링크가 막힌 환경 -> 세로 stream.button(원본 전송/재시도/취소)으로 동작.
+function renderFailureButtons(stream, original) {
+  stream.button({ command: "swbcPromptRefiner.refineUseOriginal", title: "원본 전송 (use original)", arguments: [original] });
+  stream.button({ command: "swbcPromptRefiner.refineTryAgain", title: "재시도 (try again)", arguments: [original] });
+  stream.button({ command: "swbcPromptRefiner.refineCancel", title: "취소 (cancel)", arguments: [original] });
+}
+
+// R-EX-11: 정제 서버 타임아웃/오류 시 — 무한 로딩 없이 '에러 메시지 + Use original/재시도/Cancel'
+// Fallback UI를 띄운다. throw하지 않는다(fail-open). 재시도는 동일 원본으로 정제 서버에 다시 요청한다.
+function renderFailureFallback(stream, original) {
+  stream.markdown("⚠️ 정제 서버 호출에 **실패**했습니다(타임아웃 또는 오류). 무한 로딩 없이 아래에서 선택하세요.\n\n");
+  stream.markdown("_원본_: " + String(original).replace(/\n/g, " ") + "\n\n");
+  try {
+    const bar = new vscode.MarkdownString(
+      actionLink("arrow-right", "**원본 전송**", "swbcPromptRefiner.refineUseOriginal", [original]) +
+        "  ·  " + actionLink("refresh", "재시도", "swbcPromptRefiner.refineTryAgain", [original]) +
+        "  ·  " + actionLink("close", "취소", "swbcPromptRefiner.refineCancel", [original])
+    );
+    bar.isTrusted = { enabledCommands: FALLBACK_COMMANDS };
+    bar.supportThemeIcons = true;
+    stream.markdown(bar);
+  } catch (e) {
+    renderFailureButtons(stream, original);
+  }
+}
+
 // [폴백] 커맨드 링크가 막힌(구버전 등) 환경 -> 기존 세로 stream.button 5개로 그대로 동작.
 function renderActionsFallback(stream, original, refined) {
   stream.button({ command: "swbcPromptRefiner.refineAllow", title: "전송 (allow)", arguments: [original, refined] });
@@ -88,19 +131,25 @@ function renderPreview(stream, original, refined) {
 }
 
 async function handler(request, context, stream, token) {
+  let text = "";
   try {
-    const text = (request.prompt || "").trim();
+    text = (request.prompt || "").trim();
     // 기본: 정제 -> 미리보기 + 버튼.
     if (!text) {
       stream.markdown("정제할 프롬프트를 함께 입력하세요. 예: `@refine 1+1이 뭐야?`");
       return;
     }
-    const refined = await refine(text);
-    renderPreview(stream, text, String(refined));
+    const result = await refinePrompt(text);
+    if (!result || result.ok === false) {
+      // R-EX-11: 정제 서버 실패 -> 에러 메시지 + Use original/Cancel Fallback UI.
+      renderFailureFallback(stream, text);
+      return;
+    }
+    renderPreview(stream, text, String(result.text));
   } catch (e) {
-    // fail-open: 미리보기 실패해도 확장/Copilot 흐름은 살아 있게.
+    // fail-open: 미리보기 실패해도 확장/Copilot 흐름은 살아 있게. 원본으로 진행할 수 있게 Fallback UI 제공.
     try {
-      stream.markdown("정제 미리보기에 실패했습니다(fail-open). 그대로 보내려면 다시 입력해 주세요.");
+      renderFailureFallback(stream, text || (request && request.prompt) || "");
     } catch (_) {
       /* 무시 */
     }
@@ -139,9 +188,10 @@ function registerChat(context) {
     vscode.commands.registerCommand("swbcPromptRefiner.refineModify", (refined) =>
       seedInput(refined)
     ),
-    // cancel: 원본을 입력창에 시드(정제 취소, 원본 돌려줌) -> 유저가 그대로 보내거나 편집.
+    // cancel: 정제 취소 -> 원본을 '@refine '를 붙여 입력창에 시드. 유저가 그대로 엔터하면 다시 정제 흐름으로
+    // 진입(취소했더라도 @refine 컨텍스트 유지). 성공 미리보기/실패 Fallback 양쪽의 취소가 이 명령을 공유한다.
     vscode.commands.registerCommand("swbcPromptRefiner.refineCancel", (original) =>
-      seedInput(original)
+      seedInput("@refine " + String(original == null ? "" : original))
     ),
     // try again: 원본으로 재정제. @refine 자동 전송으로 핸들러를 재진입시켜 새 미리보기 턴을 만든다.
     vscode.commands.registerCommand("swbcPromptRefiner.refineTryAgain", async (original) => {

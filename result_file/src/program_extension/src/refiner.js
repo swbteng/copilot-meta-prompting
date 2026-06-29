@@ -45,27 +45,40 @@ const REFINE_API_TIMEOUT_MS = 20000;
 //   return refined.replace(/\s*$/, "") + "\n\n---\n" + defs;
 // }
 
-async function refine(original) {
-  // 절대 throw 금지(fail-open: 문제가 생기면 원본 반환).
+// refine의 '상세판' — 성공/실패를 구분해 돌려준다(R-EX-11 Fallback UI 판단의 단일 근거).
+// 절대 throw 금지(fail-open). 반환 = { text, ok, reason }.
+//   - 빈 입력      : { text: original,           ok: true,  reason: "blank"  } (실패 UI 띄우지 않음)
+//   - URL 미설정   : { text: FIXED_REPLACEMENT,  ok: true,  reason: "fixed"  } (폴백, 정상 흐름)
+//   - 서버 성공    : { text: refined,            ok: true,  reason: "server" }
+//   - 서버 실패    : { text: original,           ok: false, reason: "api"    } (타임아웃/4xx·5xx/연결실패/빈응답)
+//   - 예외         : { text: original,           ok: false, reason: "exception" }
+// ok:false일 때만 호출 측(chat.js)이 '에러 메시지 + Use original/Cancel' Fallback UI를 띄운다.
+async function refineDetailed(original) {
   try {
-    if (typeof original !== "string" || !original.trim()) return original;
-
-    // ───────────────────────────────────────────────────────────────────────
-    // [정식] 정제 서버 호출 - REFINE_API_URL로 직접 정제 서버를 부른다.
-    // 실패(null)하면 원본을 그대로 반환(fail-open).
-    if (REFINE_API_URL) {
-      const refined = await callRefineApi(original);
-      // ${question} 등 자리표시자 채움은 BE 서버 책임 -> 받은 정제본을 그대로 사용.
-      // (확장 측 정의 덧붙임은 보류: return appendQuestionDefinition(refined, original);)
-      return (typeof refined === "string" && refined.trim()) ? refined : original;
+    if (typeof original !== "string" || !original.trim()) {
+      return { text: original, ok: true, reason: "blank" };
     }
-    // ───────────────────────────────────────────────────────────────────────
-
-    // [폴백] URL이 비어 있으면 고정 문자열(서버 미설정 시 파이프라인 검증용).
-    return FIXED_REPLACEMENT;
+    // [폴백] URL이 비어 있으면 고정 문자열(서버 미설정 시 파이프라인 검증용 — 실패 아님).
+    if (!REFINE_API_URL) {
+      return { text: FIXED_REPLACEMENT, ok: true, reason: "fixed" };
+    }
+    // [정식] 정제 서버 호출. 실패하면 null -> ok:false(원본 유지).
+    // ${question} 등 자리표시자 채움은 BE 서버 책임 -> 받은 정제본을 그대로 사용.
+    const refined = await callRefineApi(original);
+    if (typeof refined === "string" && refined.trim()) {
+      return { text: refined, ok: true, reason: "server" };
+    }
+    return { text: original, ok: false, reason: "api" };
   } catch (e) {
-    return original;
+    return { text: original, ok: false, reason: "exception" };
   }
+}
+
+// 하위호환 얇은 래퍼 — 문자열만 필요한 호출부(셀프테스트/노드 점검)는 이걸 그대로 쓴다.
+// 동작/계약은 종전과 동일(성공이면 정제본, 실패면 원본/고정문자열을 fail-open으로 반환).
+async function refine(original) {
+  const r = await refineDetailed(original);
+  return r.text;
 }
 
 // 표준 모듈(http/https)만 사용 - 추가 의존성 없음. 실패하면 null(-> 호출 측에서 원본 유지 = fail-open).
@@ -90,6 +103,10 @@ function callRefineApi(original) {
           res.on("data", (c) => chunks.push(c));
           res.on("end", () => {
             try {
+              // R-EX-11: 4xx/5xx는 통신 실패로 간주(text/plain 500 본문을 정제본으로 오인하지 않게).
+              if (typeof res.statusCode === "number" && res.statusCode >= 400) {
+                return resolve(null);
+              }
               const text = Buffer.concat(chunks).toString("utf8");
               const ctype = (res.headers["content-type"] || "").toLowerCase();
               if (!ctype.includes("json")) return resolve(text || null);
@@ -119,4 +136,4 @@ function callRefineApi(original) {
 }
 
 // appendQuestionDefinition은 보류(BE 서버 처리)라 export하지 않는다.
-module.exports = { refine, callRefineApi, FIXED_REPLACEMENT };
+module.exports = { refine, refineDetailed, callRefineApi, FIXED_REPLACEMENT };

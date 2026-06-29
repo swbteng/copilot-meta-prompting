@@ -11,6 +11,8 @@
 > **작업을 "완료"라고 보고하기 전에 반드시 [§7 작업 완료 정의](#7-작업-완료-정의-definition-of-done)를 수행한다 — 변경에 맞춰 문서를 갱신한다.**
 > **모든 쉘 명령은 git bash. 개발 실행은 `F5`(Node 불필요), 패키징만 Node(`./build.sh`).**
 
+> **📋 평가 기준** — 이 프로젝트의 최종 산출물은 **프로젝트 루트의 [`project_assessment_agent_v1.0.md`](../../../project_assessment_agent_v1.0.md)**(프로젝트 평가 Agent 정의서)에 따라 채점된다. 모든 에이전트는 요구사항 명세 대비 기능 구현, 테스트/신뢰성, DevOps·실행 가능성, 시연 동작 검증 관점을 의식하고 작업한다 — 결론에는 **검증 가능한 증거**(파일 경로·테스트 로그·실행 결과)를 남기고, 자동 검증 불가 항목은 **사람/시연 검증으로 명시**한다.
+
 ---
 
 ## 0. 한 줄 요약
@@ -41,8 +43,8 @@
 | 파일 | 핵심 |
 |---|---|
 | `extension.js` | 진입점. 사이드바(WebviewView) 등록 + `registerChat(context)`. |
-| `chat.js` | **`@refine` 참가자**. `refine()` -> 미리보기(`stream.markdown`) + **가로 액션 바**(codicon 커맨드 링크 5개, 신뢰 `MarkdownString`; 막히면 `stream.button` 폴백) + 5명령. 전송은 `workbench.action.chat.open`. |
-| `refiner.js` | **유일한 refiner**. `refine()`(서버 정제 호출 기본 / URL 미설정 시 고정문자열 폴백), `callRefineApi()`(http/https). 서버 URL 우선순위 = `process.env` > `env.generated.js`(빌드 굽기) > 코드 내장 기본값. `appendQuestionDefinition()`(`${var}` 정의 덧붙임)은 BE 서버가 처리하기로 해 **주석/보류**. |
+| `chat.js` | **`@refine` 참가자**. `refinePrompt()`(=`refineDetailed` 우선)로 정제 -> 성공이면 미리보기(`stream.markdown`) + **가로 액션 바**(codicon 커맨드 링크 5개, 신뢰 `MarkdownString`; 막히면 `stream.button` 폴백) + 5명령. **실패(`ok:false`)/예외면 R-EX-11 Fallback UI**(에러 메시지 + Use original/재시도/Cancel). 전송은 `workbench.action.chat.open`. |
+| `refiner.js` | **유일한 refiner**. `refineDetailed()`(성공/실패 `{text, ok, reason}` 구분 — R-EX-11 Fallback 판단 근거) / `refine()`(그 얇은 래퍼, 문자열만), `callRefineApi()`(http/https, **4xx·5xx는 실패로 처리**). 서버 URL 우선순위 = `process.env` > `env.generated.js`(빌드 굽기) > 코드 내장 기본값. `appendQuestionDefinition()`(`${var}` 정의 덧붙임)은 BE 서버가 처리하기로 해 **주석/보류**. |
 | `env.generated.js` | **빌드 산출물**(커밋 금지, `.gitignore`). `build.sh`가 `.env`의 `REFINE_API_URL`을 구워 넣어 `.vsix`에 동봉(없으면 미생성, 코드 내장 기본값으로). `.vscodeignore`에서 **제외 금지**. |
 | `logger.js` | `@refine` allow 시 `observe-YYYY-MM-DD.log`에 **JSONL 한 줄 append**(스키마 동결, fail-open). |
 | `config.js` | `resolveLogDir(context)`(쓰는 쪽·읽는 쪽 단일 소스) / `getMaxEntries()`. |
@@ -57,7 +59,7 @@
 | **try again** | 원본으로 재정제 -> 새 미리보기 | `chat.open({query:"@refine 원본"})` | - |
 | **use original** | 원본 자동 전송 | `chat.open({query: 원본})` | - (교체 없음) |
 | **modify** | 정제본을 입력창에 시드(전송 안 함) | `seedInput(정제본)` | - |
-| **cancel** | 원본을 입력창에 시드(정제 취소) | `seedInput(원본)` | - |
+| **cancel** | `@refine 원본`을 입력창에 시드(정제 취소, @refine 컨텍스트 유지) | `seedInput("@refine "+원본)` | - |
 
 마커/슬래시 없음. modify는 `@refine`/슬래시 없는 **평범한 텍스트**를 입력창에 내린다(엔터 시 네이티브 Copilot 직행).
 
@@ -76,6 +78,10 @@
   `appendQuestionDefinition()`은 `src/refiner.js`에 **주석 처리/보류**로 남아 있다 — 서버가 못 채우게 되면
   그 함수 + `refine()`의 호출 + `module.exports`를 함께 되살린다(특정 변수명 하드코딩 금지).
 - 응답 스키마가 바뀌면 `callRefineApi()`의 요청/응답 키만 맞춘다(나머지는 fail-open이 흡수).
+- **성공/실패 구분(R-EX-11)**: `refineDetailed()`가 `{text, ok, reason}`을 돌려준다 — 빈입력/URL미설정은
+  `ok:true`(정상 흐름), 타임아웃·4xx·5xx·연결실패·빈응답·예외는 `ok:false`(원본 유지). chat.js는
+  `ok:false`일 때만 **에러 메시지 + Use original/재시도/Cancel Fallback UI**를 띄운다(무한 로딩 금지). `refine()`는
+  `refineDetailed().text`만 돌려주는 하위호환 래퍼(계약 불변).
 
 ---
 
