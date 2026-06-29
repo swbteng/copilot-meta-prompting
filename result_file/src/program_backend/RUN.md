@@ -8,8 +8,21 @@
 cd result_file/src/program_backend
 python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
-.venv/bin/pip install -r requirements.txt   # fastapi, uvicorn, requests, chromadb, openai, tqdm
+.venv/bin/pip install -r requirements.txt   # fastapi, uvicorn, requests, chromadb, openai, tqdm, scikit-learn
 ```
+
+### (선택) 벡터 DB 2D 시각화 지도
+
+웹 데모의 **"벡터 DB 시각화" 탭**은 미리 계산된 지도(`artifacts/viz_layout.json`)를 씁니다. 이미 커밋돼 있어
+그대로 동작하지만, DB(템플릿)를 다시 빌드했다면 아래로 지도를 재생성하세요(임베딩 서비스 없이 동작, 수 초 소요).
+
+```bash
+.venv/bin/python indexing/build_viz_layout.py            # t-SNE 2D 투영 + KMeans 군집(기본 k=10)
+.venv/bin/python indexing/build_viz_layout.py --clusters 12   # 군집 수 조정
+```
+
+> 지도 자체(점/군집)는 임베딩 서비스가 없어도 보이지만, 탭에서 **프롬프트를 검색**할 때는
+> 임베딩 서비스(`EMBED_BASE_URL`)가 떠 있어야 쿼리를 임베딩해 지도에 찍을 수 있습니다.
 
 ## 2. 설정
 

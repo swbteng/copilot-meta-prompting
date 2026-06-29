@@ -16,21 +16,70 @@
         </p>
       </header>
 
-      <section class="input-card">
-        <textarea
-          id="prompt"
-          rows="3"
-          placeholder="예) AI 관련 자유 주제로 5분 발표 PPT 슬라이드 내용을 구성해줘"
-        ></textarea>
-        <div class="input-row">
-          <span class="hint">⌘ / Ctrl + Enter 로도 실행</span>
-          <button id="run" class="btn">정제하기</button>
-        </div>
-      </section>
+      <nav class="tabs" role="tablist">
+        <button class="tab active" data-tab="pipeline" role="tab">파이프라인</button>
+        <button class="tab" data-tab="vizmap" role="tab">벡터 DB 시각화</button>
+      </nav>
 
-      <section id="pipeline" class="pipeline" hidden></section>
+      <!-- 탭 1: 파이프라인 (기존) -->
+      <div class="tab-panel" data-panel="pipeline">
+        <section class="input-card">
+          <textarea
+            id="prompt"
+            rows="3"
+            placeholder="예) AI 관련 자유 주제로 5분 발표 PPT 슬라이드 내용을 구성해줘"
+          ></textarea>
+          <div class="input-row">
+            <span class="hint">⌘ / Ctrl + Enter 로도 실행</span>
+            <button id="run" class="btn">정제하기</button>
+          </div>
+        </section>
+
+        <section id="pipeline" class="pipeline" hidden></section>
+      </div>
+
+      <!-- 탭 2: 벡터 DB 시각화 -->
+      <div class="tab-panel" data-panel="vizmap" hidden>
+        <section class="input-card">
+          <textarea
+            id="vizPrompt"
+            rows="2"
+            placeholder="예) 분기 매출 예측 보고서를 작성해줘"
+          ></textarea>
+          <div class="input-row">
+            <span class="hint">정제 없이 입력 그대로 임베딩해 바로 검색합니다 · ⌘ / Ctrl + Enter</span>
+            <button id="vizRun" class="btn">검색</button>
+          </div>
+        </section>
+
+        <section class="viz-stage">
+          <div class="viz-canvas-wrap">
+            <canvas id="vizCanvas"></canvas>
+            <div id="vizTooltip" class="viz-tooltip" hidden></div>
+            <div id="vizLoading" class="viz-loading"><span class="spinner"></span> 지도를 불러오는 중…</div>
+          </div>
+          <div id="vizLegend" class="viz-legend"></div>
+        </section>
+
+        <section id="vizResults" class="viz-results" hidden></section>
+
+        <section class="viz-list-card">
+          <div class="viz-list-head">
+            <span class="viz-list-title">전체 템플릿 <span id="vizListCount" class="viz-list-count"></span></span>
+            <input
+              id="vizListSearch"
+              class="viz-list-search"
+              type="search"
+              placeholder="제목·태그 검색…"
+              autocomplete="off"
+            />
+          </div>
+          <div id="vizListBody" class="viz-list-body"></div>
+        </section>
+      </div>
     </main>
 
     <script src="/static/app.js"></script>
+    <script src="/static/viz.js"></script>
   </body>
 </html>

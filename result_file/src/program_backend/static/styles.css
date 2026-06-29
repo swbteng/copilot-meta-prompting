@@ -19,6 +19,12 @@
   padding: 0;
 }
 
+/* display 를 지정한 요소(.viz-loading, .pipeline 등)에서도 hidden 속성이 확실히 먹도록 강제한다.
+   ([hidden] 의 기본 display:none 은 UA 스타일이라 author 의 display:flex 에 밀린다) */
+[hidden] {
+  display: none !important;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI",
     "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
@@ -362,11 +368,269 @@ textarea:focus {
   }
 }
 
+/* ----- 탭 ----- */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: #ececef;
+  border-radius: 980px;
+  padding: 4px;
+  margin: 0 auto 28px;
+  width: fit-content;
+}
+.tab {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 8px 22px;
+  border-radius: 980px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.tab:hover {
+  color: var(--text);
+}
+.tab.active {
+  background: var(--card);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+.tab-panel {
+  animation: rise 0.4s ease both;
+}
+
+/* ----- 벡터 DB 시각화 ----- */
+.viz-stage {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-top: 24px;
+}
+.viz-canvas-wrap {
+  position: relative;
+  width: 100%;
+}
+#vizCanvas {
+  display: block;
+  width: 100%;
+  height: 480px;
+  border-radius: 12px;
+  background: #fbfbfd;
+  border: 1px solid var(--border);
+  cursor: crosshair;
+}
+.viz-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.viz-tooltip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  max-width: 240px;
+  background: rgba(29, 29, 31, 0.92);
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 11px;
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transform: translate(-50%, calc(-100% - 12px));
+}
+.viz-tooltip .tt-title {
+  font-weight: 600;
+}
+.viz-tooltip .tt-meta {
+  color: #c7c7cc;
+  font-size: 12px;
+  margin-top: 2px;
+}
+.viz-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 16px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.legend-swatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex: none;
+}
+.legend-item .legend-size {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+
+.viz-results {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 24px;
+  margin-top: 24px;
+  animation: rise 0.4s ease both;
+}
+.viz-results .cand-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex: none;
+}
+
+/* 범례를 클릭하면 군집 필터로 동작 */
+.legend-item {
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 980px;
+  transition: background 0.12s, color 0.12s;
+  user-select: none;
+}
+.legend-item:hover {
+  background: #ececef;
+}
+.legend-item.active {
+  background: var(--accent-soft);
+  color: var(--text);
+}
+
+/* ----- 전체 템플릿 리스트 ----- */
+.viz-list-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 24px;
+  margin-top: 24px;
+}
+.viz-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.viz-list-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.viz-list-count {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+}
+.viz-list-search {
+  border: 1px solid var(--border);
+  border-radius: 980px;
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 14px;
+  background: #fbfbfd;
+  color: var(--text);
+  min-width: 200px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.viz-list-search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.viz-list-body {
+  max-height: 460px;
+  overflow-y: auto;
+  margin: 0 -8px;
+  padding: 0 8px;
+}
+.viz-group-head {
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 4px 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  z-index: 1;
+}
+.viz-group-head .legend-swatch {
+  width: 10px;
+  height: 10px;
+}
+.viz-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.12s;
+  scroll-margin: 60px;
+}
+.viz-item:hover {
+  background: #f5f5f7;
+}
+.viz-item-title {
+  flex: 1;
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.viz-item-tags {
+  color: var(--muted);
+  font-size: 12px;
+  flex: none;
+  max-width: 45%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.viz-item.flash {
+  animation: flashItem 1.1s ease;
+}
+@keyframes flashItem {
+  0%,
+  40% {
+    background: var(--accent-soft);
+  }
+  100% {
+    background: transparent;
+  }
+}
+.viz-list-empty {
+  color: var(--muted);
+  font-size: 14px;
+  padding: 16px 4px;
+}
+
 @media (max-width: 520px) {
   .hero h1 {
     font-size: 32px;
   }
   .container {
     padding: 40px 16px 64px;
+  }
+  #vizCanvas {
+    height: 380px;
   }
 }

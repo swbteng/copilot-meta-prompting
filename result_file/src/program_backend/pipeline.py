@@ -11,13 +11,14 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any, Optional
 
 import requests
 
 import config
-from retrieval import rerank_candidates, search_chroma
+from retrieval import _get_chroma_collection, rerank_candidates, search_chroma
 
 
 def _require(**values: str) -> None:
@@ -257,4 +258,93 @@ def run_full(
             }
             for item in ranked
         ],
+    }
+
+
+# ============================ 벡터 DB 시각화 (viz) ============================
+# 미리 계산해 둔 2D 레이아웃(indexing/build_viz_layout.py 산출물)을 1회 로드해 캐시한다.
+_VIZ_LAYOUT_PATH = Path(config.CHROMA_DIR).resolve().parent / "viz_layout.json"
+_viz_layout: Optional[dict[str, Any]] = None
+_viz_coord_by_id: dict[str, dict[str, Any]] = {}
+
+
+def _load_viz_layout() -> dict[str, Any]:
+    """artifacts/viz_layout.json 을 1회 읽어 캐시한다. id -> 점 매핑도 같이 만든다."""
+    global _viz_layout
+    if _viz_layout is None:
+        if not _VIZ_LAYOUT_PATH.exists():
+            raise RuntimeError(
+                f"시각화 레이아웃이 없습니다: {_VIZ_LAYOUT_PATH}. "
+                "먼저 `python indexing/build_viz_layout.py` 를 실행하세요."
+            )
+        _viz_layout = json.loads(_VIZ_LAYOUT_PATH.read_text(encoding="utf-8"))
+        for pt in _viz_layout["points"]:
+            _viz_coord_by_id[pt["id"]] = pt
+    return _viz_layout
+
+
+def viz_map() -> dict[str, Any]:
+    """(탭 2) 미리 계산된 전체 벡터 DB 지도(점/군집)를 그대로 반환한다.
+
+    임베딩 서비스 없이도 동작한다(정적 아티팩트만 읽음)."""
+    return _load_viz_layout()
+
+
+def viz_query(query: str, top_k: Optional[int] = None) -> dict[str, Any]:
+    """(탭 2) 정제 없이 사용자 입력을 바로 임베딩 → 벡터 검색하고, 지도 위 좌표까지 계산한다.
+
+    새 쿼리는 런타임에 t-SNE 공간으로 직접 투영할 수 없으므로(레이아웃은 고정), 가장 가까운
+    이웃들의 (x,y) 를 유사도 가중평균해 찍는다. 그래서 쿼리 점은 자기와 매칭된 군집 한가운데 나타난다.
+
+    반환: {"query", "point": {x, y}, "results": [{id, title, cluster, x, y, chroma_distance, document}]}.
+    """
+    _load_viz_layout()
+    k = top_k or config.CHROMA_TOP_K
+    candidates = search(query, top_k=k)
+
+    results: list[dict[str, Any]] = []
+    weighted_x = weighted_y = weight_sum = 0.0
+    for cand in candidates:
+        pt = _viz_coord_by_id.get(cand["id"])
+        if pt is None:
+            continue  # 레이아웃 빌드 이후 DB가 바뀌어 매칭이 안 되는 점은 건너뛴다
+        # 코사인 거리(0~2)를 유사도로: 가까울수록 큰 가중치. 지수가중으로 가장 가까운 이웃 쪽으로 끌어당긴다.
+        similarity = max(0.0, 1.0 - float(cand["chroma_distance"]))
+        weight = math.exp(similarity * 8.0)
+        weighted_x += pt["x"] * weight
+        weighted_y += pt["y"] * weight
+        weight_sum += weight
+        results.append(
+            {
+                "id": cand["id"],
+                "title": (cand.get("metadata") or {}).get("title") or cand["id"],
+                "cluster": pt["cluster"],
+                "x": pt["x"],
+                "y": pt["y"],
+                "chroma_rank": cand["chroma_rank"],
+                "chroma_distance": cand["chroma_distance"],
+                "document": cand["document"],
+            }
+        )
+
+    if weight_sum <= 0:
+        raise RuntimeError("쿼리를 지도에 배치할 수 없습니다(매칭되는 이웃 없음).")
+    point = {"x": weighted_x / weight_sum, "y": weighted_y / weight_sum}
+    return {"query": query, "point": point, "results": results}
+
+
+def viz_template(template_id: str) -> dict[str, Any]:
+    """(탭 2) 지도 노드 클릭 시, 해당 id 의 원본 템플릿 본문을 Chroma 에서 직접 읽어 반환한다.
+
+    임베딩 서비스가 없어도 동작한다(로컬 Chroma 만 읽음). 반환: {"id", "title", "document"}.
+    """
+    collection = _get_chroma_collection(Path(config.CHROMA_DIR), config.CHROMA_COLLECTION_NAME)
+    got = collection.get(ids=[template_id], include=["documents", "metadatas"])
+    if not got["ids"]:
+        raise RuntimeError(f"템플릿을 찾을 수 없습니다: {template_id}")
+    meta = (got["metadatas"][0] or {}) if got.get("metadatas") else {}
+    return {
+        "id": template_id,
+        "title": meta.get("title") or template_id,
+        "document": (got["documents"][0] if got.get("documents") else "") or "",
     }
