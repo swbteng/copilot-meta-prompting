@@ -184,6 +184,9 @@ prompt template for the user's request and adapt it precisely to their needs.
 
 {blocks}
 
+## Output Format
+Output only the final adapted prompt in Korean. Do not include any titles, labels, descriptions, or explanatory text outside the prompt content itself. No language other than Korean is permitted.
+
 ## Instructions
 1. Using **both** the original request and the rewritten prompt together, evaluate each template:
    - Use the **original request** to understand the user's raw intent and tone
@@ -199,9 +202,6 @@ prompt template for the user's request and adapt it precisely to their needs.
    - Removing irrelevant sections
    - Adding any missing critical elements specific to this request
    - Keeping the structure and quality of the original template intact
-
-## Output Format
-Output only the final adapted prompt in Korean. Do not include any titles, labels, descriptions, or explanatory text outside the prompt content itself. No language other than Korean is permitted.
 """
 
 def generate(translated_input: str, rewritten_prompt: str, templates: list[str]) -> dict[str, Any]:
