@@ -47,6 +47,7 @@ def _chat(prompt: str) -> tuple[str, Optional[str]]:
             "model": config.LLM_MODEL,
             "messages": [{"role": "user", "content": prompt}],
             "max_tokens": config.LLM_MAX_TOKENS,
+            "chat_template_kwargs": {"enable_thinking": False},
         },
         headers=headers,
         timeout=config.LLM_TIMEOUT,
@@ -168,53 +169,52 @@ def rerank(
 
 
 # ============================ (4) LLM 최종 프롬프트 생성 (generate) ============================
-def _generate_prompt(user_request: str, templates: list[str]) -> str:
+def _generate_prompt(translated_input: str, rewritten_prompt: str, templates: list[str]) -> str:
     blocks = "\n\n".join(f"### Template {i + 1}\n{tpl}" for i, tpl in enumerate(templates))
     return f"""You are an expert prompt engineer. Your task is to select the best matching
 prompt template for the user's request and adapt it precisely to their needs.
 
 ## User's Original Request
-{user_request}
+{translated_input}
+
+## Rewritten (Clarified) Prompt
+{rewritten_prompt}
 
 ## Candidate Prompt Templates (Top {len(templates)} Most Relevant)
 
 {blocks}
 
 ## Instructions
-1. Analyze the user's original request carefully, identifying:
-   - Core task and goal
-   - Key constraints and requirements explicitly stated
-   - Implicit requirements not directly stated
+1. Using **both** the original request and the rewritten prompt together, evaluate each template:
+   - Use the **original request** to understand the user's raw intent and tone
+   - Use the **rewritten prompt** to identify clarified requirements and explicit constraints
+   - Relevance: How well does it match the core task captured in both?
+   - Completeness: Does it cover all requirements surfaced across both versions?
+   - Adaptability: How easily can it be adjusted to fully reflect both?
 
-2. Evaluate each template against the user's request:
-   - Relevance: How well does it match the core task?
-   - Completeness: Does it cover all key requirements?
-   - Adaptability: How easily can it be adjusted to fit?
-
-3. Select the single best-matching template and adapt it by:
-   - Filling in or replacing placeholders with specifics from the user's request
+2. Silently reason through which template best fits the request (do not print this reasoning).
+   Then select the single best-matching template and adapt it by:
+   - Filling in or replacing placeholders with specifics drawn from **both** the original request and the rewritten prompt
+   - Ensuring no intent from the original request is lost, even if not reflected in the rewritten prompt
    - Removing irrelevant sections
    - Adding any missing critical elements specific to this request
    - Keeping the structure and quality of the original template intact
 
 ## Output Format
-First, reason through your template selection silently (do not print this reasoning).
+Output the adapted prompt only, with no other content before or after:
 
-Then output the result using EXACTLY this label on its own line, followed by the adapted prompt:
+**최종 적용 프롬프트:**
+<한국어로만 작성된 최종 적용 프롬프트. 한국어 외 다른 언어는 절대 포함하지 말 것.>
 
-final adapted prompt:
-<the fully adapted prompt in Korean>
+"""
 
-Do not include anything after the adapted prompt."""
-
-
-def generate(user_request: str, templates: list[str]) -> dict[str, Any]:
-    """(4단계) 사용자 요청과 후보 템플릿들로 최종 적응 프롬프트를 생성한다.
+def generate(translated_input: str, rewritten_prompt: str, templates: list[str]) -> dict[str, Any]:
+    """(4단계) 번역된 원문 + 정제 프롬프트 + 후보 템플릿들로 최종 적응 프롬프트를 생성한다.
 
     반환: {"adapted_prompt", "finish_reason"}.
     "final adapted prompt:" 레이블 뒤 텍스트만 추출하고, 레이블이 없으면 전문을 사용한다.
     """
-    raw, finish_reason = _chat(_generate_prompt(user_request, templates))
+    raw, finish_reason = _chat(_generate_prompt(translated_input, rewritten_prompt, templates))
     label = "final adapted prompt:"
     idx = raw.lower().find(label)
     adapted_prompt = raw[idx + len(label):].strip() if idx != -1 else raw
@@ -239,7 +239,11 @@ def run_full(
     ranked = rerank(query, chroma_top_k=chroma_top_k, top_n=top_n)
     templates = [item["document"] for item in ranked]
 
-    gen = generate(rw["translated_input"] or user_input, templates)
+    gen = generate(
+        rw["translated_input"] or user_input,
+        rw["rewritten_prompt"] or rw["translated_input"] or user_input,
+        templates,
+    )
 
     return {
         "refined": gen["adapted_prompt"],

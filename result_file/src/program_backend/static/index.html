@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>메타 프롬프팅 파이프라인</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="hero">
+        <h1>메타 프롬프팅 파이프라인</h1>
+        <p class="subtitle">
+          입력한 프롬프트가 <b>정제 → 검색 → 리랭킹 → 생성</b> 4단계를 거쳐
+          어떻게 바뀌는지 단계별로 보여줍니다.
+        </p>
+      </header>
+
+      <section class="input-card">
+        <textarea
+          id="prompt"
+          rows="3"
+          placeholder="예) AI 관련 자유 주제로 5분 발표 PPT 슬라이드 내용을 구성해줘"
+        ></textarea>
+        <div class="input-row">
+          <span class="hint">⌘ / Ctrl + Enter 로도 실행</span>
+          <button id="run" class="btn">정제하기</button>
+        </div>
+      </section>
+
+      <section id="pipeline" class="pipeline" hidden></section>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>

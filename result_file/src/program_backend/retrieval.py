@@ -18,8 +18,38 @@ from chromadb.config import Settings
 from openai import OpenAI
 
 
+# 모듈 레벨 싱글톤 캐시: 서버가 떠 있는 동안 임베딩/Chroma 클라이언트와 컬렉션을 1회만 열고 재사용한다.
+# 매 검색마다 새로 열면 (특히 RunPod network volume 같은 느린 디스크에서) SQLite 연결과 HNSW 인덱스를
+# 그때마다 다시 읽어 병목이 된다. 한 번 연 컬렉션은 chromadb 가 HNSW 인덱스를 메모리에 유지하므로
+# 이후 검색은 디스크를 거의 치지 않는다(= 사실상 "메모리에서 읽기").
+_embedding_clients: dict[tuple[str, str], OpenAI] = {}
+_chroma_clients: dict[str, Any] = {}
+_chroma_collections: dict[tuple[str, str], Any] = {}
+
+
 def create_embedding_client(base_url: str, api_key: str) -> OpenAI:
-    return OpenAI(base_url=base_url, api_key=api_key)
+    key = (base_url, api_key)
+    client = _embedding_clients.get(key)
+    if client is None:
+        client = OpenAI(base_url=base_url, api_key=api_key)
+        _embedding_clients[key] = client
+    return client
+
+
+def _get_chroma_collection(chroma_dir: Path, collection_name: str) -> Any:
+    """PersistentClient/컬렉션을 (경로, 이름) 기준으로 1회만 생성해 캐시한다.
+    호출 측(search_chroma) 시그니처는 그대로라 pipeline 수정이 필요 없다."""
+    dir_key = str(chroma_dir)
+    client = _chroma_clients.get(dir_key)
+    if client is None:
+        client = chromadb.PersistentClient(path=dir_key, settings=Settings(anonymized_telemetry=False))
+        _chroma_clients[dir_key] = client
+    coll_key = (dir_key, collection_name)
+    collection = _chroma_collections.get(coll_key)
+    if collection is None:
+        collection = client.get_collection(collection_name)
+        _chroma_collections[coll_key] = collection
+    return collection
 
 
 def generate_embedding(client: OpenAI, text: str, model_name: str) -> list[float]:
@@ -43,8 +73,7 @@ def search_chroma(
 ) -> list[dict[str, Any]]:
     embedding_client = create_embedding_client(embed_base_url, embed_api_key)
     query_embedding = generate_embedding(embedding_client, query, embed_model)
-    chroma_client = chromadb.PersistentClient(path=str(chroma_dir), settings=Settings(anonymized_telemetry=False))
-    collection = chroma_client.get_collection(collection_name)
+    collection = _get_chroma_collection(chroma_dir, collection_name)
     results = collection.query(
         query_embeddings=[query_embedding],
         n_results=top_k,
