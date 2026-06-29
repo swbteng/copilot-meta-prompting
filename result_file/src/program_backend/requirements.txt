@@ -1,7 +1,8 @@
-# program_backend 의존성 (API + 파이프라인 + 검색/리랭킹 retrieval, 한 배포 단위).
-# chromadb/openai 는 retrieval.py 가 직접 쓰므로 backend 의 정당한 의존성이다.
-fastapi
-uvicorn[standard]
-requests
-chromadb
-openai
+# program_backend dependencies (API + pipeline + retrieval + offline indexing).
+# Single deployment requirements file; versions are pinned from the backend .venv.
+fastapi==0.138.1
+uvicorn[standard]==0.49.0
+requests==2.34.2
+chromadb==1.5.9
+openai==2.44.0
+tqdm==4.68.3

@@ -8,7 +8,7 @@
 cd result_file/src/program_backend
 python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
-.venv/bin/pip install -r requirements.txt   # fastapi, uvicorn, requests, chromadb, openai
+.venv/bin/pip install -r requirements.txt   # fastapi, uvicorn, requests, chromadb, openai, tqdm
 ```
 
 ## 2. 설정
