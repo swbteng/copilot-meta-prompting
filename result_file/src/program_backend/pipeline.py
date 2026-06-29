@@ -201,8 +201,7 @@ prompt template for the user's request and adapt it precisely to their needs.
    - Keeping the structure and quality of the original template intact
 
 ## Output Format
-출력은 완성된 한국어 프롬프트 본문만 작성한다. 제목, 레이블, 설명, 부연 문장 등 프롬프트 내용 외의 모든 텍스트는 포함하지 않는다. 한국어 외 다른 언어는 절대 포함하지 않는다.
-
+Output only the final adapted prompt in Korean. Do not include any titles, labels, descriptions, or explanatory text outside the prompt content itself. No language other than Korean is permitted.
 """
 
 def generate(translated_input: str, rewritten_prompt: str, templates: list[str]) -> dict[str, Any]:
