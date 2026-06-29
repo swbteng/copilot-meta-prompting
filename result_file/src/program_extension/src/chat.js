@@ -1,7 +1,7 @@
 // chat.js - '@refine' Chat Participant: 확인형(승인 게이트) 정제. (확장 단독 구조)
 //
-// 우측 Copilot Chat에서 `@refine <프롬프트>`를 치면 정제본을 미리 보여주고, 5버튼으로
-// 승인/재생성/원본전송/수정/취소를 묻는다. 승인 시 '최종 텍스트(정제본/원본/수정본)'를 그대로
+// 우측 Copilot Chat에서 `@refine <프롬프트>`를 치면 정제본을 미리 보여주고, '가로 액션 바'(codicon
+// 커맨드 링크 5개)로 승인/재생성/원본전송/수정/취소를 묻는다. 승인 시 '최종 텍스트(정제본/원본/수정본)'를 그대로
 // 네이티브 Copilot에 보낸다(workbench.action.chat.open). 답은 네이티브 Copilot 스레드에 남는다(평소대로).
 //
 // 프록시가 없으므로 bypass 마커/슬래시가 없다. '평범하게 친(=@refine 없는) 프롬프트'는 애초에
@@ -36,17 +36,55 @@ async function seedInput(text) {
   }
 }
 
-function renderPreview(stream, original, refined) {
-  stream.markdown("**정제본 미리보기**\n\n");
-  stream.markdown("> " + String(refined).replace(/\n/g, "\n> ") + "\n\n");
-  stream.markdown("_원본_: " + String(original).replace(/\n/g, " ") + "\n\n");
-  // 버튼 5개. 각 버튼은 명령을 인자와 함께 호출한다(아래 registerChat에서 등록).
-  // allow는 로깅을 위해 [원본, 정제본] 둘 다 넘긴다.
+// 액션 버튼이 호출하는 명령 5개(아래 registerChat에서 등록). 가로 액션 바의 신뢰 명령 목록으로도 쓴다.
+const ACTION_COMMANDS = [
+  "swbcPromptRefiner.refineAllow",
+  "swbcPromptRefiner.refineTryAgain",
+  "swbcPromptRefiner.refineUseOriginal",
+  "swbcPromptRefiner.refineModify",
+  "swbcPromptRefiner.refineCancel",
+];
+
+// codicon + 라벨을 통째로 클릭 가능한 '커맨드 링크' 한 조각으로 만든다.
+// 인자는 JSON -> URI 인코딩해서 쿼리스트링으로 붙인다(VS Code chat 커맨드 링크 규약).
+function actionLink(icon, label, command, args) {
+  const q = encodeURIComponent(JSON.stringify(args));
+  return "[$(" + icon + ") " + label + "](command:" + command + "?" + q + ")";
+}
+
+// [폴백] 커맨드 링크가 막힌(구버전 등) 환경 -> 기존 세로 stream.button 5개로 그대로 동작.
+function renderActionsFallback(stream, original, refined) {
   stream.button({ command: "swbcPromptRefiner.refineAllow", title: "전송 (allow)", arguments: [original, refined] });
   stream.button({ command: "swbcPromptRefiner.refineTryAgain", title: "다시 정제 (try again)", arguments: [original] });
   stream.button({ command: "swbcPromptRefiner.refineUseOriginal", title: "원본 전송 (use original)", arguments: [original] });
   stream.button({ command: "swbcPromptRefiner.refineModify", title: "수정 (modify)", arguments: [refined] });
   stream.button({ command: "swbcPromptRefiner.refineCancel", title: "취소 (cancel)", arguments: [original] });
+}
+
+function renderPreview(stream, original, refined) {
+  // 미리보기 본문(정제본/원본)은 평범한 마크다운.
+  stream.markdown("**정제본 미리보기**\n\n");
+  stream.markdown("> " + String(refined).replace(/\n/g, "\n> ") + "\n\n");
+  stream.markdown("_원본_: " + String(original).replace(/\n/g, " ") + "\n\n");
+
+  // 액션 바: 세로로 쌓이는 stream.button 5개 대신, codicon이 붙은 커맨드 링크를 '한 줄에 가로'로
+  // 배치해 현대적·컴팩트하게 보여준다. (LG 디자인 참고: 1차 액션[전송]만 굵게 강조 + 간결한 라벨.)
+  // VS Code chat은 커맨드 링크/codicon에 커스텀 색을 줄 수 없어 색은 테마를 따른다 — 배치/강조로 모던함을 낸다.
+  try {
+    const bar = new vscode.MarkdownString(
+      actionLink("check", "**전송**", "swbcPromptRefiner.refineAllow", [original, refined]) +
+        "  ·  " + actionLink("edit", "수정", "swbcPromptRefiner.refineModify", [refined]) +
+        "  ·  " + actionLink("refresh", "다시 정제", "swbcPromptRefiner.refineTryAgain", [original]) +
+        "  ·  " + actionLink("arrow-right", "원본 전송", "swbcPromptRefiner.refineUseOriginal", [original]) +
+        "  ·  " + actionLink("close", "취소", "swbcPromptRefiner.refineCancel", [original])
+    );
+    bar.isTrusted = { enabledCommands: ACTION_COMMANDS }; // 커맨드 링크 실행 허용(이 명령들만)
+    bar.supportThemeIcons = true; // $(...) codicon 렌더 활성
+    stream.markdown(bar);
+  } catch (e) {
+    // fail-open: 커맨드 링크 렌더가 막히면 기존 세로 버튼으로 폴백(기능은 동일).
+    renderActionsFallback(stream, original, refined);
+  }
 }
 
 async function handler(request, context, stream, token) {

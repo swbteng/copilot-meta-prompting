@@ -1,7 +1,7 @@
 # .vscodeignore - 'vsce package'로 .vsix(배포본)를 만들 때만 적용된다.
 #   개발/F5 실행에는 아무 영향이 없다(여기 패턴은 .vsix에 '넣지 않을' 파일 목록일 뿐).
-#   이 확장은 extension/ 폴더에서 패키징되므로, 저장소 루트의 개발 파일
-#   (AGENTS.md, docs/, legacy/, .venv/ 등)은 애초에 .vsix에 들어가지 않는다.
+#   패키징 루트는 이 폴더(program_extension/)다. 런타임에 필요한 것은
+#   package.json · src/ · media/ 뿐이고, 아래 개발/문서 파일은 .vsix에서 제외한다.
 
 # ----- 확장 자체의 개발 산출물 (.vsix에 불필요) -----
 .vscode/**
@@ -14,3 +14,18 @@ build.sh
 **/.DS_Store
 **/Thumbs.db
 node_modules/**
+
+# 환경변수 파일(.vsix에 불필요 — 런타임은 OS 환경변수/코드 내장 기본값을 씀)
+.env
+.env.example
+# 주의: src/env.generated.js는 build.sh가 .env를 구워 넣은 '런타임 파일'이라 .vsix에 반드시 포함한다.
+#       (여기서 절대 제외하지 말 것 — 제외하면 .env 값이 패키지에 안 들어간다.)
+
+# ----- 개발 문서(.vsix에 불필요, README.md만 확장 페이지용으로 포함) -----
+#   README는 다른 .md를 '상대 링크'로 걸지 않는다(인라인 코드로만 언급) — vsce가 상대 링크를
+#   검증하다 repo URL 없이 실패하기 때문. 그래서 아래 문서들은 안전하게 제외된다.
+AGENTS.md
+CLAUDE.md
+RUN.md
+requirements.txt
+docs/**
