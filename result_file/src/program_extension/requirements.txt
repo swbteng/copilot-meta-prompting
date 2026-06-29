@@ -1,9 +1,10 @@
-# swbc-proxy 런타임 의존성 (.venv 위에서 설치)
+# requirements.txt — swbc-prompt-refiner
 #
-# 최초 1회 설치 (git bash):
-#   python -m venv .venv
-#   ./.venv/Scripts/python.exe -m pip install -r requirements.txt
+# 이 프로젝트는 **순수 JavaScript VS Code 확장**이며, 파이썬/런타임 의존성이 없습니다.
+#   - 런타임: Node.js 내장 모듈(http / https / url)만 사용 — 설치할 패키지 없음(의존성 0).
+#   - 패키징: @vscode/vsce (Node 도구). 전역 설치 없이 `npx @vscode/vsce`로 on-demand 실행됨.
 #
-# 정제 서버 호출은 표준 라이브러리(urllib)만 사용하므로 추가 의존성이 없습니다.
-# (transitive 의존성 cryptography/h2/wsproto 등은 pip가 자동 해석)
-mitmproxy==12.2.3
+# 따라서 pip로 설치할 파이썬 모듈이 없습니다(의도적으로 비어 있음).
+# (과거 mitmproxy 기반 프록시 구조에서 쓰던 requirements는 폐기·삭제되었습니다.)
+#
+# 실행/패키징 방법은 RUN.md 참고.
