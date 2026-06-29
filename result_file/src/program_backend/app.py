@@ -6,7 +6,7 @@
   POST /rewrite    (1) LLM 정제만.    {"prompt": ...} -> {"translated_input", "rewritten_prompt"}
   POST /search     (2) 벡터 검색만.   {"query": ...}  -> {"results": [...]}
   POST /rerank     (3) 검색+리랭킹.   {"query": ...}  -> {"results": [...]}
-  POST /generate   (4) 최종 생성만.   {"user_request", "templates": [...]} -> {"adapted_prompt"}
+  POST /generate   (4) 최종 생성만.   {"translated_input", "rewritten_prompt", "templates": [...]} -> {"adapted_prompt"}
 
 /refine 응답의 "refined" 키는 VSCode 확장/프록시 계약(refiner.js, refine_copilot.py)에 맞춘 것이다.
 """
@@ -15,8 +15,12 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 import config
@@ -56,8 +60,14 @@ class RerankIn(BaseModel):
 
 
 class GenerateIn(BaseModel):
-    user_request: str
+    translated_input: str
+    rewritten_prompt: str
     templates: list[str]
+
+
+class VizQueryIn(BaseModel):
+    query: str
+    top_k: Optional[int] = None
 
 
 # ============================ 라우트 ============================
@@ -103,6 +113,43 @@ def rerank(body: RerankIn) -> dict[str, Any]:
 @app.post("/generate")
 def generate(body: GenerateIn) -> dict[str, Any]:
     try:
-        return pipeline.generate(body.user_request, body.templates)
+        return pipeline.generate(body.translated_input, body.rewritten_prompt, body.templates)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/viz/map")
+def viz_map() -> dict[str, Any]:
+    """(탭 2) 미리 계산된 벡터 DB 2D 지도(점/군집). 임베딩 서비스 없이도 동작."""
+    try:
+        return pipeline.viz_map()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.post("/viz/query")
+def viz_query(body: VizQueryIn) -> dict[str, Any]:
+    """(탭 2) 정제 없이 입력을 바로 임베딩·검색하고 지도 위 좌표까지 반환."""
+    try:
+        return pipeline.viz_query(body.query, top_k=body.top_k)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/viz/template/{template_id}")
+def viz_template(template_id: str) -> dict[str, Any]:
+    """(탭 2) 지도 노드 클릭 시 원본 템플릿 본문을 반환."""
+    try:
+        return pipeline.viz_template(template_id)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+_STATIC_DIR = Path(__file__).resolve().parent / "static"
+app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
+
+
+@app.get("/")
+def index() -> FileResponse:
+    """루트(GET /): 파이프라인 시각화 데모 페이지."""
+    return FileResponse(str(_STATIC_DIR / "index.html"))
