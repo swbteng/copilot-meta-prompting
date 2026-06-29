@@ -65,6 +65,11 @@ class GenerateIn(BaseModel):
     templates: list[str]
 
 
+class VizQueryIn(BaseModel):
+    query: str
+    top_k: Optional[int] = None
+
+
 # ============================ 라우트 ============================
 @app.get("/health")
 def health() -> dict[str, str]:
@@ -109,6 +114,33 @@ def rerank(body: RerankIn) -> dict[str, Any]:
 def generate(body: GenerateIn) -> dict[str, Any]:
     try:
         return pipeline.generate(body.translated_input, body.rewritten_prompt, body.templates)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/viz/map")
+def viz_map() -> dict[str, Any]:
+    """(탭 2) 미리 계산된 벡터 DB 2D 지도(점/군집). 임베딩 서비스 없이도 동작."""
+    try:
+        return pipeline.viz_map()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.post("/viz/query")
+def viz_query(body: VizQueryIn) -> dict[str, Any]:
+    """(탭 2) 정제 없이 입력을 바로 임베딩·검색하고 지도 위 좌표까지 반환."""
+    try:
+        return pipeline.viz_query(body.query, top_k=body.top_k)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
+@app.get("/viz/template/{template_id}")
+def viz_template(template_id: str) -> dict[str, Any]:
+    """(탭 2) 지도 노드 클릭 시 원본 템플릿 본문을 반환."""
+    try:
+        return pipeline.viz_template(template_id)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc))
 
