@@ -1,5 +1,0 @@
-# program_backend/indexing 의존성 (오프라인 Chroma 구축/수집/점검; 런타임 서빙엔 불필요).
-# build_vector_db.py 가 openai 임베딩으로 Chroma 를 만들고, collect 은 표준 라이브러리만 쓴다.
-chromadb
-openai
-tqdm
