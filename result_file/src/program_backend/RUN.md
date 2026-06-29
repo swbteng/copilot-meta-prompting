@@ -27,16 +27,16 @@ cp .env.example .env
 
 ```bash
 cd result_file/src/program_backend
-.venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000
+.venv/bin/uvicorn app:app --host 0.0.0.0 --port 80
 ```
 
-- `--host 0.0.0.0` 이어야 외부에서 접속됩니다(R-IN-02). 자동 문서는 `http://<host>:8000/docs`.
+- `--host 0.0.0.0` 이어야 외부에서 접속됩니다(R-IN-02). 자동 문서는 `http://<host>:80/docs`.
 
 ### 스모크 테스트
 
 ```bash
-curl -s http://127.0.0.1:8000/health
-curl -s -X POST http://127.0.0.1:8000/refine \
+curl -s http://127.0.0.1:80/health
+curl -s -X POST http://127.0.0.1:80/refine \
   -H 'Content-Type: application/json' \
   -d '{"prompt":"AI 관련 자유 주제로 5분 발표 PPT 슬라이드 내용을 구성해줘"}'
 ```
