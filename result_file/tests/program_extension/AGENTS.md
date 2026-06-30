@@ -90,7 +90,13 @@ npm run test:extension
 
 # 결과 산출물(JUnit XML + 사람용 요약) 재생성
 npm run test:extension:junit
+
+# 커버리지(Node 내장, 의존성 0) — 콘솔 표 / lcov 산출물
+npm run test:extension:coverage          # 표만
+npm run test:extension:coverage:lcov     # + test-results/program_extension/coverage.lcov
 ```
+- 커버리지는 `--experimental-test-coverage`(내장 V8)라 추가 의존성이 없다. `--test-coverage-exclude="tests/**"`로
+  테스트 코드 자신은 빼고 `src/program_extension/src/*.js`만 집계한다(스크립트에 고정됨).
 - 디렉터리 인자(`tests/program_extension/`)를 주면 Node가 모듈로 해석해 실패한다 → **반드시 glob**
   (`tests/program_extension/src/*.test.js`)을 따옴표로 감싼다.
 - 권장 Node ≥ 20.13(내장 JUnit 리포터). 검증 환경: Node v24.
