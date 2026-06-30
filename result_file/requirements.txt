@@ -1,0 +1,5 @@
+# Aggregate Python dependency list for the submitted result_file.
+# Program-specific files keep the authoritative pinned versions.
+-r src/program_backend/requirements.txt
+-r src/program_AI/requirements.txt
+-r src/program_extension/requirements.txt

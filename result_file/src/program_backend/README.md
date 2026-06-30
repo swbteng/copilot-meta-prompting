@@ -1,52 +1,61 @@
-# program_backend — 메타 프롬프팅 API 서버
+# program_backend - 메타 프롬프팅 API 서버
 
-사용자 프롬프트를 받아 **정제 → 벡터 검색 → 리랭킹 → 최종 프롬프트 생성** 파이프라인을 실행하고
-결과를 돌려주는 FastAPI 서버입니다. VSCode 확장(프록시)이 이 서버로 요청을 보냅니다.
+사용자 프롬프트를 받아 `정제 -> 벡터 검색 -> 리랭킹 -> 최종 프롬프트 생성` 파이프라인을 실행하는 FastAPI 서버이다. 루트 경로에서는 같은 파이프라인을 단계별로 보여주는 웹 데모를 제공한다.
 
-```
+## 파이프라인
+
+```text
 사용자 입력
-   │
-   ▼  (1) LLM 정제      /rewrite   rewrite_prompt 로직
-translated_input · rewritten_prompt
-   │
-   ▼  (2) 벡터 검색      /search    retrieval.search_chroma (Chroma top-k)
-   ▼  (3) 리랭킹         /rerank    retrieval.rerank_candidates (top-n)
-top-n 템플릿
-   │
-   ▼  (4) LLM 최종 생성  /generate  pick_prompt 로직
-최종 정제 프롬프트  →  /refine 응답의 "refined"
+  -> /rewrite   LLM으로 영어 번역 및 검색용 프롬프트 재작성
+  -> /search    Chroma production DB에서 top-k 템플릿 검색
+  -> /rerank    리랭커 모델로 후보 재점수화 후 top-n 선별
+  -> /generate  선택 템플릿과 사용자 의도를 합성해 최종 한국어 프롬프트 생성
 ```
 
-- **백엔드는 자족 모듈**입니다: API·파이프라인·검색/리랭킹(`retrieval.py`)·Chroma 데이터(`artifacts/`)가
-  한 폴더에 있습니다. DB 구축 도구는 오프라인용이라 `indexing/` 으로 분리했습니다(런타임 서빙엔 불필요).
-- 모델 추론(LLM/임베딩/리랭커)은 별도 서버(로컬 vLLM 또는 RunPod)의 OpenAI 호환 엔드포인트가 담당하고,
-  이 서버는 그 주소/모델명을 `.env` 로만 받습니다(코드 하드코딩 없음).
+`/refine`은 위 네 단계를 한 번에 실행하고, VS Code 확장 또는 외부 클라이언트가 사용하기 쉬운 `refined` 키를 포함해 반환한다.
 
 ## 엔드포인트
 
-| 메서드 | 경로 | 입력 | 출력 |
-| :-- | :-- | :-- | :-- |
-| GET | `/health` | — | `{"status":"ok", ...}` |
-| POST | `/refine` | `{"prompt", "chroma_top_k?", "top_n?"}` | `{"refined", "translated_input", "rewritten_prompt", "templates"}` |
-| POST | `/rewrite` | `{"prompt"}` | `{"translated_input", "rewritten_prompt", "finish_reason"}` |
-| POST | `/search` | `{"query", "top_k?"}` | `{"query", "results":[...]}` |
-| POST | `/rerank` | `{"query", "chroma_top_k?", "top_n?"}` | `{"query", "results":[...]}` |
-| POST | `/generate` | `{"user_request", "templates":[...]}` | `{"adapted_prompt", "finish_reason"}` |
+| 메서드 | 경로 | 설명 |
+|---|---|---|
+| GET | `/` | 파이프라인 시각화 웹 데모 |
+| GET | `/health` | 서버 상태 확인 |
+| POST | `/refine` | 전체 파이프라인 실행 |
+| POST | `/rewrite` | LLM 재작성 단계 실행 |
+| POST | `/search` | Chroma 벡터 검색 단계 실행 |
+| POST | `/rerank` | 검색+리랭킹 단계 실행 |
+| POST | `/generate` | 최종 프롬프트 생성 단계 실행 |
 
-- `/refine` 가 전체 파이프라인이고, 나머지 4개는 각 단계를 따로 실행/디버깅하는 용도입니다.
-- `/refine` 응답의 `refined` 키는 확장↔서버 계약(`refiner.js`, `refine_copilot.py`)에 맞춘 최종 결과입니다.
-- 자동 문서: 서버 실행 후 `/docs` (Swagger UI).
+자동 API 문서는 서버 실행 후 `/docs`에서 확인한다.
 
-## 설정 (.env)
+## 데이터와 검색 자원
 
-모든 연결값은 `.env` 에서만 읽습니다. `.env.example` 을 복사해 채우세요(실제 `.env` 는 커밋 금지).
+- `data/md`: 고품질 프롬프트 템플릿 원천 데이터
+- `artifacts/production_task_templates`: 정규화된 템플릿 레코드와 manifest
+- `artifacts/production_chroma_qwen3_8b`: `Qwen/Qwen3-Embedding-8B` 기준으로 구축된 Chroma DB
+- `retrieval.py`: Chroma 검색과 리랭커 호출을 담당하는 런타임 모듈
+- `indexing/`: 템플릿 수집과 벡터 DB 재구축용 오프라인 도구
+
+## 설정
 
 ```bash
-cp .env.example .env   # 값 채우기 (로컬 vLLM 또는 RunPod 주소/모델/키)
+cp .env.example .env
 ```
 
-빈 값으로 두면 해당 요청이 명확한 에러(`설정값이 비어 있습니다: ...`)를 냅니다.
+`.env`에서 LLM, 임베딩, 리랭커의 URL/모델/API 키를 설정한다. 비어 있는 필수 연결값은 요청 시 명확한 오류로 반환된다.
 
-## 실행 / 배포
+## 실행
 
-[RUN.md](RUN.md) 참고 (로컬 실행, 외부 노출, RunPod Pod 고정 도메인 포함).
+자세한 절차는 `RUN.md`를 따른다.
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+.venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000
+```
+
+확인:
+
+```bash
+curl -s http://127.0.0.1:8000/health
+```

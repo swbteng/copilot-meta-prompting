@@ -1,0 +1,1466 @@
+commit 1b77863354db6de764ee84108a4a2303618c9879
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-29 07:08:45 +0000
+
+    Move output format instruction before instructions in pipeline prompt
+
+ result_file/src/program_backend/pipeline.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 4cc4d12f403ab06ca06b10e7432d04902ad12e0a
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-29 06:13:36 +0000
+
+    Refine prompt output format instruction in pipeline
+
+ result_file/src/program_backend/pipeline.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+commit 25a11481204c9f412b2ed8dd49ba5897dbdb2ddb
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-29 06:07:43 +0000
+
+    Reorganize backend markdown data layout
+
+ .../data/md/{prompts => }/administrative/administrative-sop-creator.md    | 0
+ .../data/md/{prompts => }/administrative/budget-planner.md                | 0
+ .../data/md/{prompts => }/administrative/compliance-tracker.md            | 0
+ .../data/md/{prompts => }/administrative/correspondence-specialist.md     | 0
+ .../data/md/{prompts => }/administrative/event-planner-pro.md             | 0
+ .../data/md/{prompts => }/administrative/executive-excellence-partner.md  | 0
+ .../data/md/{prompts => }/administrative/expense-report-analyst.md        | 0
+ .../data/md/{prompts => }/administrative/meeting-facilitator.md           | 0
+ .../data/md/{prompts => }/administrative/meeting-minutes-specialist.md    | 0
+ .../data/md/{prompts => }/administrative/office-manager-toolkit.md        | 0
+ .../data/md/{prompts => }/administrative/onboarding-coordinator.md        | 0
+ .../program_backend/data/md/{prompts => }/administrative/policy-writer.md | 0
+ .../data/md/{prompts => }/administrative/records-management-expert.md     | 0
+ .../data/md/{prompts => }/administrative/scheduling-optimizer.md          | 0
+ .../data/md/{prompts => }/administrative/travel-coordinator.md            | 0
+ .../data/md/{prompts => }/administrative/vendor-relations-manager.md      | 0
+ .../data/md/{prompts => }/analysis/competitive-analysis-expert.md         | 0
+ .../data/md/{prompts => }/analysis/cost-benefit-analysis-expert.md        | 0
+ .../data/md/{prompts => }/analysis/data-analysis-expert.md                | 0
+ .../data/md/{prompts => }/analysis/financial-modeling-expert.md           | 0
+ .../data/md/{prompts => }/analysis/market-research-strategist.md          | 0
+ .../data/md/{prompts => }/analysis/pattern-recognition-expert.md          | 0
+ .../data/md/{prompts => }/analysis/performance-evaluation-expert.md       | 0
+ .../data/md/{prompts => }/analysis/predictive-analysis-expert.md          | 0
+ .../data/md/{prompts => }/analysis/risk-assessment-expert.md              | 0
+ .../data/md/{prompts => }/analysis/root-cause-analysis-expert.md          | 0
+ .../data/md/{prompts => }/analysis/sentiment-analysis-expert.md           | 0
+ .../data/md/{prompts => }/analysis/statistical-analysis-expert.md         | 0
+ .../data/md/{prompts => }/analysis/swot-analysis-expert.md                | 0
+ .../data/md/{prompts => }/analysis/trend-identification-expert.md         | 0
+ .../data/md/{prompts => }/analysis/user-behavior-analysis-expert.md       | 0
+ .../md/{prompts => }/business/administrative/calendar-optimization.md     | 0
+ .../{prompts => }/business/administrative/document-organization-filing.md | 0
+ .../business/administrative/email-prioritization-response.md              | 0
+ .../business/administrative/meeting-minutes-summarization.md              | 0
+ .../md/{prompts => }/business/administrative/task-delegation-tracking.md  | 0
+ .../business/business-analysis/requirements-engineering-expert.md         | 0
+ .../business/customer-success/retention-optimization-expert.md            | 0
+ .../data/md/{prompts => }/business/finance/financial-model-builder.md     | 0
+ .../business/human-resources/talent-acquisition-strategist.md             | 0
+ .../data/md/{prompts => }/business/legal/compliance-officer-expert.md     | 0
+ .../data/md/{prompts => }/business/legal/contract-review-expert.md        | 0
+ .../business/management/business-analyst-strategic-excellence.md          | 0
+ .../md/{prompts => }/business/marketing/integrated-campaign-architect.md  | 0
+ .../md/{prompts => }/business/marketing/marketing-manager-strategist.md   | 0
+ .../md/{prompts => }/business/operations/operations-manager-excellence.md | 0
+ .../md/{prompts => }/business/operations/process-optimization-expert.md   | 0
+ .../{prompts => }/business/operations/supply-chain-optimization-expert.md | 0
+ .../business/product-management/strategic-roadmap-generator.md            | 0
+ .../business/project-management/comprehensive-risk-assessment.md          | 0
+ .../data/md/{prompts => }/business/sales/sales-pipeline-optimizer.md      | 0
+ .../md/{prompts => }/career-development/career-advancement-strategist.md  | 0
+ .../md/{prompts => }/career-development/freelance-business-builder.md     | 0
+ .../md/{prompts => }/career-development/interview-preparation-coach.md    | 0
+ .../{prompts => }/career-development/interview-preparation-specialist.md  | 0
+ .../data/md/{prompts => }/career-development/job-search-optimizer.md      | 0
+ .../md/{prompts => }/career-development/leadership-development-coach.md   | 0
+ .../data/md/{prompts => }/career-development/networking-strategist.md     | 0
+ .../md/{prompts => }/career-development/performance-review-optimizer.md   | 0
+ .../md/{prompts => }/career-development/personal-branding-strategist.md   | 0
+ .../career-development/professional-networking-strategist.md              | 0
+ .../data/md/{prompts => }/career-development/remote-work-optimizer.md     | 0
+ .../data/md/{prompts => }/career-development/salary-negotiation-expert.md | 0
+ .../data/md/{prompts => }/career-development/skill-development-planner.md | 0
+ .../data/md/{prompts => }/career-development/skill-gap-analyzer.md        | 0
+ .../{prompts => }/career-development/workplace-productivity-optimizer.md  | 0
+ .../data/md/{prompts => }/communication/client-presentation-expert.md     | 0
+ .../data/md/{prompts => }/communication/conflict-mediation-expert.md      | 0
+ .../data/md/{prompts => }/communication/crisis-communication-expert.md    | 0
+ .../{prompts => }/communication/cross-functional-coordination-expert.md   | 0
+ .../md/{prompts => }/communication/email-communication-strategy-expert.md | 0
+ .../data/md/{prompts => }/communication/executive-briefing-expert.md      | 0
+ .../data/md/{prompts => }/communication/feedback-collection-expert.md     | 0
+ .../data/md/{prompts => }/communication/knowledge-transfer-expert.md      | 0
+ .../data/md/{prompts => }/communication/meeting-facilitation-expert.md    | 0
+ .../data/md/{prompts => }/communication/negotiation-preparation-expert.md | 0
+ .../md/{prompts => }/communication/public-speaking-preparation-expert.md  | 0
+ .../md/{prompts => }/communication/stakeholder-communication-expert.md    | 0
+ .../data/md/{prompts => }/communication/status-reporting-expert.md        | 0
+ .../data/md/{prompts => }/communication/team-collaboration-expert.md      | 0
+ .../data/md/{prompts => }/communication/technical-documentation-expert.md | 0
+ .../md/{prompts => }/content-creation/audience-engagement-specialist.md   | 0
+ .../data/md/{prompts => }/content-creation/blog-content-planner.md        | 0
+ .../data/md/{prompts => }/content-creation/brand-storytelling-expert.md   | 0
+ .../data/md/{prompts => }/content-creation/content-calendar-architect.md  | 0
+ .../md/{prompts => }/content-creation/copywriting-enhancement-expert.md   | 0
+ .../data/md/{prompts => }/content-creation/email-marketing-specialist.md  | 0
+ .../data/md/{prompts => }/content-creation/email-newsletter-strategist.md | 0
+ .../md/{prompts => }/content-creation/influencer-marketing-strategist.md  | 0
+ .../data/md/{prompts => }/content-creation/podcast-content-strategist.md  | 0
+ .../data/md/{prompts => }/content-creation/seo-content-optimizer.md       | 0
+ .../md/{prompts => }/content-creation/social-media-strategy-optimizer.md  | 0
+ .../md/{prompts => }/content-creation/storytelling-framework-designer.md  | 0
+ .../data/md/{prompts => }/content-creation/video-content-creator.md       | 0
+ .../data/md/{prompts => }/content-creation/youtube-content-strategist.md  | 0
+ .../{prompts => }/customer-focused/customer-feedback-analysis-expert.md   | 0
+ .../md/{prompts => }/customer-focused/customer-journey-mapping-expert.md  | 0
+ .../customer-focused/customer-satisfaction-measurement-expert.md          | 0
+ .../md/{prompts => }/customer-focused/customer-segmentation-expert.md     | 0
+ .../md/{prompts => }/customer-focused/customer-success-planning-expert.md | 0
+ .../md/{prompts => }/customer-focused/customer-support-process-expert.md  | 0
+ .../{prompts => }/customer-focused/customer-win-back-strategy-expert.md   | 0
+ .../md/{prompts => }/customer-focused/loyalty-program-design-expert.md    | 0
+ .../md/{prompts => }/customer-focused/onboarding-experience-expert.md     | 0
+ .../md/{prompts => }/customer-focused/personalization-framework-expert.md | 0
+ .../data/md/{prompts => }/customer-focused/retention-strategy-expert.md   | 0
+ .../data/md/{prompts => }/customer-focused/service-design-expert.md       | 0
+ .../{prompts => }/customer-focused/support-escalation-process-expert.md   | 0
+ .../md/{prompts => }/customer-focused/user-experience-design-expert.md    | 0
+ .../{prompts => }/customer-focused/voice-of-customer-analysis-expert.md   | 0
+ .../data/md/{prompts => }/customer-service/chatbot-script-writer.md       | 0
+ .../data/md/{prompts => }/customer-service/complaint-resolution-expert.md | 0
+ .../customer-service/customer-experience-excellence-leader.md             | 0
+ .../data/md/{prompts => }/customer-service/customer-feedback-analyst.md   | 0
+ .../data/md/{prompts => }/customer-service/customer-journey-mapper.md     | 0
+ .../data/md/{prompts => }/customer-service/customer-success-planner.md    | 0
+ .../data/md/{prompts => }/customer-service/escalation-handler.md          | 0
+ .../data/md/{prompts => }/customer-service/knowledge-base-builder.md      | 0
+ .../md/{prompts => }/customer-service/multichannel-support-architect.md   | 0
+ .../data/md/{prompts => }/customer-service/retention-specialist.md        | 0
+ .../data/md/{prompts => }/customer-service/service-level-designer.md      | 0
+ .../data/md/{prompts => }/customer-service/service-recovery-designer.md   | 0
+ .../data/md/{prompts => }/customer-service/support-team-trainer.md        | 0
+ .../data/md/{prompts => }/customer-service/support-ticket-classifier.md   | 0
+ .../data/md/{prompts => }/customer-service/voice-of-customer-analyst.md   | 0
+ .../data/md/{prompts => }/decision-making/budget-allocation-expert.md     | 0
+ .../data/md/{prompts => }/decision-making/ethics-evaluation-expert.md     | 0
+ .../md/{prompts => }/decision-making/feature-prioritization-expert.md     | 0
+ .../md/{prompts => }/decision-making/go-no-go-determinations-expert.md    | 0
+ .../md/{prompts => }/decision-making/hiring-decision-framework-expert.md  | 0
+ .../{prompts => }/decision-making/investment-decision-support-expert.md   | 0
+ .../data/md/{prompts => }/decision-making/option-evaluation-expert.md     | 0
+ .../md/{prompts => }/decision-making/policy-decision-framework-expert.md  | 0
+ .../md/{prompts => }/decision-making/prioritization-frameworks-expert.md  | 0
+ .../{prompts => }/decision-making/resource-allocation-decisions-expert.md | 0
+ .../{prompts => }/decision-making/stakeholder-impact-analysis-expert.md   | 0
+ .../{prompts => }/decision-making/strategic-direction-setting-expert.md   | 0
+ .../{prompts => }/decision-making/technical-approach-selection-expert.md  | 0
+ .../md/{prompts => }/decision-making/vendor-selection-process-expert.md   | 0
+ .../data/md/{prompts => }/development/api-integration-architect.md        | 0
+ .../data/md/{prompts => }/development/architecture-advisor.md             | 0
+ .../data/md/{prompts => }/development/code-migration-planner.md           | 0
+ .../data/md/{prompts => }/development/code-review-expert.md               | 0
+ .../data/md/{prompts => }/development/database-schema-designer.md         | 0
+ .../data/md/{prompts => }/development/debugging-detective.md              | 0
+ .../data/md/{prompts => }/development/dependency-manager.md               | 0
+ .../data/md/{prompts => }/development/developer-onboarding-guide.md       | 0
+ .../data/md/{prompts => }/development/devops-pipeline-architect.md        | 0
+ .../data/md/{prompts => }/development/documentation-writer.md             | 0
+ .../data/md/{prompts => }/development/git-workflow-advisor.md             | 0
+ .../data/md/{prompts => }/development/performance-profiler.md             | 0
+ .../data/md/{prompts => }/development/refactoring-coach.md                | 0
+ .../data/md/{prompts => }/development/security-code-auditor.md            | 0
+ .../data/md/{prompts => }/development/test-strategy-architect.md          | 0
+ .../md/{prompts => }/engineering/civil-engineering-project-manager.md     | 0
+ .../data/md/{prompts => }/engineering/construction-excellence-director.md | 0
+ .../data/md/{prompts => }/engineering/cost-estimation-engineer.md         | 0
+ .../data/md/{prompts => }/engineering/design-review-facilitator.md        | 0
+ .../data/md/{prompts => }/engineering/electrical-systems-designer.md      | 0
+ .../data/md/{prompts => }/engineering/failure-mode-analyst.md             | 0
+ .../data/md/{prompts => }/engineering/materials-selection-expert.md       | 0
+ .../data/md/{prompts => }/engineering/mechanical/design-review-expert.md  | 0
+ .../data/md/{prompts => }/engineering/project-execution-engineer.md       | 0
+ .../data/md/{prompts => }/engineering/regulatory-compliance-engineer.md   | 0
+ .../data/md/{prompts => }/engineering/reliability-engineering-expert.md   | 0
+ .../data/md/{prompts => }/engineering/root-cause-analysis-engineer.md     | 0
+ .../data/md/{prompts => }/engineering/simulation-modeling-advisor.md      | 0
+ .../data/md/{prompts => }/engineering/sustainability-engineer.md          | 0
+ .../data/md/{prompts => }/engineering/systems-engineering-expert.md       | 0
+ .../data/md/{prompts => }/engineering/technical-specification-writer.md   | 0
+ .../data/md/{prompts => }/engineering/test-validation-engineer.md         | 0
+ .../md/{prompts => }/evaluation-assessment/candidate-assessment-expert.md | 0
+ .../data/md/{prompts => }/evaluation-assessment/code-review-expert.md     | 0
+ .../md/{prompts => }/evaluation-assessment/compliance-audit-expert.md     | 0
+ .../data/md/{prompts => }/evaluation-assessment/document-review-expert.md | 0
+ .../evaluation-assessment/investment-opportunity-assessment-expert.md     | 0
+ .../{prompts => }/evaluation-assessment/market-fit-assessment-expert.md   | 0
+ .../md/{prompts => }/evaluation-assessment/performance-review-expert.md   | 0
+ .../md/{prompts => }/evaluation-assessment/product-evaluation-expert.md   | 0
+ .../md/{prompts => }/evaluation-assessment/project-post-mortem-expert.md  | 0
+ .../md/{prompts => }/evaluation-assessment/quality-assurance-expert.md    | 0
+ .../data/md/{prompts => }/evaluation-assessment/roi-analysis-expert.md    | 0
+ .../md/{prompts => }/evaluation-assessment/security-assessment-expert.md  | 0
+ .../md/{prompts => }/evaluation-assessment/usability-testing-expert.md    | 0
+ .../md/{prompts => }/evaluation-assessment/vendor-evaluation-expert.md    | 0
+ .../data/md/{prompts => }/finance/budget-analysis-expert.md               | 0
+ .../program_backend/data/md/{prompts => }/finance/cash-flow-optimizer.md  | 0
+ .../data/md/{prompts => }/finance/cost-reduction-advisor.md               | 0
+ .../data/md/{prompts => }/finance/esg-investment-analyst.md               | 0
+ .../data/md/{prompts => }/finance/financial-analysis-expert.md            | 0
+ .../data/md/{prompts => }/finance/financial-audit-preparation.md          | 0
+ .../data/md/{prompts => }/finance/financial-model-builder.md              | 0
+ .../data/md/{prompts => }/finance/financial-reporting-specialist.md       | 0
+ .../data/md/{prompts => }/finance/investment-research-analyst.md          | 0
+ .../data/md/{prompts => }/finance/merger-acquisition-analyst.md           | 0
+ .../data/md/{prompts => }/finance/personal-finance-coach.md               | 0
+ .../data/md/{prompts => }/finance/risk-assessment-financial.md            | 0
+ .../data/md/{prompts => }/finance/startup-funding-advisor.md              | 0
+ .../data/md/{prompts => }/finance/tax-planning-strategist.md              | 0
+ .../data/md/{prompts => }/finance/treasury-management-expert.md           | 0
+ .../data/md/{prompts => }/financial-planning/college-savings-planner.md   | 0
+ .../data/md/{prompts => }/financial-planning/credit-score-improver.md     | 0
+ .../data/md/{prompts => }/financial-planning/crypto-investment-advisor.md | 0
+ .../md/{prompts => }/financial-planning/debt-elimination-strategist.md    | 0
+ .../data/md/{prompts => }/financial-planning/emergency-fund-builder.md    | 0
+ .../data/md/{prompts => }/financial-planning/estate-planning-advisor.md   | 0
+ .../md/{prompts => }/financial-planning/expense-tracking-optimizer.md     | 0
+ .../data/md/{prompts => }/financial-planning/financial-goal-tracker.md    | 0
+ .../data/md/{prompts => }/financial-planning/insurance-planning-expert.md | 0
+ .../md/{prompts => }/financial-planning/investment-planning-advisor.md    | 0
+ .../md/{prompts => }/financial-planning/investment-strategy-optimizer.md  | 0
+ .../data/md/{prompts => }/financial-planning/personal-budget-optimizer.md | 0
+ .../md/{prompts => }/financial-planning/real-estate-investment-analyst.md | 0
+ .../md/{prompts => }/financial-planning/retirement-planning-specialist.md | 0
+ .../data/md/{prompts => }/financial-planning/side-hustle-monetizer.md     | 0
+ .../data/md/{prompts => }/financial-planning/side-income-developer.md     | 0
+ .../md/{prompts => }/financial-planning/tax-optimization-strategist.md    | 0
+ .../md/{prompts => }/human-resources/compensation-benchmarking-expert.md  | 0
+ .../md/{prompts => }/human-resources/diversity-inclusion-strategist.md    | 0
+ .../data/md/{prompts => }/human-resources/employee-engagement-designer.md | 0
+ .../data/md/{prompts => }/human-resources/employee-relations-advisor.md   | 0
+ .../data/md/{prompts => }/human-resources/hr-excellence-leader.md         | 0
+ .../data/md/{prompts => }/human-resources/hr-policy-designer.md           | 0
+ .../data/md/{prompts => }/human-resources/interview-question-designer.md  | 0
+ .../data/md/{prompts => }/human-resources/job-description-writer.md       | 0
+ .../data/md/{prompts => }/human-resources/learning-development-planner.md | 0
+ .../md/{prompts => }/human-resources/offboarding-experience-designer.md   | 0
+ .../data/md/{prompts => }/human-resources/performance-review-coach.md     | 0
+ .../data/md/{prompts => }/human-resources/succession-planning-expert.md   | 0
+ .../md/{prompts => }/human-resources/talent-acquisition-strategist.md     | 0
+ .../md/{prompts => }/human-resources/termination-documentation-guide.md   | 0
+ .../data/md/{prompts => }/human-resources/workforce-planning-expert.md    | 0
+ .../md/{prompts => }/learning-development/competency-assessment-expert.md | 0
+ .../md/{prompts => }/learning-development/concept-explanation-expert.md   | 0
+ .../learning-development/continuous-learning-framework-expert.md          | 0
+ .../{prompts => }/learning-development/curriculum-development-expert.md   | 0
+ .../{prompts => }/learning-development/feedback-implementation-expert.md  | 0
+ .../{prompts => }/learning-development/knowledge-gap-analysis-expert.md   | 0
+ .../md/{prompts => }/learning-development/knowledge-synthesis-expert.md   | 0
+ .../learning-development/learning-experience-design-expert.md             | 0
+ .../{prompts => }/learning-development/learning-plan-creation-expert.md   | 0
+ .../md/{prompts => }/learning-development/mentorship-structure-expert.md  | 0
+ .../learning-development/onboarding-process-design-expert.md              | 0
+ .../md/{prompts => }/learning-development/research-methodology-expert.md  | 0
+ .../md/{prompts => }/learning-development/skill-acquisition-expert.md     | 0
+ .../learning-development/training-material-development-expert.md          | 0
+ .../md/{prompts => }/learning-development/tutorial-creation-expert.md     | 0
+ .../md/{prompts => }/management-leadership/change-management-expert.md    | 0
+ .../md/{prompts => }/management-leadership/conflict-resolution-expert.md  | 0
+ .../md/{prompts => }/management-leadership/crisis-leadership-expert.md    | 0
+ .../management-leadership/cross-cultural-leadership-expert.md             | 0
+ .../md/{prompts => }/management-leadership/delegation-framework-expert.md | 0
+ .../management-leadership/executive-decision-making-expert.md             | 0
+ .../management-leadership/organizational-development-expert.md            | 0
+ .../{prompts => }/management-leadership/performance-management-expert.md  | 0
+ .../md/{prompts => }/management-leadership/project-governance-expert.md   | 0
+ .../{prompts => }/management-leadership/remote-team-management-expert.md  | 0
+ .../md/{prompts => }/management-leadership/resource-management-expert.md  | 0
+ .../md/{prompts => }/management-leadership/strategic-leadership-expert.md | 0
+ .../md/{prompts => }/management-leadership/talent-management-expert.md    | 0
+ .../data/md/{prompts => }/management-leadership/team-building-expert.md   | 0
+ .../data/md/{prompts => }/management-leadership/team-motivation-expert.md | 0
+ .../data/md/{prompts => }/operations/business-continuity-planner.md       | 0
+ .../data/md/{prompts => }/operations/capacity-planning-advisor.md         | 0
+ .../data/md/{prompts => }/operations/change-management-facilitator.md     | 0
+ .../data/md/{prompts => }/operations/facility-management-expert.md        | 0
+ .../data/md/{prompts => }/operations/inventory-management-expert.md       | 0
+ .../data/md/{prompts => }/operations/kpi-dashboard-designer.md            | 0
+ .../data/md/{prompts => }/operations/lean-operations-coach.md             | 0
+ .../data/md/{prompts => }/operations/logistics-coordinator.md             | 0
+ .../data/md/{prompts => }/operations/operational-efficiency-analyst.md    | 0
+ .../data/md/{prompts => }/operations/procurement-strategist.md            | 0
+ .../data/md/{prompts => }/operations/production-planning-expert.md        | 0
+ .../data/md/{prompts => }/operations/quality-management-system.md         | 0
+ .../data/md/{prompts => }/operations/standard-work-documentation.md       | 0
+ .../data/md/{prompts => }/operations/supply-chain-excellence-director.md  | 0
+ .../data/md/{prompts => }/operations/vendor-management-specialist.md      | 0
+ .../data/md/{prompts => }/optimization/algorithm-efficiency-expert.md     | 0
+ .../md/{prompts => }/optimization/conversion-rate-optimization-expert.md  | 0
+ .../data/md/{prompts => }/optimization/cost-reduction-expert.md           | 0
+ .../data/md/{prompts => }/optimization/efficiency-enhancement-expert.md   | 0
+ .../data/md/{prompts => }/optimization/energy-efficiency-expert.md        | 0
+ .../data/md/{prompts => }/optimization/performance-tuning-expert.md       | 0
+ .../data/md/{prompts => }/optimization/process-improvement-expert.md      | 0
+ .../data/md/{prompts => }/optimization/resource-optimization-expert.md    | 0
+ .../data/md/{prompts => }/optimization/revenue-optimization-expert.md     | 0
+ .../data/md/{prompts => }/optimization/schedule-optimization-expert.md    | 0
+ .../data/md/{prompts => }/optimization/space-optimization-expert.md       | 0
+ .../md/{prompts => }/optimization/supply-chain-optimization-expert.md     | 0
+ .../data/md/{prompts => }/optimization/time-management-expert.md          | 0
+ .../md/{prompts => }/optimization/user-experience-optimization-expert.md  | 0
+ .../data/md/{prompts => }/optimization/workflow-streamlining-expert.md    | 0
+ .../data/md/{prompts => }/planning/budget-planning-expert.md              | 0
+ .../data/md/{prompts => }/planning/career-development-planning-expert.md  | 0
+ .../data/md/{prompts => }/planning/content-calendar-planning-expert.md    | 0
+ .../data/md/{prompts => }/planning/contingency-planning-expert.md         | 0
+ .../data/md/{prompts => }/planning/curriculum-planning-expert.md          | 0
+ .../data/md/{prompts => }/planning/event-planning-expert.md               | 0
+ .../data/md/{prompts => }/planning/marketing-campaign-planning-expert.md  | 0
+ .../data/md/{prompts => }/planning/product-roadmapping-expert.md          | 0
+ .../data/md/{prompts => }/planning/project-planning-expert.md             | 0
+ .../data/md/{prompts => }/planning/release-planning-expert.md             | 0
+ .../data/md/{prompts => }/planning/resource-allocation-expert.md          | 0
+ .../data/md/{prompts => }/planning/risk-management-expert.md              | 0
+ .../data/md/{prompts => }/planning/schedule-development-expert.md         | 0
+ .../data/md/{prompts => }/planning/strategic-planning-expert.md           | 0
+ .../data/md/{prompts => }/planning/succession-planning-expert.md          | 0
+ .../md/{prompts => }/problem-solving/algorithm-optimization-expert.md     | 0
+ .../data/md/{prompts => }/problem-solving/conflict-resolution-expert.md   | 0
+ .../data/md/{prompts => }/problem-solving/crisis-management-expert.md     | 0
+ .../md/{prompts => }/problem-solving/customer-issue-resolution-expert.md  | 0
+ .../data/md/{prompts => }/problem-solving/debugging-expert.md             | 0
+ .../data/md/{prompts => }/problem-solving/decision-making-expert.md       | 0
+ .../data/md/{prompts => }/problem-solving/error-handling-design-expert.md | 0
+ .../problem-solving/performance-bottleneck-analysis-expert.md             | 0
+ .../data/md/{prompts => }/problem-solving/process-optimization-expert.md  | 0
+ .../data/md/{prompts => }/problem-solving/quality-improvement-expert.md   | 0
+ .../{prompts => }/problem-solving/resource-constraint-solutions-expert.md | 0
+ .../problem-solving/security-vulnerability-mitigation-expert.md           | 0
+ .../problem-solving/technical-challenge-resolution-expert.md              | 0
+ .../data/md/{prompts => }/problem-solving/troubleshooting-expert.md       | 0
+ .../problem-solving/workflow-bottleneck-resolution-expert.md              | 0
+ .../data/md/{prompts => }/project-management/agile-sprint-planner.md      | 0
+ .../data/md/{prompts => }/project-management/dependency-mapping-expert.md | 0
+ .../data/md/{prompts => }/project-management/fresh-repo-readme.md         | 0
+ .../md/{prompts => }/project-management/milestone-planning-advisor.md     | 0
+ .../data/md/{prompts => }/project-management/project-charter-creator.md   | 0
+ .../md/{prompts => }/project-management/project-closeout-specialist.md    | 0
+ .../{prompts => }/project-management/project-retrospective-facilitator.md | 0
+ .../data/md/{prompts => }/project-management/project-status-reporter.md   | 0
+ .../data/md/{prompts => }/project-management/repo-documentation.md        | 0
+ .../md/{prompts => }/project-management/repository-setup-automation.md    | 0
+ .../md/{prompts => }/project-management/resource-allocation-optimizer.md  | 0
+ .../data/md/{prompts => }/project-management/risk-register-manager.md     | 0
+ .../data/md/{prompts => }/project-management/scope-change-analyzer.md     | 0
+ .../{prompts => }/project-management/stakeholder-communication-planner.md | 0
+ .../md/{prompts => }/project-management/vendor-project-coordinator.md     | 0
+ .../{prompts => }/research-workflows/competitive-intelligence-expert.md   | 0
+ .../{prompts => }/research-workflows/consumer-behavior-research-expert.md | 0
+ .../data/md/{prompts => }/research-workflows/economic-research-expert.md  | 0
+ .../research-workflows/environmental-impact-research-expert.md            | 0
+ .../md/{prompts => }/research-workflows/historical-research-expert.md     | 0
+ .../md/{prompts => }/research-workflows/industry-trend-analysis-expert.md | 0
+ .../{prompts => }/research-workflows/legal-precedent-research-expert.md   | 0
+ .../data/md/{prompts => }/research-workflows/literature-review-expert.md  | 0
+ .../data/md/{prompts => }/research-workflows/market-research-expert.md    | 0
+ .../data/md/{prompts => }/research-workflows/materials-research-expert.md | 0
+ .../{prompts => }/research-workflows/medical-research-protocol-expert.md  | 0
+ .../data/md/{prompts => }/research-workflows/patent-research-expert.md    | 0
+ .../data/md/{prompts => }/research-workflows/scientific-inquiry-expert.md | 0
+ .../md/{prompts => }/research-workflows/technology-assessment-expert.md   | 0
+ .../data/md/{prompts => }/research-workflows/user-research-expert.md      | 0
+ .../data/md/{prompts => }/research/adr-record-generation.md               | 0
+ .../data/md/{prompts => }/research/competitive-intelligence-analyst.md    | 0
+ .../data/md/{prompts => }/research/data-synthesis-expert.md               | 0
+ .../data/md/{prompts => }/research/ethnographic-research-guide.md         | 0
+ .../data/md/{prompts => }/research/hypothesis-testing-advisor.md          | 0
+ .../data/md/{prompts => }/research/information-architecture-researcher.md | 0
+ .../data/md/{prompts => }/research/primary-research-designer.md           | 0
+ .../data/md/{prompts => }/research/research-findings-presenter.md         | 0
+ .../data/md/{prompts => }/research/research-report-writer.md              | 0
+ .../data/md/{prompts => }/research/secondary-research-specialist.md       | 0
+ .../program_backend/data/md/{prompts => }/research/teach-me-advanced.md   | 0
+ .../program_backend/data/md/{prompts => }/research/teach-me-beginner.md   | 0
+ .../program_backend/data/md/{prompts => }/research/teach-me-journeyman.md | 0
+ .../data/md/{prompts => }/research/trend-analysis-expert.md               | 0
+ .../data/md/{prompts => }/research/user-research-analyst.md               | 0
+ .../data/md/{prompts => }/security/bandit-security-analysis.md            | 0
+ .../data/md/{prompts => }/security/cloud-security-reviewer.md             | 0
+ .../data/md/{prompts => }/security/compliance-gap-analyzer.md             | 0
+ .../data/md/{prompts => }/security/data-protection-advisor.md             | 0
+ .../program_backend/data/md/{prompts => }/security/devsecops-advisor.md   | 0
+ .../data/md/{prompts => }/security/identity-access-management.md          | 0
+ .../data/md/{prompts => }/security/incident-response-planner.md           | 0
+ .../data/md/{prompts => }/security/penetration-test-planner.md            | 0
+ .../data/md/{prompts => }/security/risk-register-builder.md               | 0
+ .../data/md/{prompts => }/security/security-architecture-reviewer.md      | 0
+ .../data/md/{prompts => }/security/security-awareness-trainer.md          | 0
+ .../data/md/{prompts => }/security/security-policy-writer.md              | 0
+ .../data/md/{prompts => }/security/threat-modeling-expert.md              | 0
+ .../data/md/{prompts => }/security/vulnerability-assessment-guide.md      | 0
+ .../data/md/{prompts => }/security/zero-trust-architect.md                | 0
+ .../supply-chain/digital-supply-chain-transformation-expert.md            | 0
+ .../digital-supply-chain-transformation-architect.md                      | 0
+ .../resilience-risk/supply-chain-resilience-strategy-architect.md         | 0
+ .../supply-chain/supplier-ecosystem/supplier-ecosystem-orchestrator.md    | 0
+ .../md/{prompts => }/supply-chain/supply-chain-excellence-director.md     | 0
+ .../{prompts => }/supply-chain/supply-chain-resilience-strategy-expert.md | 0
+ .../supply-chain/sustainable-supply-chain-management-expert.md            | 0
+ .../data/md/{prompts => }/technical-templates/adr-research-framework.md   | 0
+ .../data/md/{prompts => }/technical-templates/code-review-prompts.md      | 0
+ .../md/{prompts => }/technical-templates/docker-production-patterns.md    | 0
+ .../data/md/{prompts => }/technical-templates/execution-instructions.md   | 0
+ .../data/md/{prompts => }/technical-templates/fastmcp-server-patterns.md  | 0
+ .../md/{prompts => }/technical-templates/mcp-enabler-comprehensive.md     | 0
+ .../data/md/{prompts => }/technical-templates/python-project-ci-cd.md     | 0
+ .../technical-workflows/ai-powered-quality-control-expert.md              | 0
+ .../data/md/{prompts => }/technical-workflows/api-design-expert.md        | 0
+ .../{prompts => }/technical-workflows/cloud-migration-planning-expert.md  | 0
+ .../data/md/{prompts => }/technical-workflows/code-refactoring-expert.md  | 0
+ .../technical-workflows/database-schema-development-expert.md             | 0
+ .../technical-workflows/deployment-pipeline-creation-expert.md            | 0
+ .../md/{prompts => }/technical-workflows/devops-workflow-design-expert.md | 0
+ .../technical-workflows/edge-computing-architecture-expert.md             | 0
+ .../{prompts => }/technical-workflows/infrastructure-planning-expert.md   | 0
+ .../technical-workflows/legacy-system-modernization-expert.md             | 0
+ .../technical-workflows/manufacturing-iot-integration-expert.md           | 0
+ .../md/{prompts => }/technical-workflows/microservice-design-expert.md    | 0
+ .../technical-workflows/mobile-development-workflow-expert.md             | 0
+ .../{prompts => }/technical-workflows/predictive-maintenance-ai-expert.md | 0
+ .../technical-workflows/robotic-process-automation-expert.md              | 0
+ .../{prompts => }/technical-workflows/security-implementation-expert.md   | 0
+ .../technical-workflows/system-architecture-design-expert.md              | 0
+ .../{prompts => }/technical-workflows/technical-debt-assessment-expert.md | 0
+ .../{prompts => }/technical-workflows/technical-documentation-expert.md   | 0
+ .../{prompts => }/technical-workflows/test-strategy-development-expert.md | 0
+ .../{prompts => }/technical/ai-engineering/memory-management-patterns.md  | 0
+ .../md/{prompts => }/technical/architecture/cloud-migration-expert.md     | 0
+ .../{prompts => }/technical/cybersecurity/incident-response-commander.md  | 0
+ .../{prompts => }/technical/data-engineering/pipeline-design-architect.md | 0
+ .../md/{prompts => }/technical/data-science/model-evaluation-framework.md | 0
+ .../data/md/{prompts => }/technical/devops/cicd-pipeline-optimizer.md     | 0
+ .../technical/infrastructure/azurerm-terraform-module-maker.md            | 0
+ .../md/{prompts => }/technical/infrastructure/ci-workflow-watchdog.md     | 0
+ .../{prompts => }/technical/infrastructure/terraform-formatting-prompt.md | 0
+ .../data/md/{prompts => }/technical/mcp/claude-mcp-example.md             | 0
+ .../data/md/{prompts => }/technical/mcp/claude-with-mcps.md               | 0
+ .../data/md/{prompts => }/technical/mcp/register-new-mcp-servers.md       | 0
+ .../technical/quality-assurance/comprehensive-test-strategist.md          | 0
+ .../{prompts => }/technical/security/cybersecurity-defense-architect.md   | 0
+ .../technical/software-engineering/advanced-debugging-analyzer.md         | 0
+ .../technical/software-engineering/fullstack-developer-architect.md       | 0
+ 432 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 92f0d5d673b4afc59831ba81e05ad931377f65e6
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-29 05:54:57 +0000
+
+    Add program backend prompt data set
+
+ .../program_backend/data/csv/selected_prompts.csv  | 11769 +++++++++++++++++++
+ .../administrative/administrative-sop-creator.md   |   211 +
+ .../md/prompts/administrative/budget-planner.md    |   173 +
+ .../prompts/administrative/compliance-tracker.md   |   202 +
+ .../administrative/correspondence-specialist.md    |   180 +
+ .../md/prompts/administrative/event-planner-pro.md |   222 +
+ .../administrative/executive-excellence-partner.md |   164 +
+ .../administrative/expense-report-analyst.md       |   228 +
+ .../prompts/administrative/meeting-facilitator.md  |   186 +
+ .../administrative/meeting-minutes-specialist.md   |   172 +
+ .../administrative/office-manager-toolkit.md       |   183 +
+ .../administrative/onboarding-coordinator.md       |   230 +
+ .../md/prompts/administrative/policy-writer.md     |   184 +
+ .../administrative/records-management-expert.md    |   196 +
+ .../prompts/administrative/scheduling-optimizer.md |   200 +
+ .../prompts/administrative/travel-coordinator.md   |   211 +
+ .../administrative/vendor-relations-manager.md     |   191 +
+ .../analysis/competitive-analysis-expert.md        |   166 +
+ .../analysis/cost-benefit-analysis-expert.md       |   174 +
+ .../md/prompts/analysis/data-analysis-expert.md    |   169 +
+ .../prompts/analysis/financial-modeling-expert.md  |   173 +
+ .../prompts/analysis/market-research-strategist.md |   180 +
+ .../prompts/analysis/pattern-recognition-expert.md |   178 +
+ .../analysis/performance-evaluation-expert.md      |   196 +
+ .../prompts/analysis/predictive-analysis-expert.md |   182 +
+ .../md/prompts/analysis/risk-assessment-expert.md  |   150 +
+ .../prompts/analysis/root-cause-analysis-expert.md |   158 +
+ .../prompts/analysis/sentiment-analysis-expert.md  |   159 +
+ .../analysis/statistical-analysis-expert.md        |   155 +
+ .../md/prompts/analysis/swot-analysis-expert.md    |   186 +
+ .../analysis/trend-identification-expert.md        |   196 +
+ .../analysis/user-behavior-analysis-expert.md      |   205 +
+ .../administrative/calendar-optimization.md        |   203 +
+ .../administrative/document-organization-filing.md |   253 +
+ .../email-prioritization-response.md               |   205 +
+ .../meeting-minutes-summarization.md               |   177 +
+ .../administrative/task-delegation-tracking.md     |   248 +
+ .../requirements-engineering-expert.md             |   294 +
+ .../retention-optimization-expert.md               |   302 +
+ .../business/finance/financial-model-builder.md    |   303 +
+ .../talent-acquisition-strategist.md               |   260 +
+ .../business/legal/compliance-officer-expert.md    |   320 +
+ .../business/legal/contract-review-expert.md       |   329 +
+ .../business-analyst-strategic-excellence.md       |   384 +
+ .../marketing/integrated-campaign-architect.md     |   358 +
+ .../marketing/marketing-manager-strategist.md      |   210 +
+ .../operations/operations-manager-excellence.md    |   256 +
+ .../operations/process-optimization-expert.md      |   273 +
+ .../operations/supply-chain-optimization-expert.md |   281 +
+ .../strategic-roadmap-generator.md                 |   279 +
+ .../comprehensive-risk-assessment.md               |   335 +
+ .../business/sales/sales-pipeline-optimizer.md     |   348 +
+ .../career-advancement-strategist.md               |   303 +
+ .../freelance-business-builder.md                  |   313 +
+ .../interview-preparation-coach.md                 |   235 +
+ .../interview-preparation-specialist.md            |   202 +
+ .../career-development/job-search-optimizer.md     |   223 +
+ .../leadership-development-coach.md                |   248 +
+ .../career-development/networking-strategist.md    |   267 +
+ .../performance-review-optimizer.md                |   244 +
+ .../personal-branding-strategist.md                |   247 +
+ .../professional-networking-strategist.md          |   275 +
+ .../career-development/remote-work-optimizer.md    |   289 +
+ .../salary-negotiation-expert.md                   |   263 +
+ .../skill-development-planner.md                   |   316 +
+ .../career-development/skill-gap-analyzer.md       |   211 +
+ .../workplace-productivity-optimizer.md            |   286 +
+ .../communication/client-presentation-expert.md    |   221 +
+ .../communication/conflict-mediation-expert.md     |   260 +
+ .../communication/crisis-communication-expert.md   |   283 +
+ .../cross-functional-coordination-expert.md        |   303 +
+ .../email-communication-strategy-expert.md         |   269 +
+ .../communication/executive-briefing-expert.md     |   237 +
+ .../communication/feedback-collection-expert.md    |   295 +
+ .../communication/knowledge-transfer-expert.md     |   299 +
+ .../communication/meeting-facilitation-expert.md   |   240 +
+ .../negotiation-preparation-expert.md              |   255 +
+ .../public-speaking-preparation-expert.md          |   280 +
+ .../stakeholder-communication-expert.md            |   275 +
+ .../communication/status-reporting-expert.md       |   290 +
+ .../communication/team-collaboration-expert.md     |   280 +
+ .../technical-documentation-expert.md              |   346 +
+ .../audience-engagement-specialist.md              |   274 +
+ .../content-creation/blog-content-planner.md       |   296 +
+ .../content-creation/brand-storytelling-expert.md  |   279 +
+ .../content-creation/content-calendar-architect.md |   151 +
+ .../copywriting-enhancement-expert.md              |   150 +
+ .../content-creation/email-marketing-specialist.md |   160 +
+ .../email-newsletter-strategist.md                 |   172 +
+ .../influencer-marketing-strategist.md             |   160 +
+ .../content-creation/podcast-content-strategist.md |   164 +
+ .../content-creation/seo-content-optimizer.md      |   172 +
+ .../social-media-strategy-optimizer.md             |   179 +
+ .../storytelling-framework-designer.md             |   166 +
+ .../content-creation/video-content-creator.md      |   185 +
+ .../content-creation/youtube-content-strategist.md |   190 +
+ .../customer-feedback-analysis-expert.md           |   313 +
+ .../customer-journey-mapping-expert.md             |   377 +
+ .../customer-satisfaction-measurement-expert.md    |   386 +
+ .../customer-segmentation-expert.md                |   399 +
+ .../customer-success-planning-expert.md            |   483 +
+ .../customer-support-process-expert.md             |   410 +
+ .../customer-win-back-strategy-expert.md           |   122 +
+ .../loyalty-program-design-expert.md               |   127 +
+ .../onboarding-experience-expert.md                |   137 +
+ .../personalization-framework-expert.md            |   136 +
+ .../customer-focused/retention-strategy-expert.md  |   139 +
+ .../customer-focused/service-design-expert.md      |   145 +
+ .../support-escalation-process-expert.md           |   148 +
+ .../user-experience-design-expert.md               |   170 +
+ .../voice-of-customer-analysis-expert.md           |   153 +
+ .../customer-service/chatbot-script-writer.md      |   141 +
+ .../complaint-resolution-expert.md                 |   176 +
+ .../customer-experience-excellence-leader.md       |   162 +
+ .../customer-service/customer-feedback-analyst.md  |   127 +
+ .../customer-service/customer-journey-mapper.md    |   161 +
+ .../customer-service/customer-success-planner.md   |   169 +
+ .../prompts/customer-service/escalation-handler.md |   119 +
+ .../customer-service/knowledge-base-builder.md     |   217 +
+ .../multichannel-support-architect.md              |   151 +
+ .../customer-service/retention-specialist.md       |   156 +
+ .../customer-service/service-level-designer.md     |   149 +
+ .../customer-service/service-recovery-designer.md  |   177 +
+ .../customer-service/support-team-trainer.md       |   158 +
+ .../customer-service/support-ticket-classifier.md  |   119 +
+ .../customer-service/voice-of-customer-analyst.md  |   144 +
+ .../decision-making/budget-allocation-expert.md    |   142 +
+ .../decision-making/ethics-evaluation-expert.md    |   150 +
+ .../feature-prioritization-expert.md               |   149 +
+ .../go-no-go-determinations-expert.md              |   167 +
+ .../hiring-decision-framework-expert.md            |   167 +
+ .../investment-decision-support-expert.md          |   176 +
+ .../decision-making/option-evaluation-expert.md    |   163 +
+ .../policy-decision-framework-expert.md            |   204 +
+ .../prioritization-frameworks-expert.md            |   176 +
+ .../resource-allocation-decisions-expert.md        |   195 +
+ .../stakeholder-impact-analysis-expert.md          |   213 +
+ .../strategic-direction-setting-expert.md          |   233 +
+ .../technical-approach-selection-expert.md         |   208 +
+ .../vendor-selection-process-expert.md             |   209 +
+ .../development/api-integration-architect.md       |   208 +
+ .../md/prompts/development/architecture-advisor.md |   195 +
+ .../prompts/development/code-migration-planner.md  |   206 +
+ .../md/prompts/development/code-review-expert.md   |   217 +
+ .../development/database-schema-designer.md        |   247 +
+ .../md/prompts/development/debugging-detective.md  |   213 +
+ .../md/prompts/development/dependency-manager.md   |   217 +
+ .../development/developer-onboarding-guide.md      |   272 +
+ .../development/devops-pipeline-architect.md       |   242 +
+ .../md/prompts/development/documentation-writer.md |   218 +
+ .../md/prompts/development/git-workflow-advisor.md |   205 +
+ .../md/prompts/development/performance-profiler.md |   218 +
+ .../md/prompts/development/refactoring-coach.md    |   211 +
+ .../prompts/development/security-code-auditor.md   |   220 +
+ .../prompts/development/test-strategy-architect.md |   200 +
+ .../civil-engineering-project-manager.md           |   195 +
+ .../construction-excellence-director.md            |   213 +
+ .../engineering/cost-estimation-engineer.md        |   198 +
+ .../engineering/design-review-facilitator.md       |   206 +
+ .../engineering/electrical-systems-designer.md     |   205 +
+ .../md/prompts/engineering/failure-mode-analyst.md |   171 +
+ .../engineering/materials-selection-expert.md      |   183 +
+ .../engineering/mechanical/design-review-expert.md |   221 +
+ .../engineering/project-execution-engineer.md      |   209 +
+ .../engineering/regulatory-compliance-engineer.md  |   207 +
+ .../engineering/reliability-engineering-expert.md  |   185 +
+ .../engineering/root-cause-analysis-engineer.md    |   199 +
+ .../engineering/simulation-modeling-advisor.md     |   189 +
+ .../prompts/engineering/sustainability-engineer.md |   197 +
+ .../engineering/systems-engineering-expert.md      |   183 +
+ .../engineering/technical-specification-writer.md  |   193 +
+ .../engineering/test-validation-engineer.md        |   196 +
+ .../candidate-assessment-expert.md                 |   184 +
+ .../evaluation-assessment/code-review-expert.md    |   201 +
+ .../compliance-audit-expert.md                     |   205 +
+ .../document-review-expert.md                      |   165 +
+ .../investment-opportunity-assessment-expert.md    |   203 +
+ .../market-fit-assessment-expert.md                |   193 +
+ .../performance-review-expert.md                   |   173 +
+ .../product-evaluation-expert.md                   |   196 +
+ .../project-post-mortem-expert.md                  |   215 +
+ .../quality-assurance-expert.md                    |   247 +
+ .../evaluation-assessment/roi-analysis-expert.md   |   240 +
+ .../security-assessment-expert.md                  |   242 +
+ .../usability-testing-expert.md                    |   276 +
+ .../vendor-evaluation-expert.md                    |   240 +
+ .../md/prompts/finance/budget-analysis-expert.md   |   185 +
+ .../data/md/prompts/finance/cash-flow-optimizer.md |   158 +
+ .../md/prompts/finance/cost-reduction-advisor.md   |   156 +
+ .../md/prompts/finance/esg-investment-analyst.md   |   144 +
+ .../prompts/finance/financial-analysis-expert.md   |   178 +
+ .../prompts/finance/financial-audit-preparation.md |   161 +
+ .../md/prompts/finance/financial-model-builder.md  |   163 +
+ .../finance/financial-reporting-specialist.md      |   161 +
+ .../prompts/finance/investment-research-analyst.md |   144 +
+ .../prompts/finance/merger-acquisition-analyst.md  |   171 +
+ .../md/prompts/finance/personal-finance-coach.md   |   142 +
+ .../prompts/finance/risk-assessment-financial.md   |   126 +
+ .../md/prompts/finance/startup-funding-advisor.md  |   130 +
+ .../md/prompts/finance/tax-planning-strategist.md  |   157 +
+ .../prompts/finance/treasury-management-expert.md  |   144 +
+ .../financial-planning/college-savings-planner.md  |   191 +
+ .../financial-planning/credit-score-improver.md    |   213 +
+ .../crypto-investment-advisor.md                   |   230 +
+ .../debt-elimination-strategist.md                 |   239 +
+ .../financial-planning/emergency-fund-builder.md   |   234 +
+ .../financial-planning/estate-planning-advisor.md  |   254 +
+ .../expense-tracking-optimizer.md                  |   276 +
+ .../financial-planning/financial-goal-tracker.md   |   305 +
+ .../insurance-planning-expert.md                   |   180 +
+ .../investment-planning-advisor.md                 |   203 +
+ .../investment-strategy-optimizer.md               |   209 +
+ .../personal-budget-optimizer.md                   |   212 +
+ .../real-estate-investment-analyst.md              |   219 +
+ .../retirement-planning-specialist.md              |   220 +
+ .../financial-planning/side-hustle-monetizer.md    |   224 +
+ .../financial-planning/side-income-developer.md    |   239 +
+ .../tax-optimization-strategist.md                 |   245 +
+ .../compensation-benchmarking-expert.md            |   142 +
+ .../diversity-inclusion-strategist.md              |   142 +
+ .../employee-engagement-designer.md                |   150 +
+ .../human-resources/employee-relations-advisor.md  |   138 +
+ .../human-resources/hr-excellence-leader.md        |   261 +
+ .../prompts/human-resources/hr-policy-designer.md  |   160 +
+ .../human-resources/interview-question-designer.md |   220 +
+ .../human-resources/job-description-writer.md      |   192 +
+ .../learning-development-planner.md                |   163 +
+ .../offboarding-experience-designer.md             |   178 +
+ .../human-resources/performance-review-coach.md    |   127 +
+ .../human-resources/succession-planning-expert.md  |   175 +
+ .../talent-acquisition-strategist.md               |   158 +
+ .../termination-documentation-guide.md             |   152 +
+ .../human-resources/workforce-planning-expert.md   |   168 +
+ .../competency-assessment-expert.md                |   250 +
+ .../concept-explanation-expert.md                  |   208 +
+ .../continuous-learning-framework-expert.md        |   280 +
+ .../curriculum-development-expert.md               |   237 +
+ .../feedback-implementation-expert.md              |   248 +
+ .../knowledge-gap-analysis-expert.md               |   229 +
+ .../knowledge-synthesis-expert.md                  |   249 +
+ .../learning-experience-design-expert.md           |   237 +
+ .../learning-plan-creation-expert.md               |   261 +
+ .../mentorship-structure-expert.md                 |   277 +
+ .../onboarding-process-design-expert.md            |   252 +
+ .../research-methodology-expert.md                 |   278 +
+ .../skill-acquisition-expert.md                    |   262 +
+ .../training-material-development-expert.md        |   175 +
+ .../tutorial-creation-expert.md                    |   173 +
+ .../change-management-expert.md                    |   166 +
+ .../conflict-resolution-expert.md                  |   163 +
+ .../crisis-leadership-expert.md                    |   214 +
+ .../cross-cultural-leadership-expert.md            |   178 +
+ .../delegation-framework-expert.md                 |   181 +
+ .../executive-decision-making-expert.md            |   208 +
+ .../organizational-development-expert.md           |   233 +
+ .../performance-management-expert.md               |   235 +
+ .../project-governance-expert.md                   |   244 +
+ .../remote-team-management-expert.md               |   247 +
+ .../resource-management-expert.md                  |   244 +
+ .../strategic-leadership-expert.md                 |   240 +
+ .../talent-management-expert.md                    |   267 +
+ .../management-leadership/team-building-expert.md  |   247 +
+ .../team-motivation-expert.md                      |   246 +
+ .../operations/business-continuity-planner.md      |   150 +
+ .../operations/capacity-planning-advisor.md        |   135 +
+ .../operations/change-management-facilitator.md    |   145 +
+ .../operations/facility-management-expert.md       |   142 +
+ .../operations/inventory-management-expert.md      |   145 +
+ .../prompts/operations/kpi-dashboard-designer.md   |   136 +
+ .../md/prompts/operations/lean-operations-coach.md |   142 +
+ .../md/prompts/operations/logistics-coordinator.md |   133 +
+ .../operations/operational-efficiency-analyst.md   |   130 +
+ .../prompts/operations/procurement-strategist.md   |   144 +
+ .../operations/production-planning-expert.md       |   147 +
+ .../operations/quality-management-system.md        |   139 +
+ .../operations/standard-work-documentation.md      |   197 +
+ .../operations/supply-chain-excellence-director.md |   246 +
+ .../operations/vendor-management-specialist.md     |   131 +
+ .../optimization/algorithm-efficiency-expert.md    |   236 +
+ .../conversion-rate-optimization-expert.md         |   260 +
+ .../prompts/optimization/cost-reduction-expert.md  |   288 +
+ .../optimization/efficiency-enhancement-expert.md  |   294 +
+ .../optimization/energy-efficiency-expert.md       |   301 +
+ .../optimization/performance-tuning-expert.md      |   297 +
+ .../optimization/process-improvement-expert.md     |   313 +
+ .../optimization/resource-optimization-expert.md   |   329 +
+ .../optimization/revenue-optimization-expert.md    |   310 +
+ .../optimization/schedule-optimization-expert.md   |   308 +
+ .../optimization/space-optimization-expert.md      |   211 +
+ .../supply-chain-optimization-expert.md            |   229 +
+ .../prompts/optimization/time-management-expert.md |   228 +
+ .../user-experience-optimization-expert.md         |   232 +
+ .../optimization/workflow-streamlining-expert.md   |   257 +
+ .../md/prompts/planning/budget-planning-expert.md  |   262 +
+ .../planning/career-development-planning-expert.md |   259 +
+ .../planning/content-calendar-planning-expert.md   |   277 +
+ .../planning/contingency-planning-expert.md        |   300 +
+ .../prompts/planning/curriculum-planning-expert.md |   237 +
+ .../md/prompts/planning/event-planning-expert.md   |   262 +
+ .../planning/marketing-campaign-planning-expert.md |   312 +
+ .../prompts/planning/product-roadmapping-expert.md |   347 +
+ .../md/prompts/planning/project-planning-expert.md |   296 +
+ .../md/prompts/planning/release-planning-expert.md |   341 +
+ .../prompts/planning/resource-allocation-expert.md |   323 +
+ .../md/prompts/planning/risk-management-expert.md  |   374 +
+ .../planning/schedule-development-expert.md        |   325 +
+ .../prompts/planning/strategic-planning-expert.md  |   418 +
+ .../prompts/planning/succession-planning-expert.md |   263 +
+ .../algorithm-optimization-expert.md               |   306 +
+ .../problem-solving/conflict-resolution-expert.md  |   262 +
+ .../problem-solving/crisis-management-expert.md    |   311 +
+ .../customer-issue-resolution-expert.md            |   276 +
+ .../md/prompts/problem-solving/debugging-expert.md |   311 +
+ .../problem-solving/decision-making-expert.md      |   262 +
+ .../error-handling-design-expert.md                |   436 +
+ .../performance-bottleneck-analysis-expert.md      |   398 +
+ .../problem-solving/process-optimization-expert.md |   313 +
+ .../problem-solving/quality-improvement-expert.md  |   204 +
+ .../resource-constraint-solutions-expert.md        |   199 +
+ .../security-vulnerability-mitigation-expert.md    |   229 +
+ .../technical-challenge-resolution-expert.md       |   226 +
+ .../problem-solving/troubleshooting-expert.md      |   222 +
+ .../workflow-bottleneck-resolution-expert.md       |   212 +
+ .../project-management/agile-sprint-planner.md     |   176 +
+ .../dependency-mapping-expert.md                   |   159 +
+ .../project-management/fresh-repo-readme.md        |   186 +
+ .../milestone-planning-advisor.md                  |   161 +
+ .../project-management/project-charter-creator.md  |   197 +
+ .../project-closeout-specialist.md                 |   180 +
+ .../project-retrospective-facilitator.md           |   159 +
+ .../project-management/project-status-reporter.md  |   152 +
+ .../project-management/repo-documentation.md       |   201 +
+ .../repository-setup-automation.md                 |   203 +
+ .../resource-allocation-optimizer.md               |   168 +
+ .../project-management/risk-register-manager.md    |   122 +
+ .../project-management/scope-change-analyzer.md    |   154 +
+ .../stakeholder-communication-planner.md           |   162 +
+ .../vendor-project-coordinator.md                  |   171 +
+ .../competitive-intelligence-expert.md             |   242 +
+ .../consumer-behavior-research-expert.md           |   309 +
+ .../research-workflows/economic-research-expert.md |   288 +
+ .../environmental-impact-research-expert.md        |   296 +
+ .../historical-research-expert.md                  |   268 +
+ .../industry-trend-analysis-expert.md              |   310 +
+ .../legal-precedent-research-expert.md             |   172 +
+ .../research-workflows/literature-review-expert.md |   196 +
+ .../research-workflows/market-research-expert.md   |   210 +
+ .../materials-research-expert.md                   |   212 +
+ .../medical-research-protocol-expert.md            |   232 +
+ .../research-workflows/patent-research-expert.md   |   224 +
+ .../scientific-inquiry-expert.md                   |   236 +
+ .../technology-assessment-expert.md                |   261 +
+ .../research-workflows/user-research-expert.md     |   264 +
+ .../md/prompts/research/adr-record-generation.md   |   237 +
+ .../research/competitive-intelligence-analyst.md   |   182 +
+ .../md/prompts/research/data-synthesis-expert.md   |   169 +
+ .../research/ethnographic-research-guide.md        |   200 +
+ .../prompts/research/hypothesis-testing-advisor.md |   179 +
+ .../information-architecture-researcher.md         |   225 +
+ .../prompts/research/primary-research-designer.md  |   198 +
+ .../research/research-findings-presenter.md        |   166 +
+ .../md/prompts/research/research-report-writer.md  |   161 +
+ .../research/secondary-research-specialist.md      |   166 +
+ .../data/md/prompts/research/teach-me-advanced.md  |   186 +
+ .../data/md/prompts/research/teach-me-beginner.md  |   193 +
+ .../md/prompts/research/teach-me-journeyman.md     |   218 +
+ .../md/prompts/research/trend-analysis-expert.md   |   171 +
+ .../md/prompts/research/user-research-analyst.md   |   200 +
+ .../prompts/security/bandit-security-analysis.md   |   257 +
+ .../md/prompts/security/cloud-security-reviewer.md |   182 +
+ .../md/prompts/security/compliance-gap-analyzer.md |   176 +
+ .../md/prompts/security/data-protection-advisor.md |   185 +
+ .../data/md/prompts/security/devsecops-advisor.md  |   217 +
+ .../prompts/security/identity-access-management.md |   180 +
+ .../prompts/security/incident-response-planner.md  |   201 +
+ .../prompts/security/penetration-test-planner.md   |   183 +
+ .../md/prompts/security/risk-register-builder.md   |   195 +
+ .../security/security-architecture-reviewer.md     |   187 +
+ .../prompts/security/security-awareness-trainer.md |   183 +
+ .../md/prompts/security/security-policy-writer.md  |   213 +
+ .../md/prompts/security/threat-modeling-expert.md  |   181 +
+ .../security/vulnerability-assessment-guide.md     |   176 +
+ .../md/prompts/security/zero-trust-architect.md    |   189 +
+ .../digital-supply-chain-transformation-expert.md  |   224 +
+ ...igital-supply-chain-transformation-architect.md |   244 +
+ .../supply-chain-resilience-strategy-architect.md  |   157 +
+ .../supplier-ecosystem-orchestrator.md             |   170 +
+ .../supply-chain-excellence-director.md            |   171 +
+ .../supply-chain-resilience-strategy-expert.md     |   178 +
+ .../sustainable-supply-chain-management-expert.md  |   183 +
+ .../technical-templates/adr-research-framework.md  |   179 +
+ .../technical-templates/code-review-prompts.md     |   206 +
+ .../docker-production-patterns.md                  |   262 +
+ .../technical-templates/execution-instructions.md  |   202 +
+ .../technical-templates/fastmcp-server-patterns.md |   311 +
+ .../mcp-enabler-comprehensive.md                   |   185 +
+ .../technical-templates/python-project-ci-cd.md    |   249 +
+ .../ai-powered-quality-control-expert.md           |   183 +
+ .../technical-workflows/api-design-expert.md       |   210 +
+ .../cloud-migration-planning-expert.md             |   192 +
+ .../technical-workflows/code-refactoring-expert.md |   238 +
+ .../database-schema-development-expert.md          |   265 +
+ .../deployment-pipeline-creation-expert.md         |   303 +
+ .../devops-workflow-design-expert.md               |   318 +
+ .../edge-computing-architecture-expert.md          |   257 +
+ .../infrastructure-planning-expert.md              |   223 +
+ .../legacy-system-modernization-expert.md          |   286 +
+ .../manufacturing-iot-integration-expert.md        |   276 +
+ .../microservice-design-expert.md                  |   294 +
+ .../mobile-development-workflow-expert.md          |   336 +
+ .../predictive-maintenance-ai-expert.md            |   318 +
+ .../robotic-process-automation-expert.md           |   384 +
+ .../security-implementation-expert.md              |   351 +
+ .../system-architecture-design-expert.md           |   370 +
+ .../technical-debt-assessment-expert.md            |   356 +
+ .../technical-documentation-expert.md              |   267 +
+ .../test-strategy-development-expert.md            |   217 +
+ .../ai-engineering/memory-management-patterns.md   |   303 +
+ .../architecture/cloud-migration-expert.md         |   216 +
+ .../cybersecurity/incident-response-commander.md   |   254 +
+ .../data-engineering/pipeline-design-architect.md  |   255 +
+ .../data-science/model-evaluation-framework.md     |   276 +
+ .../technical/devops/cicd-pipeline-optimizer.md    |   386 +
+ .../azurerm-terraform-module-maker.md              |   566 +
+ .../infrastructure/ci-workflow-watchdog.md         |   324 +
+ .../infrastructure/terraform-formatting-prompt.md  |   192 +
+ .../md/prompts/technical/mcp/claude-mcp-example.md |   250 +
+ .../md/prompts/technical/mcp/claude-with-mcps.md   |   255 +
+ .../technical/mcp/register-new-mcp-servers.md      |   271 +
+ .../comprehensive-test-strategist.md               |   256 +
+ .../security/cybersecurity-defense-architect.md    |   242 +
+ .../advanced-debugging-analyzer.md                 |   332 +
+ .../fullstack-developer-architect.md               |   337 +
+ 433 files changed, 108135 insertions(+)
+
+commit 630de0a169b94389e0999021e903dad05fb57a6f
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-29 04:59:06 +0000
+
+    Refine prompt output format instruction in pipeline
+
+ result_file/src/program_backend/pipeline.py | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+commit 3d3811f302d6c4c7f5c6fc77bba3c5fa4674a15c
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-29 02:02:44 +0000
+
+    Add pipeline visualization web demo
+
+ result_file/src/program_backend/RUN.md            |   8 +-
+ result_file/src/program_backend/app.py            |  21 +-
+ result_file/src/program_backend/pipeline.py       |  54 ++--
+ result_file/src/program_backend/retrieval.py      |  35 +-
+ result_file/src/program_backend/static/app.js     | 239 ++++++++++++++
+ result_file/src/program_backend/static/index.html |  36 +++
+ result_file/src/program_backend/static/styles.css | 372 ++++++++++++++++++++++
+ 7 files changed, 730 insertions(+), 35 deletions(-)
+
+commit f559dfdd864938f10718b74c91af3666c0de8654
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-29 01:43:57 +0000
+
+    Consolidate program backend requirements
+
+ result_file/src/program_backend/RUN.md                    |  2 +-
+ result_file/src/program_backend/indexing/requirements.txt |  5 -----
+ result_file/src/program_backend/requirements.txt          | 15 ++++++++-------
+ 3 files changed, 9 insertions(+), 13 deletions(-)
+
+commit 20787b5ddd2a349a27e98096e996043109945696
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   2026-06-29 09:21:43 +0900
+
+    Merge pull request #7 from swbteng/extension
+
+commit 64891922eefcf11748b93e1ce0b84ec6c351e70e
+Author: 홍창표 <cp.hong@lge.com>
+Date:   2026-06-29 08:56:19 +0900
+
+    Merge branch 'main' into extension
+
+commit 1dcef8fb3330152beb9c5ec100eeaf3f0db8cfe1
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   2026-06-26 16:05:17 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+
+ ...25\255_\353\252\205\354\204\270\354\204\234.md" | 25 +++++++++++-----------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
+
+commit 53c787bb3e95ffe967bb52f4264f7a85a92587de
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   2026-06-26 16:02:37 +0900
+
+    Merge pull request #6 from swbteng/endpoint
+
+commit ccb3ff9a76ac002f140771cefcab98e4d04e0314
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   2026-06-26 16:01:41 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+
+ ...25\255_\353\252\205\354\204\270\354\204\234.md" | 43 ++++++++++++++--------
+ 1 file changed, 27 insertions(+), 16 deletions(-)
+
+commit 14f238cb098e280c50c27af8b6c2efaae3869e4c
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 06:56:20 +0000
+
+    Add program_AI gitignore and update RAG doc paths
+
+ result_file/src/program_AI/.gitignore                 | 3 +++
+ result_file/src/program_backend/docs/rag_reranking.md | 6 ++++++
+ 2 files changed, 9 insertions(+)
+
+commit cda2359bfeea253e2fe84b4febad0d651eca705d
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 06:53:45 +0000
+
+    Rename test folders to new module names
+
+ result_file/test-results/{program_db => program_AI}/README.md             | 0
+ result_file/test-results/{program_endpoint => program_backend}/README.md  | 0
+ .../test-results/{program_extension_proxy => program_extension}/README.md | 0
+ result_file/{test-results/program_infra => tests/program_AI}/README.md    | 0
+ result_file/tests/{program_db => program_backend}/README.md               | 0
+ result_file/tests/{program_endpoint => program_extension}/README.md       | 0
+ .../program_db/test-results/README.md}/README.md                          | 0
+ .../tests/program_infra => tmp/program_db/tests/README.md}/README.md      | 0
+ 8 files changed, 0 insertions(+), 0 deletions(-)
+
+commit 645aa20166053fae67fdb8775f8f917439d7d12e
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 06:52:19 +0000
+
+    Merge program_db into program_backend with self-contained retrieval
+
+ result_file/src/program_backend/.env.example       |   4 +-
+ result_file/src/program_backend/README.md          |  10 +-
+ result_file/src/program_backend/RUN.md             |  11 +--
+ result_file/src/program_backend/app.py             |   2 +-
+ .../production_chroma_qwen3_8b/chroma.sqlite3      | Bin
+ .../data_level0.bin                                | Bin
+ .../header.bin                                     | Bin
+ .../length.bin                                     | Bin
+ .../link_lists.bin                                 |   0
+ .../production_task_templates/manifest.json        |   0
+ .../template_records.jsonl                         |   0
+ .../production_task_templates/templates.json       |   0
+ .../vector_db_manifest.json                        |   0
+ result_file/src/program_backend/config.py          |  27 +++--
+ .../docs/rag_reranking.md                          |   0
+ .../indexing}/build_vector_db.py                   |   0
+ .../indexing}/collect_production_templates.py      |   0
+ .../indexing}/inspect_vector_db.py                 |   0
+ .../src/program_backend/indexing/requirements.txt  |   5 +
+ result_file/src/program_backend/pipeline.py        |  13 +--
+ result_file/src/program_backend/requirements.txt   |   7 +-
+ result_file/src/program_backend/retrieval.py       | 110 +++++++++++++++++++++
+ {result_file/src => tmp}/program_db/.env.example   |   0
+ .../src => tmp}/program_db/.env.production.example |   0
+ {result_file/src => tmp}/program_db/.gitignore     |   0
+ {result_file/src => tmp}/program_db/DEPLOYMENT.md  |   0
+ {result_file/src => tmp}/program_db/README.md      |   0
+ .../src => tmp}/program_db/contests/llm_scripts.py |   0
+ .../src => tmp}/program_db/requirements.deploy.txt |   0
+ .../program_db/scripts/rerank_vector_db.py         |   0
+ .../program_db/scripts/search_vector_db.py         |   0
+ 31 files changed, 147 insertions(+), 42 deletions(-)
+
+commit 989d60aecd2b854b5f7283cd2f86e43ff902de73
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 06:42:18 +0000
+
+    Rename modules to program_backend, program_extension, program_AI
+
+ result_file/src/{program_infra => program_AI}/README.md                   | 0
+ result_file/src/{program_infra => program_AI}/requirements.txt            | 0
+ result_file/src/{program_infra => program_AI}/scripts/serve_embedding.sh  | 0
+ result_file/src/{program_infra => program_AI}/scripts/serve_llm.sh        | 0
+ result_file/src/{program_infra => program_AI}/scripts/serve_reranker.sh   | 0
+ result_file/src/{program_infra => program_AI}/scripts/test_apis.py        | 0
+ result_file/src/{program_endpoint => program_backend}/.env.example        | 0
+ result_file/src/{program_endpoint => program_backend}/.gitignore          | 0
+ result_file/src/{program_endpoint => program_backend}/README.md           | 0
+ result_file/src/{program_endpoint => program_backend}/RUN.md              | 0
+ result_file/src/{program_endpoint => program_backend}/app.py              | 0
+ result_file/src/{program_endpoint => program_backend}/config.py           | 0
+ result_file/src/{program_endpoint => program_backend}/pipeline.py         | 0
+ result_file/src/{program_endpoint => program_backend}/requirements.txt    | 0
+ result_file/src/{program_extension_proxy => program_extension}/.gitignore | 0
+ result_file/src/{program_extension_proxy => program_extension}/AGENTS.md  | 0
+ result_file/src/{program_extension_proxy => program_extension}/CLAUDE.md  | 0
+ result_file/src/{program_extension_proxy => program_extension}/README.md  | 0
+ .../docs/VSCODE_EXTENSION_PLAN.md                                         | 0
+ .../docs/WORKLOG-2026-06-23.md                                            | 0
+ .../docs/WORKLOG-2026-06-24.md                                            | 0
+ .../docs/WORKLOG-2026-06-25.md                                            | 0
+ .../extension/.vscodeignore                                               | 0
+ .../{program_extension_proxy => program_extension}/extension/README.md    | 0
+ .../src/{program_extension_proxy => program_extension}/extension/build.sh | 0
+ .../extension/jsconfig.json                                               | 0
+ .../extension/media/icon.svg                                              | 0
+ .../extension/media/main.css                                              | 0
+ .../extension/media/main.js                                               | 0
+ .../{program_extension_proxy => program_extension}/extension/package.json | 0
+ .../{program_extension_proxy => program_extension}/extension/src/chat.js  | 0
+ .../extension/src/config.js                                               | 0
+ .../extension/src/engine.js                                               | 0
+ .../extension/src/extension.js                                            | 0
+ .../extension/src/logReader.js                                            | 0
+ .../extension/src/refiner.js                                              | 0
+ .../{program_extension_proxy => program_extension}/extension/src/setup.js | 0
+ .../src/{program_extension_proxy => program_extension}/refine_copilot.py  | 0
+ .../src/{program_extension_proxy => program_extension}/requirements.txt   | 0
+ result_file/src/{program_extension_proxy => program_extension}/run.sh     | 0
+ 40 files changed, 0 insertions(+), 0 deletions(-)
+
+commit d34d2788728ec36cbedb2914fac34690cfc9e3d7
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 06:29:45 +0000
+
+    Pin vLLM requirements to installed versions
+
+ result_file/src/program_infra/requirements.txt | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+commit 33b1ce88b4b3d4f0d814fd517d80ff11084cc84e
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   2026-06-26 15:24:46 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+
+ ...225\255_\353\252\205\354\204\270\354\204\234.md" | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+commit 3dc4122974a37a64d9d445180f4cfd68da96bd3e
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   2026-06-26 15:03:25 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+
+ ...\254\354\202\254\355\225\255_\353\252\205\354\204\270\354\204\234.md" | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 787405532f117da91f22ff873a2db9622b5fd023
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   2026-06-26 15:01:34 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+
+ ...\254\355\225\255_\353\252\205\354\204\270\354\204\234.md" | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+commit 6b621ba16a664bd5486006c1bf4f5d370d03e367
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 05:48:31 +0000
+
+    Add endpoint run and RunPod deploy docs
+
+ result_file/src/program_endpoint/README.md | 52 ++++++++++++++++++++
+ result_file/src/program_endpoint/RUN.md    | 78 ++++++++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
+
+commit b488d06fa2ea376321b9fda0e83899de1e500313
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 05:45:31 +0000
+
+    Add infra requirements
+
+ result_file/src/program_infra/requirements.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 348026c65a49529814d7903bb23387e14f6f1741
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 05:44:52 +0000
+
+    Move root demo scripts to tmp, refactor into endpoint pipeline
+
+ tmp/README.md                              | 7 +++++++
+ pick_prompt.py => tmp/pick_prompt.py       | 0
+ rewrite_prompt.py => tmp/rewrite_prompt.py | 0
+ 3 files changed, 7 insertions(+)
+
+commit 69c4e8b9a21d24980f16ac1eeb5abfb6dbc88db2
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-26 05:42:55 +0000
+
+    Add endpoint meta-prompting API server
+
+ result_file/src/program_endpoint/.env.example     |  40 ++++
+ result_file/src/program_endpoint/.gitignore       |   3 +
+ result_file/src/program_endpoint/app.py           | 108 +++++++++
+ result_file/src/program_endpoint/config.py        |  78 +++++++
+ result_file/src/program_endpoint/pipeline.py      | 263 ++++++++++++++++++++++
+ result_file/src/program_endpoint/requirements.txt |   6 +
+ 6 files changed, 498 insertions(+)
+
+commit 0916f9de65e7f748ed869340a594d328a8d49074
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   2026-06-26 09:54:26 +0900
+
+    Merge pull request #5 from swbteng/rag
+
+commit 0233a35d83f8015e030a1c936960b6244aa4a626
+Author: mj <kasamdi170@gmail.com>
+Date:   2026-06-25 08:07:55 +0000
+
+    Add LLM prompt rewriting and picking scripts
+
+ pick_prompt.py    | 183 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ rewrite_prompt.py | 119 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 302 insertions(+)
+
+commit 2fa05fa36b709a0b66b7083b511daaa9d147bb86
+Author: kimtaeyong98 <kasamdi5@naver.com>
+Date:   2026-06-25 17:00:32 +0900
+
+    feat(infra): add model serving scripts for LLM, embedding, reranker
+
+ .../src/program_infra/scripts/serve_embedding.sh   | 18 ++++++
+ result_file/src/program_infra/scripts/serve_llm.sh | 22 ++++++++
+ .../src/program_infra/scripts/serve_reranker.sh    | 21 +++++++
+ result_file/src/program_infra/scripts/test_apis.py | 65 ++++++++++++++++++++++
+ 4 files changed, 126 insertions(+)
+
+commit f3518b128795ee86dbf776b0f5ddf00cc0044b80
+Author: cp.hong <cp.hong@lge.com>
+Date:   2026-06-25 17:23:32 +0900
+
+    Merge remote-tracking branch 'origin/extension' into extension
+
+commit f240f502610bd86dec48713fc63efb3e9a7d1fbe
+Author: cp.hong <cp.hong@lge.com>
+Date:   2026-06-25 17:16:57 +0900
+
+    Merge branch 'main' of github.com:swbteng/copilot-meta-prompting into extension
+
+commit d490f82c99147654311f8efaee9f8f305b6b8a62
+Author: Codex <codex@example.local>
+Date:   2026-06-25 08:03:51 +0000
+
+    Add program DB RAG reranking pipeline
+
+ result_file/src/program_db/.env.example            |    26 +
+ result_file/src/program_db/.env.production.example |    16 +
+ result_file/src/program_db/.gitignore              |    32 +
+ result_file/src/program_db/DEPLOYMENT.md           |    49 +
+ result_file/src/program_db/README.md               |   116 +
+ .../production_chroma_qwen3_8b/chroma.sqlite3      |   Bin 0 -> 46297088 bytes
+ .../data_level0.bin                                |   Bin 0 -> 1652400 bytes
+ .../header.bin                                     |   Bin 0 -> 100 bytes
+ .../length.bin                                     |   Bin 0 -> 400 bytes
+ .../link_lists.bin                                 |     0
+ .../production_task_templates/manifest.json        |    42 +
+ .../template_records.jsonl                         |   651 +
+ .../production_task_templates/templates.json       | 19126 +++++++++++++++++++
+ .../vector_db_manifest.json                        |    10 +
+ result_file/src/program_db/contests/llm_scripts.py |    87 +
+ result_file/src/program_db/docs/rag_reranking.md   |    92 +
+ result_file/src/program_db/requirements.deploy.txt |     4 +
+ .../src/program_db/scripts/build_vector_db.py      |   158 +
+ .../scripts/collect_production_templates.py        |   267 +
+ .../src/program_db/scripts/inspect_vector_db.py    |    38 +
+ .../src/program_db/scripts/rerank_vector_db.py     |   220 +
+ .../src/program_db/scripts/search_vector_db.py     |    56 +
+ 22 files changed, 20990 insertions(+)
+
+commit 5262b809490a32cdc97c76e13eb64cf831644dd7
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 17:04:48 +0900
+
+    extension-only
+
+ result_file/src/program_extension/.gitignore       |  19 +
+ .../src/program_extension/.vscode/launch.json      |  11 +
+ result_file/src/program_extension/.vscodeignore    |  16 +
+ result_file/src/program_extension/AGENTS.md        | 129 +++++
+ result_file/src/program_extension/CLAUDE.md        |  12 +
+ result_file/src/program_extension/README.md        |  93 ++++
+ result_file/src/program_extension/build.sh         |  38 ++
+ .../extension => program_extension}/jsconfig.json  |   0
+ .../extension => program_extension}/media/icon.svg |   0
+ .../extension => program_extension}/media/main.css |   0
+ .../extension => program_extension}/media/main.js  |   0
+ result_file/src/program_extension/package.json     |  96 ++++
+ .../extension => program_extension}/src/chat.js    |  79 +--
+ result_file/src/program_extension/src/config.js    |  26 +
+ .../src/extension.js                               |  51 +-
+ .../src/logReader.js                               |   0
+ result_file/src/program_extension/src/logger.js    |  46 ++
+ .../extension => program_extension}/src/refiner.js |  22 +-
+ result_file/src/program_extension_proxy/.gitignore |  60 ---
+ result_file/src/program_extension_proxy/AGENTS.md  | 154 ------
+ result_file/src/program_extension_proxy/CLAUDE.md  |  11 -
+ result_file/src/program_extension_proxy/README.md  | 265 ----------
+ .../docs/VSCODE_EXTENSION_PLAN.md                  | 490 -----------------
+ .../docs/WORKLOG-2026-06-23.md                     |  71 ---
+ .../docs/WORKLOG-2026-06-24.md                     | 198 -------
+ .../docs/WORKLOG-2026-06-25.md                     |  48 --
+ .../extension/.vscodeignore                        |  50 --
+ .../program_extension_proxy/extension/README.md    | 125 -----
+ .../src/program_extension_proxy/extension/build.sh |  64 ---
+ .../program_extension_proxy/extension/package.json | 171 ------
+ .../extension/src/config.js                        |  90 ----
+ .../extension/src/engine.js                        | 164 ------
+ .../program_extension_proxy/extension/src/setup.js | 341 ------------
+ .../src/program_extension_proxy/refine_copilot.py  | 587 ---------------------
+ .../src/program_extension_proxy/requirements.txt   |   9 -
+ result_file/src/program_extension_proxy/run.sh     |  27 -
+ 36 files changed, 541 insertions(+), 3022 deletions(-)
+
+commit e99cf599fbd510f2f2e4a4b6e9f029bd191ede6c
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 16:47:20 +0900
+
+    extension-only-front
+
+ result_file/src/program_extension/.gitignore       |  19 +
+ .../src/program_extension/.vscode/launch.json      |  11 +
+ result_file/src/program_extension/.vscodeignore    |  16 +
+ result_file/src/program_extension/AGENTS.md        | 129 +++++
+ result_file/src/program_extension/CLAUDE.md        |  12 +
+ result_file/src/program_extension/README.md        |  93 ++++
+ result_file/src/program_extension/build.sh         |  38 ++
+ .../extension => program_extension}/jsconfig.json  |   0
+ .../extension => program_extension}/media/icon.svg |   0
+ .../extension => program_extension}/media/main.css |   0
+ .../extension => program_extension}/media/main.js  |   0
+ result_file/src/program_extension/package.json     |  96 ++++
+ .../extension => program_extension}/src/chat.js    |  79 +--
+ result_file/src/program_extension/src/config.js    |  26 +
+ .../src/extension.js                               |  51 +-
+ .../src/logReader.js                               |   0
+ result_file/src/program_extension/src/logger.js    |  46 ++
+ .../extension => program_extension}/src/refiner.js |  22 +-
+ result_file/src/program_extension_proxy/.gitignore |  60 ---
+ result_file/src/program_extension_proxy/AGENTS.md  | 154 ------
+ result_file/src/program_extension_proxy/CLAUDE.md  |  11 -
+ result_file/src/program_extension_proxy/README.md  | 265 ----------
+ .../docs/VSCODE_EXTENSION_PLAN.md                  | 490 -----------------
+ .../docs/WORKLOG-2026-06-23.md                     |  71 ---
+ .../docs/WORKLOG-2026-06-24.md                     | 198 -------
+ .../docs/WORKLOG-2026-06-25.md                     |  48 --
+ .../extension/.vscodeignore                        |  50 --
+ .../program_extension_proxy/extension/README.md    | 125 -----
+ .../src/program_extension_proxy/extension/build.sh |  64 ---
+ .../program_extension_proxy/extension/package.json | 171 ------
+ .../extension/src/config.js                        |  90 ----
+ .../extension/src/engine.js                        | 164 ------
+ .../program_extension_proxy/extension/src/setup.js | 341 ------------
+ .../src/program_extension_proxy/refine_copilot.py  | 587 ---------------------
+ .../src/program_extension_proxy/requirements.txt   |   9 -
+ result_file/src/program_extension_proxy/run.sh     |  27 -
+ 36 files changed, 541 insertions(+), 3022 deletions(-)
+
+commit 7c96ad3f5214c8f875e490ce2517ea473823c558
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 11:05:22 +0900
+
+    requirements specification initial commit
+
+ ...25\255_\353\252\205\354\204\270\354\204\234.md" | 50 ++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+commit d3621950759cf0bdbca1ed5ebac5588b88025b7d
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 10:06:49 +0900
+
+    proxy extension initial commit
+
+ result_file/src/program_extension_proxy/.gitignore |  60 +++
+ result_file/src/program_extension_proxy/AGENTS.md  | 154 ++++++
+ result_file/src/program_extension_proxy/CLAUDE.md  |  11 +
+ result_file/src/program_extension_proxy/README.md  | 265 ++++++++++
+ .../docs/VSCODE_EXTENSION_PLAN.md                  | 490 +++++++++++++++++
+ .../docs/WORKLOG-2026-06-23.md                     |  71 +++
+ .../docs/WORKLOG-2026-06-24.md                     | 198 +++++++
+ .../docs/WORKLOG-2026-06-25.md                     |  48 ++
+ .../extension/.vscodeignore                        |  50 ++
+ .../program_extension_proxy/extension/README.md    | 125 +++++
+ .../src/program_extension_proxy/extension/build.sh |  64 +++
+ .../extension/jsconfig.json                        |  10 +
+ .../extension/media/icon.svg                       |   4 +
+ .../extension/media/main.css                       | 241 +++++++++
+ .../extension/media/main.js                        | 300 +++++++++++
+ .../program_extension_proxy/extension/package.json | 171 ++++++
+ .../program_extension_proxy/extension/src/chat.js  | 114 ++++
+ .../extension/src/config.js                        |  90 ++++
+ .../extension/src/engine.js                        | 164 ++++++
+ .../extension/src/extension.js                     | 229 ++++++++
+ .../extension/src/logReader.js                     |  68 +++
+ .../extension/src/refiner.js                       |  98 ++++
+ .../program_extension_proxy/extension/src/setup.js | 341 ++++++++++++
+ .../src/program_extension_proxy/refine_copilot.py  | 587 +++++++++++++++++++++
+ .../src/program_extension_proxy/requirements.txt   |   9 +
+ result_file/src/program_extension_proxy/run.sh     |  27 +
+ 26 files changed, 3989 insertions(+)
+
+commit ccf76cb741061154144762ed1e5ef52e41f682ed
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 11:05:22 +0900
+
+    requirements specification initial commit
+
+ ...25\255_\353\252\205\354\204\270\354\204\234.md" | 50 ++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+commit 4185d1563c2ba017b0cd907704d2e05659b90313
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 10:06:49 +0900
+
+    proxy extension initial commit
+
+ result_file/src/program_extension_proxy/.gitignore |  60 +++
+ result_file/src/program_extension_proxy/AGENTS.md  | 154 ++++++
+ result_file/src/program_extension_proxy/CLAUDE.md  |  11 +
+ result_file/src/program_extension_proxy/README.md  | 265 ++++++++++
+ .../docs/VSCODE_EXTENSION_PLAN.md                  | 490 +++++++++++++++++
+ .../docs/WORKLOG-2026-06-23.md                     |  71 +++
+ .../docs/WORKLOG-2026-06-24.md                     | 198 +++++++
+ .../docs/WORKLOG-2026-06-25.md                     |  48 ++
+ .../extension/.vscodeignore                        |  50 ++
+ .../program_extension_proxy/extension/README.md    | 125 +++++
+ .../src/program_extension_proxy/extension/build.sh |  64 +++
+ .../extension/jsconfig.json                        |  10 +
+ .../extension/media/icon.svg                       |   4 +
+ .../extension/media/main.css                       | 241 +++++++++
+ .../extension/media/main.js                        | 300 +++++++++++
+ .../program_extension_proxy/extension/package.json | 171 ++++++
+ .../program_extension_proxy/extension/src/chat.js  | 114 ++++
+ .../extension/src/config.js                        |  90 ++++
+ .../extension/src/engine.js                        | 164 ++++++
+ .../extension/src/extension.js                     | 229 ++++++++
+ .../extension/src/logReader.js                     |  68 +++
+ .../extension/src/refiner.js                       |  98 ++++
+ .../program_extension_proxy/extension/src/setup.js | 341 ++++++++++++
+ .../src/program_extension_proxy/refine_copilot.py  | 587 +++++++++++++++++++++
+ .../src/program_extension_proxy/requirements.txt   |   9 +
+ result_file/src/program_extension_proxy/run.sh     |  27 +
+ 26 files changed, 3989 insertions(+)
+
+commit 1967ffc6cb49848c26603dd890dc44f46dcf247b
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 09:32:03 +0900
+
+    initial src structure
+
+ result_file/src/program_db/README.md                       | 0
+ result_file/src/program_endpoint/README.md                 | 0
+ result_file/src/program_extension_proxy/README.md          | 0
+ result_file/src/program_infra/README.md                    | 0
+ result_file/test-results/program_db/README.md              | 0
+ result_file/test-results/program_endpoint/README.md        | 0
+ result_file/test-results/program_extension_proxy/README.md | 0
+ result_file/test-results/program_infra/README.md           | 0
+ result_file/tests/program_db/README.md                     | 0
+ result_file/tests/program_endpoint/README.md               | 0
+ result_file/tests/program_extension_proxy/README.md        | 0
+ result_file/tests/program_infra/README.md                  | 0
+ 12 files changed, 0 insertions(+), 0 deletions(-)
+
+commit c2fe9fd7a4c469889b98ff4b879cea635255d062
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 09:26:45 +0900
+
+    initial structure
+
+ .gitignore                                         | 218 ---------------------
+ README.md                                          |  34 +++-
+ ...63\274\353\263\264\352\263\240\354\204\234.pdf" |   0
+ ...3\274\353\263\264\352\263\240\354\204\234.pptx" |   0
+ ...13\234\354\227\260\354\230\201\354\203\201.mp4" |   0
+ ...25\255_\353\252\205\354\204\270\354\204\234.md" |   0
+ ...7\211\352\260\200\352\262\260\352\263\274.html" |   0
+ ...4\200_\355\217\254\354\212\244\355\204\260.pdf" |   0
+ ...\200_\355\217\254\354\212\244\355\204\260.pptx" |   0
+ 9 files changed, 32 insertions(+), 220 deletions(-)
+
+commit 60b5dbdef83123a16ab6a7f768fd3bf09ae5e6e6
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   2026-06-25 09:23:27 +0900
+
+    initial structure
+
+ result_file/.gitignore       | 218 +++++++++++++++++++++++++++++++++++++++++++
+ result_file/README.md        |   5 +
+ result_file/RUN.md           |   0
+ result_file/package.json     |   0
+ result_file/requirements.txt |   0
+ 5 files changed, 223 insertions(+)
+
+commit ec09e5d1f3ab916d6eb892417ffa4a6a294ae772
+Author: swbteng <swbteng@gmail.com>
+Date:   2026-06-23 11:04:06 +0900
+
+    Initial commit
+
+ .gitignore | 218 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ README.md  |   2 +
+ 2 files changed, 220 insertions(+)
