@@ -7,10 +7,10 @@ const test = require("node:test");
 const assert = require("node:assert");
 const path = require("path");
 
-const stub = require("./_helpers/vscode-stub"); // require("vscode") 후킹 먼저
+const stub = require("../_helpers/vscode-stub"); // require("vscode") 후킹 먼저
 const { state, reset } = stub;
 
-const CONFIG = path.join(__dirname, "..", "..", "src", "program_extension", "src", "config.js");
+const CONFIG = path.join(__dirname, "..", "..", "..", "src", "program_extension", "src", "config.js");
 function loadConfig() {
   delete require.cache[require.resolve(CONFIG)];
   return require(CONFIG);

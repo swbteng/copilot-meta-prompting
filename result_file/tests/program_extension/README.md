@@ -6,7 +6,7 @@
 
 ```bash
 # 결과파일 루트(result_file/)에서
-node --test --test-reporter=spec "tests/program_extension/*.test.js"          # 콘솔 확인
+node --test --test-reporter=spec "tests/program_extension/src/*.test.js"          # 콘솔 확인
 npm run test:extension                                                         # 위와 동일(스크립트)
 npm run test:extension:junit                                                   # JUnit XML 생성
 ```
@@ -15,7 +15,7 @@ npm run test:extension:junit                                                   #
 - 권장 Node ≥ 20.13(내장 JUnit 리포터). 검증 환경: Node v24.
 - 테스트 결과(JUnit XML + 사람용 요약)는 `test-results/program_extension/`에 생성된다.
   ```bash
-  node --test --test-reporter=junit --test-reporter-destination=test-results/program_extension/junit.xml "tests/program_extension/*.test.js"
+  node --test --test-reporter=junit --test-reporter-destination=test-results/program_extension/junit.xml "tests/program_extension/src/*.test.js"
   ```
 
 ## 설계 메모

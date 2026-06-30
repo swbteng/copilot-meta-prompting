@@ -10,10 +10,10 @@ const path = require("path");
 const os = require("os");
 const fs = require("fs");
 
-const stub = require("./_helpers/vscode-stub"); // require("vscode") 후킹 먼저
+const stub = require("../_helpers/vscode-stub"); // require("vscode") 후킹 먼저
 const { state, reset, makeStream } = stub;
 
-const SRC = path.join(__dirname, "..", "..", "src", "program_extension", "src");
+const SRC = path.join(__dirname, "..", "..", "..", "src", "program_extension", "src");
 const CHAT = path.join(SRC, "chat.js");
 const REFINER = path.join(SRC, "refiner.js");
 const CONFIG = path.join(SRC, "config.js");
