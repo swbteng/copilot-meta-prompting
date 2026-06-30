@@ -1,4 +1,4 @@
-// logreader.test.js — 수정 히스토리 조회(데이터 계층) 검증
+// logReader.test.js — 수정 히스토리 조회(데이터 계층) 검증
 // 대응 요구사항: R-EX-10 (저장된 수정 내역 목록 조회 — 시간순 정렬 + 최근 N건)
 //   ※ 사이드바의 '최신순 화면 렌더'는 webview(DOM) 영역이라 사람/시연 검증. 여기서는
 //     readEntries의 조회·정렬·상한 로직(검증 가능한 핵심)을 자동 검증한다.
@@ -10,7 +10,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
-const SRC = path.join(__dirname, "..", "..", "src", "program_extension", "src");
+const SRC = path.join(__dirname, "..", "..", "..", "src", "program_extension", "src");
 const logReader = require(path.join(SRC, "logReader.js"));
 
 function seed(lines) {

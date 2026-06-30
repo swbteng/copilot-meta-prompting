@@ -6,6 +6,7 @@
 #
 # 이 확장은 순수 JS(의존성 0)라 동봉할 바이너리가 없다 - vsix는 작다(수십 KB).
 # vsce는 전역 설치 없이 npx로 on-demand 실행한다(이 머신엔 Node 설치돼 있음).
+# 재현성: 빌드 도구 버전을 고정한다 - Node.js >= 20.13(검증 환경 v24.17.0), @vscode/vsce 는 아래 VSCE_VERSION 핀.
 #
 # 참고: 개발 중엔 vsix가 필요 없다 - F5로 띄운 Extension Development Host 창에서 'Ctrl+R'이면 즉시 반영.
 set -e
@@ -44,8 +45,10 @@ fs.writeFileSync("src/env.generated.js", out);
 console.log("[build] baked REFINE_API_URL=" + (url || "<빈값: 코드 내장 기본값 사용>"));
 NODE
 
-echo "[build] packaging..."
-npx --yes @vscode/vsce package --allow-missing-repository
+# @vscode/vsce 버전 고정(재현성). 다른 버전을 쓰려면 VSCE_VERSION 환경변수로 override.
+VSCE_VERSION="${VSCE_VERSION:-3.9.2}"
+echo "[build] packaging with @vscode/vsce@${VSCE_VERSION} ..."
+npx --yes "@vscode/vsce@${VSCE_VERSION}" package --allow-missing-repository
 
 vsix="$(ls -t *.vsix | head -n1)"
 echo "[build] created: $vsix"
