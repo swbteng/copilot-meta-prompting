@@ -64,8 +64,9 @@ node -e "require('./src/refiner').refine('1+1이 뭐야?').then(console.log)"
 ./build.sh --install  # 위 + 현재 VS Code에 강제 설치(code --install-extension --force)
 ```
 
-- **git bash + Node 필요**. 새 세션은 `export PATH="$PATH:/c/Program Files/nodejs"`.
-  `vsce`는 전역 설치 없이 `npx @vscode/vsce`로 on-demand 실행된다.
+- **git bash + Node.js ≥ 20.13 필요**(검증 환경 v24.17.0). 새 세션은 `export PATH="$PATH:/c/Program Files/nodejs"`.
+  패키징 도구 `@vscode/vsce`는 전역 설치 없이 **버전 고정**해 on-demand 실행된다 — `build.sh`가 `npx @vscode/vsce@3.9.2`로
+  부른다(재현성). 다른 버전을 쓰려면 `VSCE_VERSION=<버전> ./build.sh`로 override.
 - **`.env` 자동 굽기** — `build.sh`는 패키징 직전 `.env`의 `REFINE_API_URL`을 읽어
   `src/env.generated.js`로 구워 `.vsix`에 동봉한다. 그래서 배포된 확장도 `.env`의 서버 주소를 쓴다.
   `.env`가 없거나 키가 비면 빈 값으로 생성되고 **코드 내장 기본값으로 폴백**한다(패키징은 항상 성공).
@@ -86,6 +87,11 @@ node -e "require('./src/refiner').refine('1+1이 뭐야?').then(console.log)"
 
 ## 6. 의존성
 
-- **런타임 의존성 0** — 순수 JS(Node 내장 모듈 `http`/`https`/`url`만 사용). `npm install` 불필요.
-- **패키징 도구**만 Node가 필요: `@vscode/vsce`(npx로 on-demand, 설치 불필요).
+| 구분 | 버전(고정) |
+|---|---|
+| 런타임 의존성 | **0** — 순수 JS(Node 내장 `http`/`https`/`url`만 사용). `npm install` 불필요. |
+| Node.js(개발 F5는 불필요, **패키징/테스트에만**) | **≥ 20.13** (검증 환경 v24.17.0) |
+| VS Code 엔진 | `engines.vscode` **^1.90.0** (`package.json`) |
+| 패키징 도구 `@vscode/vsce` | **3.9.2** 고정(`build.sh`의 `VSCE_VERSION`, npx on-demand — 전역 설치 불필요) |
+
 - 자세한 내용은 [`requirements.txt`](requirements.txt) 참고(파이썬 런타임 의존성 없음을 명시).

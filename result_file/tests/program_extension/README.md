@@ -39,7 +39,7 @@ npm run test:extension:junit                                                   #
 | R-EX-07 Cancel | ✅ 자동 | `chat.test.js` |
 | **R-EX-08 액티비티 바 UI** | 🧑 **사람/시연 검증** (시각적 아이콘 노출·패널 오픈은 선언적 UI라 자동화 불가) | — |
 | R-EX-09 수정 내역 로컬 저장(JSONL) | ✅ 자동 | `logger.test.js`, `config.test.js` |
-| R-EX-10 히스토리 조회(시간순·최근 N) | ✅ 자동 (화면 '최신순 렌더'는 webview DOM이라 시연 검증) | `logreader.test.js` |
+| R-EX-10 히스토리 조회(시간순·최근 N) | ✅ 자동 (화면 '최신순 렌더'는 webview DOM이라 시연 검증) | `logReader.test.js` |
 | R-EX-11 API 통신 실패 예외 + Fallback UI | ✅ 자동 | `refiner.test.js`(200/500/text500/연결실패/빈입력), `chat.test.js`(에러메시지 + Use original/재시도/Cancel) |
 
 > 자동 검증 10개 / 사람(시연) 검증 1개(R-EX-08). 명세서에도 R-EX-08에 *사람/시연 검증* 표시를 달았다.
