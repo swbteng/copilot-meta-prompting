@@ -9,7 +9,7 @@ const assert = require("node:assert");
 const http = require("http");
 const path = require("path");
 
-const REFINER = path.join(__dirname, "..", "..", "src", "program_extension", "src", "refiner.js");
+const REFINER = path.join(__dirname, "..", "..", "..", "src", "program_extension", "src", "refiner.js");
 
 function loadRefinerWith(url) {
   process.env.REFINE_API_URL = url; // env가 baked/기본값보다 우선

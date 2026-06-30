@@ -8,7 +8,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
-const SRC = path.join(__dirname, "..", "..", "src", "program_extension", "src");
+const SRC = path.join(__dirname, "..", "..", "..", "src", "program_extension", "src");
 const logger = require(path.join(SRC, "logger.js"));
 
 function tmpDir() {

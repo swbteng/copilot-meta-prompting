@@ -10,7 +10,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 
-const SRC = path.join(__dirname, "..", "..", "src", "program_extension", "src");
+const SRC = path.join(__dirname, "..", "..", "..", "src", "program_extension", "src");
 const logReader = require(path.join(SRC, "logReader.js"));
 
 function seed(lines) {
