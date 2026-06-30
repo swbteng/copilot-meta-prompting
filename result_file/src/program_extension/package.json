@@ -91,6 +91,9 @@
     }
   },
   "scripts": {
-    "package": "vsce package"
+    "package": "vsce package --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "3.9.2"
   }
 }
