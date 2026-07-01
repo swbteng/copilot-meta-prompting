@@ -142,13 +142,13 @@ RERANK_TIMEOUT=
 
 ```bash
 cd src/program_backend
-.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 8000
+.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 80
 ```
 
 다른 터미널에서 확인한다.
 
 ```bash
-curl -s http://127.0.0.1:8000/health
+curl -s http://127.0.0.1:80/health
 ```
 
 정상 상태 응답 기대값은 다음과 같다.
@@ -160,13 +160,13 @@ curl -s http://127.0.0.1:8000/health
 전체 파이프라인은 모델 서버와 `.env` 설정이 준비된 뒤 확인한다.
 
 ```bash
-curl -s -X POST http://127.0.0.1:8000/refine   -H 'Content-Type: application/json'   -d '{"prompt":"AI 관련 자유 주제로 5분 발표 PPT 슬라이드 내용을 구성해줘"}'
+curl -s -X POST http://127.0.0.1:80/refine   -H 'Content-Type: application/json'   -d '{"prompt":"AI 관련 자유 주제로 5분 발표 PPT 슬라이드 내용을 구성해줘"}'
 ```
 
 웹 데모와 API 문서는 다음 URL에서 확인한다.
 
-- 웹 데모: `http://127.0.0.1:8000/`
-- Swagger 문서: `http://127.0.0.1:8000/docs`
+- 웹 데모: `http://127.0.0.1:80/`
+- Swagger 문서: `http://127.0.0.1:80/docs`
 
 ## 7. VS Code 확장 실행
 
