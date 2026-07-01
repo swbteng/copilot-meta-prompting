@@ -1,0 +1,24 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /venv/test/bin/python
+cachedir: .pytest_cache
+rootdir: /workspace/ty/copilot-meta-prompting/result_file
+plugins: anyio-4.14.1
+collecting ... collected 3 items
+
+tests/program_AI/test_serving.py::test_llm_chat_completion 
+[R-01] INPUT(prompt) = '한 문장으로 자기소개 해줘.'
+[R-01] OUTPUT(LLM)   = '저는 사용자의 질문에 정확하게 답변하고 유용한 정보를 제공하여 업무를 돕는 인공지능 어시스턴트입니다.'
+PASSED
+tests/program_AI/test_serving.py::test_embedding_returns_fixed_dim_vector 
+[R-02] INPUT(text) = '벡터 임베딩 테스트 문장입니다.'
+[R-02] OUTPUT      = dim=4096, head=[0.022336237132549286, 0.005437879823148251, 0.014384068548679352, -0.02818341925740242]
+PASSED
+tests/program_AI/test_serving.py::test_reranker_orders_relevant_document_first 
+[R-03] INPUT(query) = '지구에서 달까지의 거리는 얼마인가?'
+         score=0.9639  doc[0]='지구에서 달까지의 평균 거리는 약 38만 4천 킬로미터이다.'
+         score=0.8513  doc[1]='오늘 저녁 메뉴로 삼겹살과 된장찌개를 먹었다.'
+         score=0.3752  doc[2]='커피는 원두를 갈아서 뜨거운 물로 추출해 만든다.'
+PASSED
+
+- generated xml file: /workspace/ty/copilot-meta-prompting/result_file/test-results/program_AI/junit.xml -
+============================== 3 passed in 4.94s ===============================

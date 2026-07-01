@@ -45,7 +45,7 @@ const REFINE_API_TIMEOUT_MS = 20000;
 //   return refined.replace(/\s*$/, "") + "\n\n---\n" + defs;
 // }
 
-// refine의 '상세판' — 성공/실패를 구분해 돌려준다(R-EX-11 Fallback UI 판단의 단일 근거).
+// refine의 '상세판' — 성공/실패를 구분해 돌려준다(R-24 Fallback UI 판단의 단일 근거).
 // 절대 throw 금지(fail-open). 반환 = { text, ok, reason }.
 //   - 빈 입력      : { text: original,           ok: true,  reason: "blank"  } (실패 UI 띄우지 않음)
 //   - URL 미설정   : { text: FIXED_REPLACEMENT,  ok: true,  reason: "fixed"  } (폴백, 정상 흐름)
@@ -103,7 +103,7 @@ function callRefineApi(original) {
           res.on("data", (c) => chunks.push(c));
           res.on("end", () => {
             try {
-              // R-EX-11: 4xx/5xx는 통신 실패로 간주(text/plain 500 본문을 정제본으로 오인하지 않게).
+              // R-24: 4xx/5xx는 통신 실패로 간주(text/plain 500 본문을 정제본으로 오인하지 않게).
               if (typeof res.statusCode === "number" && res.statusCode >= 400) {
                 return resolve(null);
               }
