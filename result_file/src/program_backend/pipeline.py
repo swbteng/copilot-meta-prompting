@@ -171,9 +171,8 @@ def rerank(
 
 # ============================ (4) LLM 최종 프롬프트 생성 (generate) ============================
 def _generate_prompt(translated_input: str, rewritten_prompt: str, templates: list[str]) -> str:
-    blocks = "\n\n".join(f"### Template {i + 1}\n{tpl}" for i, tpl in enumerate(templates))
-    return f"""You are an expert prompt engineer. Your task is to select the best matching
-prompt template for the user's request and adapt it precisely to their needs.
+    blocks = "\n\n".join(f"### Reference Template {i + 1}\n{tpl}" for i, tpl in enumerate(templates))
+    return f"""You are an expert prompt engineer. Your task is to write a high-quality prompt that precisely serves the user's request, using the provided reference templates as supplementary reference only.
 
 ## User's Original Request
 {translated_input}
@@ -181,28 +180,15 @@ prompt template for the user's request and adapt it precisely to their needs.
 ## Rewritten (Clarified) Prompt
 {rewritten_prompt}
 
-## Candidate Prompt Templates (Top {len(templates)} Most Relevant)
-
-{blocks}
-
 ## Output Format
-Output only the final adapted prompt in Korean. Do not include any titles, labels, descriptions, or explanatory text outside the prompt content itself. No language other than Korean is permitted.
+Output only the final prompt in Korean. Do not include any titles, labels, descriptions, or explanatory text outside the prompt content itself. No language other than Korean is permitted.
 
 ## Instructions
-1. Using **both** the original request and the rewritten prompt together, evaluate each template:
-   - Use the **original request** to understand the user's raw intent and tone
-   - Use the **rewritten prompt** to identify clarified requirements and explicit constraints
-   - Relevance: How well does it match the core task captured in both?
-   - Completeness: Does it cover all requirements surfaced across both versions?
-   - Adaptability: How easily can it be adjusted to fully reflect both?
+Write a prompt that fully reflects the user's intent based on the **User's Original Request** and the **Rewritten (Clarified) Prompt**. Use the reference templates below only as supplementary inspiration — the user's request takes priority over everything in the templates.
 
-2. Silently reason through which template best fits the request (do not print this reasoning).
-   Then select the single best-matching template and adapt it by:
-   - Filling in or replacing placeholders with specifics drawn from **both** the original request and the rewritten prompt
-   - Ensuring no intent from the original request is lost, even if not reflected in the rewritten prompt
-   - Removing irrelevant sections
-   - Adding any missing critical elements specific to this request
-   - Keeping the structure and quality of the original template intact
+## Reference Prompt Templates (Top {len(templates)} Most Relevant)
+
+{blocks}
 """
 
 def generate(translated_input: str, rewritten_prompt: str, templates: list[str]) -> dict[str, Any]:

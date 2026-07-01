@@ -10,9 +10,9 @@ export TRITON_CACHE_DIR=/workspace/.cache/triton
 export TORCH_HOME=/workspace/.cache/torch
 # export HF_HUB_OFFLINE=1
 
-exec .venv/bin/vllm serve Qwen/Qwen3-Embedding-8B \
+exec vllm serve Qwen/Qwen3-Embedding-8B \
   --host 0.0.0.0 \
   --port 4001 \
   --runner pooling \
   --tensor-parallel-size 1 \
-  --gpu-memory-utilization 0.90
+  --gpu-memory-utilization 0.60

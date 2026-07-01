@@ -1,0 +1,122 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /venv/test/bin/python
+cachedir: .pytest_cache
+rootdir: /workspace/ty/copilot-meta-prompting/result_file
+plugins: anyio-4.14.1
+collecting ... collected 18 items
+
+tests/program_backend/test_api.py::test_health_returns_ok 
+[R-04] REQUEST  = GET /health
+[R-04] RESPONSE = 200 {'status': 'ok'}
+PASSED
+tests/program_backend/test_api.py::test_refine_returns_500_on_pipeline_error 
+[R-11] REQUEST  = POST /refine (파이프라인이 예외를 던지는 상황)
+[R-11] RESPONSE = 500 {'detail': '단계 실패 시뮬레이션'}
+PASSED
+tests/program_backend/test_api.py::test_cors_header_present 
+[R-12] REQUEST  = GET /health (Origin: http://example.com)
+[R-12] RESPONSE = access-control-allow-origin: '*'
+PASSED
+tests/program_backend/test_api.py::test_viz_map_returns_points_and_clusters 
+[R-14] REQUEST  = GET /viz/map (임베딩 서버 없이)
+[R-14] RESPONSE = 200, points=651개, clusters=10개
+[R-14] point[0] = {'id': 'github::administrative-sop-creator', 'title': 'Administrative SOP Creator', 'tags': ['sop', 'standard-operating-procedure', 'process-documentation', 'compliance', 'workflow'], 'x': 0.78327, 'y': 0.37624, 'cluster': 6}
+PASSED
+tests/program_backend/test_integration.py::test_rewrite_endpoint_live 
+[R-05] INPUT(prompt)       = '1더하기1?'
+[R-05] OUTPUT.translated   = '1 plus 1?'
+[R-05] OUTPUT.rewritten    = 'Calculate the sum of 1 and 1 and provide the result.'
+PASSED
+tests/program_backend/test_integration.py::test_search_endpoint_live 
+[R-07] INPUT(query) = '분기 매출 예측 보고서', top_k=5
+[R-07] OUTPUT       = 5개 후보
+         rank=1 id=github::finance-financial-reporting-specialist dist=0.3717 title='Financial Reporting Specialist'
+         rank=2 id=github::analysis-predictive-analysis-expert dist=0.3730 title='Predictive Analysis Expert'
+         rank=3 id=github::business-financial-model-builder dist=0.3854 title='Financial Model Builder'
+         rank=4 id=github::business-sales-pipeline-optimizer dist=0.3989 title='Sales Pipeline Optimizer'
+         rank=5 id=github::planning-budget dist=0.4127 title='Budget Planning Expert'
+PASSED
+tests/program_backend/test_integration.py::test_refine_full_pipeline_live 
+[R-10] INPUT(prompt)        = '발표 자료 만들어줘'
+[R-10] 중간.rewritten_prompt = 'Generate a comprehensive presentation outline including slide titles, key bullet points for content, and suggested visual elements. Structure the presentation with a clear introduction, main body, and conclusion. If specific topic details are missing, use placeholders or ask clarifying questions to define the subject matter.'
+[R-10] 중간.선택 템플릿       = [('Prompt Architect Pro', 0.7016429901123047), ('Excel Data to Figma Presentation Designer', 0.7012448906898499), ('Immigration Project Presentation Specialist', 0.6733986735343933)]
+[R-10] OUTPUT.refined       =
+역할: 당신은 전문 프레젠테이션 기획자 및 콘텐츠 전문가입니다. 당신의 임무는 청중의 참여를 유도하고 메시지를 명확하게 전달하는 논리적이며 매력적인 프레젠테이션 구조를 설계하는 것입니다.
+
+작업 절차:
+1. 주제 확인: 사용자의 요청에 특정 주제가 명시되지 않은 경우, 먼저 프레젠테이션의 주제, 대상 청중, 목적 및 원하는 길이(슬라이드 수 등)에 대한 질문을 던져 세부 사항을 명확히 하십시오. 만약 사용자가 즉각적인 샘플을 원한다면, 가상의 일반적인 비즈니스 주제를 사용하여 예시를 생성하십시오.
+2. 구조 설계: 프레젠테이션을 명확한 서론, 본론, 결론의 세 부분으로 나누십시오.
+   - 서론: 시선을 사로잡는 오프닝과 핵심 메시지를 제시하십시오.
+   - 본론: 주요 논거를 지원하기 위한 3-5개의 핵심 슬라이드를 구성하십시오.
+   - 결론: 핵심 요약을 제공하고 명료한 콜투어(Call-to-Action)로 마무리하십시오.
+3. 내용 구체화: 각 슬라이드에 대해 다음 정보를 포함하여 상세한 아웃라인을 제공하십시오.
+   - 슬라이드 제목
+   - 핵심 내용(간결한 불릿 포인트 형태)
+   - suggested visual elements(추천 시각 자료: 차트, 이미지, 다이어그램 등의 제안)
+
+제약 사항:
+- 전문적이고 프로페셔널한 어조를 유지하십시오.
+- 정보는 명확하고 간결하게 작성하여 가독성을 최우선으로 하십시오.
+- 출력 형식은 구조화된 마크다운 목록을 사용하십시오.
+
+출력 예시 형식:
+## [슬라이드 제목]
+- **핵심 메시지**: [내용 요약]
+- **상세 사항**: 
+  - [불릿 포인트 1]
+  - [불릿 포인트 2]
+- **시각 자료 제안**: [추천 이미지 또는 그래프 유형 설명]
+PASSED
+tests/program_backend/test_pipeline.py::test_rewrite_parses_translated_and_rewritten 
+[R-05] INPUT(user) = '1더하기1?'
+[R-05] LLM_RAW     = '{"translated_input": "What is 1+1?", "rewritten_prompt": "Compute 1 plus 1."}'
+[R-05] OUTPUT      = translated_input='What is 1+1?', rewritten_prompt='Compute 1 plus 1.'
+PASSED
+tests/program_backend/test_pipeline.py::test_strip_code_fence_removes_json_fence 
+[R-06] INPUT  = '```json\n{"a": 1}\n```'
+[R-06] OUTPUT = '{"a": 1}'
+PASSED
+tests/program_backend/test_pipeline.py::test_rewrite_handles_fenced_json 
+[R-06] INPUT(LLM_RAW) = '```json\n{"translated_input": "hi", "rewritten_prompt": "say hi"}\n```'
+[R-06] OUTPUT         = 'hi' / 'say hi'
+PASSED
+tests/program_backend/test_pipeline.py::test_rewrite_falls_back_when_not_json 
+[R-06] INPUT(LLM_RAW, JSON아님) = '그냥 평문 응답'
+[R-06] OUTPUT(폴백)             = translated_input='', rewritten_prompt='그냥 평문 응답'
+PASSED
+tests/program_backend/test_pipeline.py::test_generate_extracts_after_label 
+[R-09] INPUT(LLM_RAW) = '여기는 잡설.\nfinal adapted prompt: 진짜 최종 프롬프트'
+[R-09] OUTPUT         = '진짜 최종 프롬프트'
+PASSED
+tests/program_backend/test_pipeline.py::test_generate_uses_full_text_without_label 
+[R-09] INPUT(LLM_RAW, 라벨없음) = '라벨 없는 최종 프롬프트 전문'
+[R-09] OUTPUT                   = '라벨 없는 최종 프롬프트 전문'
+PASSED
+tests/program_backend/test_pipeline.py::test_require_raises_with_missing_key_name 
+[R-13] INPUT  = LLM_BASE_URL='', LLM_MODEL='some-model'
+[R-13] OUTPUT = RuntimeError: 설정값이 비어 있습니다: LLM_BASE_URL. program_backend/.env 를 채우세요.
+PASSED
+tests/program_backend/test_pipeline.py::test_require_passes_when_all_present 
+[R-13] INPUT = A='x', B='y' -> OUTPUT = 예외 없음(통과)
+PASSED
+tests/program_backend/test_retrieval.py::test_rerank_candidates_sorts_desc_and_attaches_score 
+[R-08] INPUT(candidates) = ['a', 'b', 'c']
+[R-08] INPUT(점수)        = a=0.1, b=0.9, c=0.5
+[R-08] OUTPUT(정렬)       = [('b', 0.9), ('c', 0.5), ('a', 0.1)]
+PASSED
+tests/program_backend/test_retrieval.py::test_rerank_candidates_raises_when_no_usable_scores 
+[R-08] INPUT(빈 results) -> OUTPUT = ValueError: Unexpected reranker response: {"results": []}...
+PASSED
+tests/program_backend/test_retrieval.py::test_pipeline_rerank_truncates_to_top_n 
+[R-08] INPUT  = 후보 5개, top_n=2
+[R-08] OUTPUT = 2개 -> ['0', '1']
+PASSED
+
+=============================== warnings summary ===============================
+../../../../venv/test/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /venv/test/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /workspace/ty/copilot-meta-prompting/result_file/test-results/program_backend/junit.xml -
+======================== 18 passed, 1 warning in 12.78s ========================
