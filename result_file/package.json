@@ -6,6 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test:extension": "node --test --test-reporter=spec \"tests/program_extension/src/*.test.js\"",
-    "test:extension:junit": "node --test --test-reporter=junit --test-reporter-destination=test-results/program_extension/junit.xml --test-reporter=spec --test-reporter-destination=stdout \"tests/program_extension/src/*.test.js\""
+    "test:extension:junit": "node --test --test-reporter=junit --test-reporter-destination=test-results/program_extension/junit.xml --test-reporter=spec --test-reporter-destination=stdout \"tests/program_extension/src/*.test.js\"",
+    "test:extension:coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"tests/**\" --test-reporter=spec \"tests/program_extension/src/*.test.js\"",
+    "test:extension:coverage:lcov": "node --test --experimental-test-coverage --test-coverage-exclude=\"tests/**\" --test-reporter=lcov --test-reporter-destination=test-results/program_extension/coverage.lcov --test-reporter=spec --test-reporter-destination=stdout \"tests/program_extension/src/*.test.js\""
   }
 }

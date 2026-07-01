@@ -45,7 +45,32 @@ npm run test:extension:junit
     "tests/program_extension/src/*.test.js"
   ```
 
-## 3. 특정 파일/요구사항만 실행
+## 3. 테스트 커버리지 (Node 내장, 의존성 0)
+
+`node --test`의 **내장 V8 커버리지**(`--experimental-test-coverage`)를 쓴다. nyc/c8/jest 같은 추가
+도구가 필요 없어 **의존성 0 원칙을 깨지 않는다**. 테스트 코드 자신은 표에서 빼려고 `tests/**`를 제외한다.
+
+```bash
+# (1) 콘솔 표로 보기 — src/program_extension/src/*.js 만 집계
+npm run test:extension:coverage
+
+# (2) lcov 산출물까지 생성 (HTML 뷰어/CI 연동용)
+npm run test:extension:coverage:lcov
+#   → test-results/program_extension/coverage.lcov
+```
+- 표에는 파일별 **line % / branch % / funcs % / 미커버 라인**이 나온다.
+- lcov는 VS Code 확장 *Coverage Gutters*(에디터에 줄 표시)나 CI 리포트에 그대로 넣을 수 있다.
+- 스크립트 원형(직접 실행 시):
+  ```bash
+  node --test --experimental-test-coverage \
+    --test-coverage-exclude="tests/**" \
+    --test-reporter=spec \
+    "tests/program_extension/src/*.test.js"
+  ```
+- 현재 스냅샷(소스 집계): 전체 **line 84.1% / branch 71.4% / funcs 87.5%**. `config.js`는 100%,
+  미커버가 큰 곳은 `chat.js`(webview 액션 핸들러 분기)·`refiner.js`(일부 서버 호출 분기)다.
+
+## 4. 특정 파일/요구사항만 실행
 
 ```bash
 # 파일 1개만
@@ -57,14 +82,14 @@ node --test --test-name-pattern="R-EX-11" "tests/program_extension/src/*.test.js
 
 ---
 
-## 4. 기대 결과 (현재 스냅샷)
+## 5. 기대 결과 (현재 스냅샷)
 
 - **총 25개 테스트 전부 통과(pass 25 / fail 0).**
 - 요구사항 커버리지: 자동 10개(R-EX-01~07, 09, 10, 11) / 사람·시연 검증 1개(**R-EX-08** 액티비티 바 UI).
 - R-EX-11은 데이터 계층(`refiner.test.js`: 200/500/text500/연결실패/빈입력)과 UI 계층(`chat.test.js`:
   에러 메시지 + Use original/재시도/Cancel Fallback UI, 자동 전송 0회)으로 나눠 검증한다.
 
-## 5. 자주 막히는 곳
+## 6. 자주 막히는 곳
 
 | 증상 | 원인 / 해결 |
 |---|---|

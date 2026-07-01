@@ -9,7 +9,7 @@
 > 일절 필요 없습니다.** 옛 프록시 구현 이력은 원본 저장소에만 남아 있고, 이 repo에는 없습니다.
 
 > **작업을 "완료"라고 보고하기 전에 반드시 [§7 작업 완료 정의](#7-작업-완료-정의-definition-of-done)를 수행한다 — 변경에 맞춰 문서를 갱신한다.**
-> **모든 쉘 명령은 git bash. 개발 실행은 `F5`(Node 불필요), 패키징만 Node(`./build.sh`).**
+> **모든 쉘 명령은 git bash. 개발 실행은 `F5`(Node 불필요). 패키징(`./build.sh`)은 하이브리드 — Node 있으면 `@vscode/vsce`(표준), 없으면 Windows 기본 PowerShell 폴백(빈 머신에서도 빌드 가능).**
 
 > **📋 평가 기준** — 이 프로젝트의 최종 산출물은 **프로젝트 루트의 [`project_assessment_agent_v1.0.md`](../../../project_assessment_agent_v1.0.md)**(프로젝트 평가 Agent 정의서)에 따라 채점된다. 모든 에이전트는 요구사항 명세 대비 기능 구현, 테스트/신뢰성, DevOps·실행 가능성, 시연 동작 검증 관점을 의식하고 작업한다 — 결론에는 **검증 가능한 증거**(파일 경로·테스트 로그·실행 결과)를 남기고, 자동 검증 불가 항목은 **사람/시연 검증으로 명시**한다.
 
@@ -110,7 +110,7 @@ append 한다(폴더 자동 생성). **사이드바가 파싱하는 계약이므
 - **사용자 데이터 파일은 절대 삭제 금지** — `observe*.log` 포함.
 - **모든 쉘 명령은 git bash로 통일**(PowerShell/cmd 아님).
 - **개발 실행은 `F5`** — VS Code로 이 폴더를 열고 F5 -> Extension Development Host. **Node 불필요**(VS Code 자체 런타임). 코드 변경은 `Ctrl+R`로 즉시 반영.
-- **패키징만 Node 필요**: `./build.sh [--install]`. 새 git bash 세션은 `export PATH="$PATH:/c/Program Files/nodejs"`. `vsce`는 `npx @vscode/vsce`로 on-demand.
+- **패키징은 하이브리드**: `./build.sh [--install]`. **Tier 1(선호)** Node/npm 있으면 `package.json` devDependencies의 `@vscode/vsce`(핀 3.9.2)로 표준 빌드. **Tier 2(폴백)** Node 없거나 vsce 실패면 **Windows 기본 내장 PowerShell**(`System.IO.Compression`)로 `.vsix`(=OPC ZIP)를 직접 만든다(설치·네트워크 0 → 빈 머신 빌드 보장, 매니페스트는 `package.json`에서 재현). 두 경로 결과물 동일. (설치 `--install`만 `code` CLI 있으면 사용.)
 - 순수 모듈(`refiner.js`/`logger.js`/`logReader.js`)은 vscode 없이 import 가능 -> 셀프테스트는 `node`로 직접 호출.
 
 ### 실행 / 테스트 (git bash)
