@@ -26,7 +26,7 @@ function bakedRefineUrl() {
 const REFINE_API_URL =
   process.env.REFINE_API_URL ||
   bakedRefineUrl() ||
-  "https://z2cck305byfsj9-80.proxy.runpod.net/refine";
+  "https://8s1i9nad8tfygl-80.proxy.runpod.net/refine";
 const REFINE_API_TIMEOUT_MS = 20000;
 
 // [보류] ${question} 자리표시자 정의 덧붙임 - BE 서버에서 자리표시자를 채워 주기로 결정해 비활성.
