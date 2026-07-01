@@ -1,188 +1,271 @@
-# 실행 · 재현 가이드 (RUN)
+# 실행 및 재현 문서
 
-이 문서는 **제출물만으로 서비스를 다시 띄울 수 있는가**를 기준(DevOps 8개)에 맞춰 정리합니다.
-프로젝트는 **3개 프로그램**(모델 서빙 → 백엔드 → 확장)으로 구성되며, 아래 순서대로 기동합니다.
 
-> 프로그램별 상세 실행은 각 폴더의 문서를 함께 보세요 —
-> [`src/program_AI/README.md`](src/program_AI/README.md) ·
-> [`src/program_backend/RUN.md`](src/program_backend/RUN.md) ·
-> [`src/program_extension/RUN.md`](src/program_extension/RUN.md).
 
----
+## 1. 의존성 목록과 버전 고정
 
-## 0. 한눈에 (의존 순서)
-
-```
-[GPU 머신] program_AI : vLLM 3종(LLM·임베딩·리랭커) 서빙
-                │  (OpenAI 호환 /v1 엔드포인트)
-                ▼
-[서버]    program_backend : FastAPI(/refine) — .env에 위 3종 주소를 넣고 기동
-                │  (POST /refine)
-                ▼
-[로컬]    program_extension : VS Code 확장 — REFINE_API_URL을 백엔드로 지정
-```
-
-- **최소 체험**(모델·GPU 없이): 확장만 `F5`로 띄우면 됩니다(정제 서버 없으면 fail-open으로 원본 전송).
-- **전체 파이프라인 체험**: 3종 모델 서버(직접 GPU 또는 RunPod) + 백엔드가 떠 있어야 실제 정제본이 나옵니다.
-
----
-
-## 1~2. 라이브러리 목록 · 버전 고정
-
-라이브러리는 **프로그램별로 분리**되어 있으며, 버전을 고정(pin)했습니다.
-
-| 프로그램 | 라이브러리 목록 파일 | 핵심 의존성(버전 고정) |
+| 영역 | 파일 | 확인된 직접 의존성 |
 |---|---|---|
-| program_AI | [`src/program_AI/requirements.txt`](src/program_AI/requirements.txt) | `vllm==0.19.1`, `requests==2.34.2` |
-| program_backend | [`src/program_backend/requirements.txt`](src/program_backend/requirements.txt) | `fastapi==0.138.1`, `uvicorn[standard]==0.49.0`, `chromadb==1.5.9`, `openai==2.44.0`, `requests==2.34.2`, `tqdm==4.68.3`, `scikit-learn==1.9.0` |
-| program_extension | [`src/program_extension/requirements.txt`](src/program_extension/requirements.txt) | **런타임 의존성 0** (순수 JS, Node 내장 모듈만). 패키징 도구 `@vscode/vsce`는 `npx`로 on-demand. |
+| 전체 Python 참조 | `requirements.txt` | 프로그램별 requirements를 `-r`로 참조 |
+| 백엔드 | `src/program_backend/requirements.txt` | `fastapi==0.138.1`, `uvicorn[standard]==0.49.0`, `requests==2.34.2`, `chromadb==1.5.9`, `openai==2.44.0`, `tqdm==4.68.3` |
+| AI 서빙 | `src/program_AI/requirements.txt` | `vllm==0.19.1`, `requests==2.34.2` |
+| 확장 Python 프록시 | `src/program_extension/requirements.txt` | `mitmproxy==12.2.3` |
+| 테스트 | `tests/requirements-test.txt` | `fastapi==0.138.1`, `requests==2.34.2`, `chromadb==1.5.9`, `openai==2.44.0`, `pytest==9.1.1`, `httpx==0.28.1` |
+| VS Code 확장 패키징 | `package.json` | `@vscode/vsce` 버전 `3.6.0` |
+| VS Code 확장 매니페스트 | `src/program_extension/package.json` | VS Code engine `^1.90.0`, 런타임 Node 패키지 의존성 없음 |
 
-> 루트 [`requirements.txt`](requirements.txt)는 위 분리 구조를 안내하는 인덱스입니다. 두 Python 프로그램은
-> **서로 다른 환경(venv/머신)**에 설치합니다(백엔드 vs vLLM 스택은 함께 설치하지 않음).
+Python 직접 의존성은 `==`로 고정되어 있다. Node 패키징 도구는 상위 `package.json`에 `@vscode/vsce: 3.6.0`으로 명시되어 있다. `package-lock.json`은 포함되어 있지 않으므로 Node 전이 의존성의 완전 고정 여부는 확인 필요하다.
 
----
+## 2. 사전 준비
 
-## 3~4. 빌드·설치 / 실행·기동
+- Python과 `pip`
+- Node.js. 확장 테스트의 JUnit 리포터는 Node 20.13 이상 권장
+- VS Code 1.90 이상
+- VS Code Copilot Chat 사용 가능 환경
+- 로컬 vLLM 실행 시 GPU와 모델 다운로드 권한
+- 외부 모델 서버를 쓰는 경우 LLM, 임베딩, 리랭커 OpenAI 호환 엔드포인트 및 API 키
 
-### A) program_AI — 모델 서빙 (GPU 필요)
+민감한 API 키와 실제 `.env` 파일은 제출물에 포함하지 않는다. 설정 예시는 `src/program_backend/.env.example`만 사용한다.
 
-> GPU가 없거나 RunPod 등 외부 추론 엔드포인트를 쓸 경우 이 절은 건너뛰고, **6번 외부 자원**의 RunPod
-> 주소를 백엔드 `.env`에 넣으면 됩니다.
+## 3. 설치 방법
+
+### 3.1 AI 모델 서빙 의존성
 
 ```bash
 cd src/program_AI
 python3 -m venv .venv
-.venv/bin/pip install --upgrade pip
-.venv/bin/pip install -r requirements.txt        # vllm==0.19.1, requests==2.34.2
-
-# 모델 3종 서빙(각각 별도 터미널 / GPU). OpenAI 호환 엔드포인트로 노출된다.
-bash scripts/serve_llm.sh        # LLM       → :4000  (cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit)
-bash scripts/serve_embedding.sh  # 임베딩     → :4001  (Qwen/Qwen3-Embedding-8B)
-bash scripts/serve_reranker.sh   # 리랭커     → :4002  (Qwen/Qwen3-Reranker-4B)
-
-# 기동 확인(스모크 테스트)
-.venv/bin/python scripts/test_apis.py            # 3개 엔드포인트 응답 출력
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r requirements.txt
+cd ../..
 ```
 
-### B) program_backend — 메타 프롬프팅 API 서버
+`vllm==0.19.1` 설치와 모델 다운로드는 GPU, CUDA, 네트워크, 모델 접근 권한에 영향을 받는다.
+
+### 3.2 백엔드 의존성
 
 ```bash
 cd src/program_backend
 python3 -m venv .venv
-.venv/bin/pip install --upgrade pip
-.venv/bin/pip install -r requirements.txt        # fastapi/uvicorn/chromadb/openai/...
-
-cp .env.example .env                             # 5번 참고해 모델 주소/모델명 입력
-.venv/bin/uvicorn app:app --host 0.0.0.0 --port 80
-#  → http://<host>:80/         파이프라인 시각화 웹 데모
-#  → http://<host>:80/docs     Swagger UI(자동 문서)
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r requirements.txt
+cd ../..
 ```
 
-- 벡터 DB(Chroma)는 `artifacts/`에 **번들**돼 있어 별도 구축 없이 그대로 검색됩니다(651개 템플릿).
-- 시각화 지도(`artifacts/viz_layout.json`)도 커밋돼 있어 바로 보입니다(DB 재빌드 시에만 재생성).
+### 3.3 테스트 의존성
 
-### C) program_extension — VS Code 확장
+Python 테스트 실행용 의존성은 런타임과 분리되어 있다.
 
 ```bash
-# (개발 실행) VS Code로 src/program_extension/ 폴더를 열고 F5 → Extension Development Host
-#   → 우측 Copilot Chat에서:  @refine 헝가리의 수도가 어디야?
-
-# (패키징/설치) git bash + Node
-cd src/program_extension
-./build.sh --install     # .env의 REFINE_API_URL을 vsix에 구워 넣고 설치
+python3 -m venv .venv-test
+.venv-test/bin/python -m pip install --upgrade pip
+.venv-test/bin/python -m pip install -r tests/requirements-test.txt
 ```
 
-- 확장은 **의존성 0**이라 `npm install` 없이 바로 뜹니다. 코드 변경은 `Ctrl+R`로 즉시 반영.
-- 확장이 백엔드를 호출하도록 `REFINE_API_URL`을 백엔드 `/refine` 주소로 지정합니다(5번 참고).
+### 3.4 VS Code 확장 패키징 의존성
 
----
-
-## 5. 환경 변수 · 설정 파일
-
-설정값은 코드에 하드코딩하지 않고 `.env`(또는 프로세스 환경변수)로만 주입합니다. 템플릿은 각 프로그램의
-`.env.example`을 복사해 채웁니다(실제 `.env`는 커밋 금지 — `.gitignore`).
-
-### program_backend (`src/program_backend/.env.example` → `.env`)
-
-| 키 | 설명 | 예시 |
-|---|---|---|
-| `LLM_BASE_URL` / `LLM_MODEL` | 정제·생성 LLM(OpenAI 호환) 주소/모델명 | `http://127.0.0.1:4000` / `cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit` |
-| `EMBED_BASE_URL` / `EMBED_MODEL` | 임베딩 주소(끝 `/v1` 자동보정)/모델명 | `http://127.0.0.1:4001/v1` / `Qwen/Qwen3-Embedding-8B` |
-| `RERANK_BASE_URL` / `RERANK_MODEL` | 리랭커 주소/모델명 | `http://127.0.0.1:4002` / `Qwen/Qwen3-Reranker-4B` |
-| `*_API_KEY` / `RUNPOD_API_KEY` | 인증이 필요한 엔드포인트(RunPod 등)에만. 로컬 vLLM은 비움. | — |
-| `CHROMA_DIR` / `CHROMA_COLLECTION_NAME` | 비우면 번들 DB 경로/이름으로 폴백 | (비움) |
-| `CHROMA_TOP_K` / `RERANK_TOP_N` | 검색 후보 수 / 최종 템플릿 수 | `20` / `3` |
-| `LLM_TIMEOUT` / `LLM_MAX_TOKENS` / `RERANK_TIMEOUT` | 운영 파라미터(비우면 기본값) | `180` / `8192` / `120` |
-
-> 임베딩 모델은 DB 구축에 쓴 `Qwen/Qwen3-Embedding-8B`와 **반드시 동일**해야 벡터가 호환됩니다.
-> 연결값이 비면 해당 요청이 `설정값이 비어 있습니다: ...` 에러로 무엇을 채울지 알려줍니다.
-
-### program_extension (`src/program_extension/.env.example` → `.env`)
-
-| 키 | 설명 |
-|---|---|
-| `REFINE_API_URL` | 정제 서버(백엔드 `/refine`) 주소. 우선순위: OS 환경변수 > `.env` 굽기 > 코드 내장 기본값. |
-
-VS Code 설정: `swbcPromptRefiner.logDir`(정제 내역 로그 폴더 절대경로, 비우면 `globalStorage/logs`),
-`swbcPromptRefiner.maxEntries`(사이드바 표시 상한, 기본 200).
-
----
-
-## 6. 외부 서비스 · 자원
-
-| 자원 | 용도 | 안내 |
-|---|---|---|
-| **GPU** | vLLM로 LLM/임베딩/리랭커 서빙 | 서빙 모델 크기에 맞는 VRAM 필요(예: A40 등). 스크립트에 `gpu-memory-utilization` 지정. |
-| **모델 가중치** | Hugging Face에서 자동 다운로드 | LLM `cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit`, 임베딩 `Qwen/Qwen3-Embedding-8B`, 리랭커 `Qwen/Qwen3-Reranker-4B` |
-| **RunPod**(선택) | GPU 없이 추론 엔드포인트로 대체 | 각 `*_BASE_URL`을 RunPod URL로, `RUNPOD_API_KEY` 설정. Pod **고정 프록시 도메인** `https://{POD_ID}-{PORT}.proxy.runpod.net` 사용(IP 변동 회피). 상세: [`src/program_backend/RUN.md`](src/program_backend/RUN.md) §4. |
-| **Chroma DB** | 템플릿 벡터 검색 | **번들 제공**(`artifacts/production_chroma_qwen3_8b`) — 외부 DB 불필요. |
-| **API 키** | LLM 키 등 | 코드에 없음. `.env`로만 주입(커밋 금지). |
-
-> 주의(RunPod 프록시 100초 제한): `/refine` 전체 파이프라인은 LLM을 2번 호출하므로 길어질 수 있습니다.
-> 단계 분리 호출(`/rewrite`→`/rerank`→`/generate`)이나 TCP 포트/Serverless로 회피합니다(백엔드 RUN.md 참고).
-
----
-
-## 7~8. 설치 성공 / 기동 확인 (스모크 테스트)
-
-### program_AI
 ```bash
+npm install
+```
+
+상위 `package.json`에는 `package:extension` 스크립트와 `@vscode/vsce==3.6.0`에 해당하는 devDependency가 있다.
+
+## 4. AI 모델 서버 실행
+
+로컬 GPU 환경에서 세 터미널을 열어 각각 실행한다. 스크립트 파일에 실행 비트가 없을 수 있으므로 `bash`로 실행한다.
+
+```bash
+cd src/program_AI
+bash scripts/serve_llm.sh
+```
+
+```bash
+cd src/program_AI
+bash scripts/serve_embedding.sh
+```
+
+```bash
+cd src/program_AI
+bash scripts/serve_reranker.sh
+```
+
+| 서버 | 포트 | 모델 |
+|---|---:|---|
+| LLM | 4000 | `cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit` |
+| 임베딩 | 4001 | `Qwen/Qwen3-Embedding-8B` |
+| 리랭커 | 4002 | `Qwen/Qwen3-Reranker-4B` |
+
+세 서버가 실행된 뒤 스모크 테스트를 실행한다.
+
+```bash
+cd src/program_AI
 .venv/bin/python scripts/test_apis.py
-# [LLM] ... / [EMBED] dim=4096 ... / [RERANK] 점수순: ...  → 3종 모두 응답하면 정상
+cd ../..
 ```
 
-### program_backend
-```bash
-curl -s http://127.0.0.1:80/health
-# {"status":"ok"}
+성공 기준은 `[LLM]`, `[EMBED]`, `[RERANK]` 섹션이 모두 실패 없이 출력되는 것이다.
 
-curl -s -X POST http://127.0.0.1:80/refine \
-  -H 'Content-Type: application/json' \
-  -d '{"prompt":"AI 관련 자유 주제로 5분 발표 PPT 슬라이드 내용을 구성해줘"}'
-# {"refined":"<최종 정제 프롬프트>", "translated_input":..., "rewritten_prompt":..., "templates":[...]}
-```
-> 모델 서버(vLLM/RunPod)가 떠 있어야 실제 응답이 나옵니다. 안 떠 있으면 타임아웃 또는
-> "설정값이 비어 있습니다" 에러로 어디가 비었는지 알려줍니다.
-
-### program_extension (자동 테스트)
-```bash
-export PATH="$PATH:/c/Program Files/nodejs"   # 새 셸이면 1회
-# 결과파일 루트(result_file/)에서
-npm run test:extension          # 콘솔(spec) — 25개
-npm run test:extension:junit    # JUnit XML + 요약을 test-results/program_extension/에 재생성
-```
-- 권장 Node ≥ 20.13(내장 JUnit 리포터). 검증 환경: Node v24.
-- 최신 스냅샷: **25개 전부 통과**([`test-results/program_extension/summary.txt`](test-results/program_extension/summary.txt)).
-
----
-
-## 부록. 벡터 DB 재구축(선택, 오프라인)
-
-번들 DB로 충분하지만, 템플릿을 새로 색인하려면(임베딩 서버 필요):
+## 5. 백엔드 환경 변수 설정
 
 ```bash
 cd src/program_backend
-.venv/bin/python indexing/collect_production_templates.py   # 템플릿 수집 → artifacts/...templates
-.venv/bin/python indexing/build_vector_db.py                # 임베딩 → Chroma 적재(EMBED_BASE_URL 필요)
-.venv/bin/python indexing/build_viz_layout.py               # 2D 시각화 레이아웃(t-SNE+KMeans, 임베딩 불필요)
+cp .env.example .env
 ```
+
+로컬 AI 서버를 쓰는 경우 `.env`에 다음 값을 채운다.
+
+```text
+LLM_BASE_URL=http://127.0.0.1:4000
+LLM_MODEL=cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit
+LLM_API_KEY=
+
+EMBED_BASE_URL=http://127.0.0.1:4001/v1
+EMBED_MODEL=Qwen/Qwen3-Embedding-8B
+EMBED_API_KEY=
+
+RERANK_BASE_URL=http://127.0.0.1:4002
+RERANK_MODEL=Qwen/Qwen3-Reranker-4B
+RERANK_API_KEY=
+
+RUNPOD_API_KEY=
+CHROMA_DIR=
+CHROMA_COLLECTION_NAME=
+CHROMA_TOP_K=
+RERANK_TOP_N=
+LLM_TIMEOUT=
+LLM_MAX_TOKENS=
+RERANK_TIMEOUT=
+```
+
+`CHROMA_DIR`와 `CHROMA_COLLECTION_NAME`을 비우면 코드 기본값으로 제출물에 포함된 Chroma DB와 `production_task_prompt_templates` 컬렉션을 사용한다. 외부 OpenAI 호환 서버를 쓰는 경우 각 `*_BASE_URL`, `*_MODEL`, `*_API_KEY` 또는 공통 `RUNPOD_API_KEY`를 해당 서비스 값으로 변경한다.
+
+## 6. 백엔드 실행
+
+```bash
+cd src/program_backend
+.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 8000
+```
+
+다른 터미널에서 확인한다.
+
+```bash
+curl -s http://127.0.0.1:8000/health
+```
+
+정상 상태 응답 기대값은 다음과 같다.
+
+```json
+{"status":"ok"}
+```
+
+전체 파이프라인은 모델 서버와 `.env` 설정이 준비된 뒤 확인한다.
+
+```bash
+curl -s -X POST http://127.0.0.1:8000/refine   -H 'Content-Type: application/json'   -d '{"prompt":"AI 관련 자유 주제로 5분 발표 PPT 슬라이드 내용을 구성해줘"}'
+```
+
+웹 데모와 API 문서는 다음 URL에서 확인한다.
+
+- 웹 데모: `http://127.0.0.1:8000/`
+- Swagger 문서: `http://127.0.0.1:8000/docs`
+
+## 7. VS Code 확장 실행
+
+```bash
+cd src/program_extension
+code .
+```
+
+VS Code에서 `F5`를 눌러 Extension Development Host를 연다. 새 창의 Copilot Chat에 다음처럼 입력한다.
+
+```text
+@refine 발표 자료를 5장으로 구성해줘
+```
+
+현재 활성 정제 함수는 `src/refiner.js`의 고정 문자열 테스트 모드이다. 따라서 미리보기의 정제본은 백엔드 결과가 아니라 `안녕,클로드`로 표시되는 것이 현재 코드 기준 동작이다. `REFINE_API_URL`과 `callRefineApi()`는 구현되어 있지만 서버 호출 블록이 주석 처리되어 있어, 환경변수만으로 백엔드 연동이 활성화되지는 않는다.
+
+확장 설정은 `src/program_extension/package.json`에 정의되어 있다.
+
+| 설정 키 | 기본값 | 설명 |
+|---|---|---|
+| `swbcPromptRefiner.logDir` | 빈 문자열 | 비우면 VS Code `globalStorage/logs`에 `observe-YYYY-MM-DD.log`를 저장하고, 값이 있으면 지정한 절대경로를 사용 |
+| `swbcPromptRefiner.maxEntries` | `200` | 사이드바에 표시할 최근 정제 내역 개수. 최소 `10`, 최대 `5000` |
+
+확인할 항목은 다음과 같다.
+
+- `@refine` 입력 시 정제본 미리보기와 5개 버튼이 보이는지
+- `전송 (allow)` 클릭 시 Copilot Chat 입력으로 전달되는지
+- Activity Bar의 `Prompt Refiner` 사이드바에 원본/정제본 카드가 추가되는지
+- 검색, 차이 강조, 복사, 긴 본문 펼치기/접기가 동작하는지
+
+## 8. VSIX 패키징
+
+결과파일 루트에서 실행한다.
+
+```bash
+npm run package:extension
+```
+
+이 명령은 `src/program_extension`에서 `npx --yes @vscode/vsce@3.6.0 package --allow-missing-repository`를 실행한다. 성공 시 `src/program_extension` 아래에 `.vsix` 파일이 생성된다.
+
+## 9. 테스트 실행 및 재현
+
+### 9.1 Python 테스트 실행
+
+```bash
+PYTHON=.venv-test/bin/python bash tests/run_tests.sh backend --save
+PYTHON=.venv-test/bin/python bash tests/run_tests.sh ai --save
+```
+
+- 저장 위치: `test-results/program_backend/`, `test-results/program_AI/`
+- backend 단위 테스트는 외부 모델 서버 없이 실행되도록 작성되어 있다.
+- backend 통합 테스트와 AI 테스트는 실제 모델 서버가 없으면 skip되도록 작성되어 있다.
+- 문서 작성 중 현재 환경에서는 `pytest`가 없어 Python 테스트를 실행하지 못했다. 위 3.3 설치 후 재실행해야 한다.
+
+### 9.2 VS Code 확장 Node 테스트 실행
+
+현재 상위 `package.json`에는 `test:extension` 계열 npm script가 없으므로 직접 Node 테스트 명령을 사용한다.
+
+```bash
+node --test --test-reporter=spec tests/program_extension/src/*.test.js
+```
+
+JUnit XML이 필요하면 다음처럼 실행한다.
+
+```bash
+mkdir -p test-results/program_extension
+node --test \
+  --test-reporter=junit \
+  --test-reporter-destination=test-results/program_extension/junit.xml \
+  --test-reporter=spec \
+  tests/program_extension/src/*.test.js
+```
+
+문서 작성 중 직접 실행한 결과는 25개 중 16개 통과, 9개 실패였다. 주요 실패 항목은 다음과 같다.
+
+- `R-EX-02`: 미리보기 액션 버튼 기대값과 현재 렌더링 결과 불일치
+- `R-EX-07`: Cancel 동작에서 `@refine` 접두어 기대값과 현재 구현 불일치
+- `R-EX-11`: 실패 UI, 서버 성공/실패 시 refiner 동작, `refineDetailed` export 기대값과 현재 구현 불일치
+
+현재 `test-results/`에는 README 안내 문서만 있고, `junit.xml` 또는 `output.txt` 실행 산출물은 포함되어 있지 않다. `--save` 또는 JUnit 명령으로 생성할 수 있다.
+
+## 10. DevOps 8개 기준 대응
+
+| 번호 | 기준 | 제출물 기준 대응 | 상태 |
+|---:|---|---|---|
+| 1 | 사용한 라이브러리 목록 명시 | `requirements.txt`, 프로그램별 `requirements.txt`, `tests/requirements-test.txt`, `package.json` | 명시됨 |
+| 2 | 라이브러리 버전 고정 | Python 직접 의존성은 `==` 고정, `@vscode/vsce`는 `3.6.0` 명시. Node lockfile은 없음 | 부분 충족 |
+| 3 | 빌드·설치 방법 문서화 | 본 문서 3장에 AI, 백엔드, 테스트, Node 설치 절차 작성 | 문서화됨 |
+| 4 | 실행·기동 방법 문서화 | AI vLLM 스크립트, 백엔드 uvicorn, VS Code F5, VSIX 패키징 절차 작성 | 문서화됨 |
+| 5 | 환경 변수·설정 파일 문서화 | `src/program_backend/.env.example`, `.env` 작성 예시, 확장 설정 키 설명 | 문서화됨 |
+| 6 | 외부 서비스·자원 안내 | GPU/모델 접근 권한, 외부 OpenAI 호환 엔드포인트, API 키, VS Code/Copilot, Chroma 번들 DB 안내 | 문서화됨 |
+| 7 | 빌드·설치가 문서대로 성공하는가 | 설치 절차는 문서화되어 있으나 제출물에 설치 성공 로그는 없음 | 확인 필요 |
+| 8 | 애플리케이션이 실행·기동되는가 | `/health`, `/refine`, 웹 데모, `@refine`, VSIX, 테스트 실행 검증 절차 제공. 실제 저장된 실행 로그는 없음 | 확인 필요 |
+
+## 11. 현재 확인된 제한 사항
+
+- `test-results`에는 현재 README 안내 문서만 있고 자동 생성된 JUnit/콘솔 로그 파일은 없다.
+- AI 서버 실행은 GPU, CUDA, 모델 다운로드, 모델 접근 권한에 의존한다.
+- 백엔드 `/refine`은 LLM, 임베딩, 리랭커 서버와 `.env` 설정이 준비되어야 성공한다.
+- VS Code 확장의 현재 활성 정제 경로는 고정 문자열 테스트 모드이다.
+- 확장 Node 테스트는 현재 코드 기준 25개 중 9개가 실패한다.
+- `tests/run_tests.sh`의 `extension` 대상은 `npm run test:extension`을 호출하지만, 현재 상위 `package.json`에는 해당 script가 없어 직접 `node --test ...` 명령을 사용해야 한다.
