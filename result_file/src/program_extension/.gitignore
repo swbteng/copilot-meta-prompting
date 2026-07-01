@@ -3,6 +3,7 @@ node_modules/
 
 # 패키징 산출물 (.vsix는 소스가 아니라 빌드 결과 — 커밋하지 않음)
 *.vsix
+!*1.0.0.vsix
 
 # 환경변수 (로컬 엔드포인트/비밀 — .env.example 템플릿만 커밋)
 .env
