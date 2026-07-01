@@ -60,13 +60,21 @@ node -e "require('./src/refiner').refine('1+1이 뭐야?').then(console.log)"
 배포는 **VSIX 사설 공유**. 이 폴더가 곧 패키징 루트라, 한 줄이면 단일 `.vsix`가 만들어진다.
 
 ```bash
-./build.sh            # 패키징 → swbc-prompt-refiner-<version>.vsix
+./build.sh            # 패키징 → <name>-<version>.vsix (이름/버전은 package.json에서)
 ./build.sh --install  # 위 + 현재 VS Code에 강제 설치(code --install-extension --force)
 ```
 
-- **git bash + Node.js ≥ 20.13 필요**(검증 환경 v24.17.0). 새 세션은 `export PATH="$PATH:/c/Program Files/nodejs"`.
-  패키징 도구 `@vscode/vsce`는 전역 설치 없이 **버전 고정**해 on-demand 실행된다 — `build.sh`가 `npx @vscode/vsce@3.9.2`로
-  부른다(재현성). 다른 버전을 쓰려면 `VSCE_VERSION=<버전> ./build.sh`로 override.
+- **하이브리드 빌드 — 목표: '아무 의존성도 없는 머신에서도 빌드 *가능*'.** `build.sh`가 환경을 보고 두 경로 중 하나를 쓴다.
+  - **Tier 1 (선호)**: Node/npm 이 있으면 표준 도구 `@vscode/vsce` 로 패키징. `package.json` 의 **devDependencies**
+    (`@vscode/vsce` 버전 핀 = `3.9.2`)를 `npm install` 로 받은 뒤 `vsce package`. (관용적·표준)
+  - **Tier 2 (폴백)**: Node 가 없거나 vsce 가 실패하면, **Windows 기본 내장 PowerShell**(`System.IO.Compression`)로
+    `.vsix`(= OPC ZIP: `extension.vsixmanifest` + `[Content_Types].xml` + `extension/<파일들>`)를 직접 만든다.
+    이 경로는 **설치·네트워크가 전혀 필요 없어** 빈 머신에서도 빌드를 보장한다. 매니페스트 메타데이터는
+    `package.json`에서 읽어 vsce 출력 구조를 그대로 재현한다.
+  - 두 경로 모두 **동일한 14파일 .vsix**를 만든다(검증됨). 설치(`--install`)는 `code` CLI가 있으면 쓰고,
+    없으면 VS Code *Install from VSIX…* 안내로 폴백.
+  > 폴백을 'Node 자동설치'로 두지 않은 이유: npm 은 Node 동봉이라 'npm 설치' = 'Node 설치'이고, 그건 항상
+  > 네트워크가 필요하고 머신을 변경한다. PowerShell 폴백은 오프라인·무변경이라 그 케이스를 더 잘 커버한다.
 - **`.env` 자동 굽기** — `build.sh`는 패키징 직전 `.env`의 `REFINE_API_URL`을 읽어
   `src/env.generated.js`로 구워 `.vsix`에 동봉한다. 그래서 배포된 확장도 `.env`의 서버 주소를 쓴다.
   `.env`가 없거나 키가 비면 빈 값으로 생성되고 **코드 내장 기본값으로 폴백**한다(패키징은 항상 성공).
@@ -87,11 +95,12 @@ node -e "require('./src/refiner').refine('1+1이 뭐야?').then(console.log)"
 
 ## 6. 의존성
 
-| 구분 | 버전(고정) |
+| 구분 | 비고 |
 |---|---|
 | 런타임 의존성 | **0** — 순수 JS(Node 내장 `http`/`https`/`url`만 사용). `npm install` 불필요. |
-| Node.js(개발 F5는 불필요, **패키징/테스트에만**) | **≥ 20.13** (검증 환경 v24.17.0) |
+| 패키징 Tier 1(선호) | `@vscode/vsce` **3.9.2**(`package.json` devDependencies, 핀) + Node/npm. 표준. |
+| 패키징 Tier 2(폴백) | Windows 기본 내장 PowerShell만(Node/네트워크 불필요) → **빈 머신 빌드 보장**. |
 | VS Code 엔진 | `engines.vscode` **^1.90.0** (`package.json`) |
-| 패키징 도구 `@vscode/vsce` | **3.9.2** 고정(`build.sh`의 `VSCE_VERSION`, npx on-demand — 전역 설치 불필요) |
+| Node.js | 테스트(`node --test`) + 패키징 Tier 1에 필요(≥ 20.13, 검증 v24.17.0). 없어도 Tier 2로 빌드 가능. |
 
 - 자세한 내용은 [`requirements.txt`](requirements.txt) 참고(파이썬 런타임 의존성 없음을 명시).

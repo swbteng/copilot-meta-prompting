@@ -5,7 +5,9 @@
   "description": "SW Bootcamp 13기 C반 4팀 결과파일 루트. 프로그램별 소스(src/), 테스트(tests/), 결과(test-results/)를 program_<역할>로 분리.",
   "type": "commonjs",
   "scripts": {
-    "test:extension": "node --test --test-reporter=spec tests/program_extension/src/*.test.js",
-    "test:extension:junit": "node --test --test-reporter=junit --test-reporter-destination=test-results/program_extension/junit.xml --test-reporter=spec --test-reporter-destination=stdout tests/program_extension/src/*.test.js"
+    "test:extension": "node --test --test-reporter=spec \"tests/program_extension/src/*.test.js\"",
+    "test:extension:junit": "node --test --test-reporter=junit --test-reporter-destination=test-results/program_extension/junit.xml --test-reporter=spec --test-reporter-destination=stdout \"tests/program_extension/src/*.test.js\"",
+    "test:extension:coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"tests/**\" --test-reporter=spec \"tests/program_extension/src/*.test.js\"",
+    "test:extension:coverage:lcov": "node --test --experimental-test-coverage --test-coverage-exclude=\"tests/**\" --test-reporter=lcov --test-reporter-destination=test-results/program_extension/coverage.lcov --test-reporter=spec --test-reporter-destination=stdout \"tests/program_extension/src/*.test.js\""
   }
 }
