@@ -13,7 +13,7 @@ export TORCH_HOME=/workspace/.cache/torch
 # AWQ quantization is auto-detected from the model config.
 # 262144 native context won't fit on one A40 (46GB) alongside the 4-bit weights,
 # so max-model-len is capped; raise it if you have KV-cache headroom.
-exec .venv/bin/vllm serve cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit \
+exec vllm serve cyankiwi/Qwen3.6-35B-A3B-AWQ-4bit \
   --host 0.0.0.0 \
   --port 4000 \
   --tensor-parallel-size 1 \

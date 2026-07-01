@@ -1,7 +1,7 @@
 # program_backend — 메타 프롬프팅 API 서버
 
 사용자 프롬프트를 받아 **정제 → 벡터 검색 → 리랭킹 → 최종 프롬프트 생성** 파이프라인을 실행하고
-결과를 돌려주는 FastAPI 서버입니다. VSCode 확장(프록시)이 이 서버로 요청을 보냅니다.
+결과를 돌려주는 FastAPI 서버입니다. VSCode 확장이 이 서버의 `/refine` 로 요청을 보냅니다.
 
 ```
 사용자 입력
@@ -26,15 +26,15 @@ top-n 템플릿
 
 | 메서드 | 경로 | 입력 | 출력 |
 | :-- | :-- | :-- | :-- |
-| GET | `/health` | — | `{"status":"ok", ...}` |
+| GET | `/health` | — | `{"status":"ok"}` |
 | POST | `/refine` | `{"prompt", "chroma_top_k?", "top_n?"}` | `{"refined", "translated_input", "rewritten_prompt", "templates"}` |
 | POST | `/rewrite` | `{"prompt"}` | `{"translated_input", "rewritten_prompt", "finish_reason"}` |
 | POST | `/search` | `{"query", "top_k?"}` | `{"query", "results":[...]}` |
 | POST | `/rerank` | `{"query", "chroma_top_k?", "top_n?"}` | `{"query", "results":[...]}` |
-| POST | `/generate` | `{"user_request", "templates":[...]}` | `{"adapted_prompt", "finish_reason"}` |
+| POST | `/generate` | `{"translated_input", "rewritten_prompt", "templates":[...]}` | `{"adapted_prompt", "finish_reason"}` |
 
 - `/refine` 가 전체 파이프라인이고, 나머지 4개는 각 단계를 따로 실행/디버깅하는 용도입니다.
-- `/refine` 응답의 `refined` 키는 확장↔서버 계약(`refiner.js`, `refine_copilot.py`)에 맞춘 최종 결과입니다.
+- `/refine` 응답의 `refined` 키는 확장↔서버 계약(확장 `src/refiner.js`)에 맞춘 최종 결과입니다.
 - 자동 문서: 서버 실행 후 `/docs` (Swagger UI).
 
 ## 설정 (.env)

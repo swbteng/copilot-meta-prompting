@@ -4,7 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-export CUDA_VISIBLE_DEVICES=2
+export CUDA_VISIBLE_DEVICES=1
 export VLLM_CACHE_ROOT=/workspace/.cache/vllm
 export TRITON_CACHE_DIR=/workspace/.cache/triton
 export TORCH_HOME=/workspace/.cache/torch
@@ -12,10 +12,10 @@ export TORCH_HOME=/workspace/.cache/torch
 
 # Qwen3-Reranker is a causal LM; vLLM converts it to a sequence-classification
 # scorer via hf-overrides so it works with the score/rerank API.
-exec .venv/bin/vllm serve Qwen/Qwen3-Reranker-4B \
+exec vllm serve Qwen/Qwen3-Reranker-4B \
   --host 0.0.0.0 \
   --port 4002 \
   --tensor-parallel-size 1 \
-  --max-model-len 10000 \
-  --gpu-memory-utilization 0.85 \
+  --max-model-len 4096 \
+  --gpu-memory-utilization 0.30 \
   --hf-overrides '{"architectures":["Qwen3ForSequenceClassification"],"classifier_from_token":["no","yes"],"is_original_qwen3_reranker":true}'
