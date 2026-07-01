@@ -6,6 +6,18 @@ __pycache__/
 # C extensions
 *.so
 
+# 1. 모든 경로에서 아래 파일들을 무시 (하위 폴더 포함)
+README.md
+AGENTS.md
+CLAUDE.md
+RUN.md
+
+# 2. 단, 루트 폴더(/)에 있는 파일들은 예외 처리 (무시하지 않음)
+!/README.md
+!/AGENTS.md
+!/CLAUDE.md
+!/RUN.md
+
 # Distribution / packaging
 .Python
 build/
