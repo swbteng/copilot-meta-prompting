@@ -6,9 +6,6 @@ node_modules/
 !*1.0.0.vsix
 
 # 환경변수 (로컬 엔드포인트/비밀 — .env.example 템플릿만 커밋)
-.env
-.env.local
-.env.*.local
 
 # build.sh가 .env를 vsix에 구워 넣을 때 생성하는 파일(빌드 산출물 — 커밋 안 함, .vsix에는 동봉됨)
 src/env.generated.js
