@@ -173,23 +173,27 @@ def rerank(
 def _generate_prompt(translated_input: str, rewritten_prompt: str, templates: list[str]) -> str:
     blocks = "\n\n".join(f"### Reference Template {i + 1}\n{tpl}" for i, tpl in enumerate(templates))
     return f"""You are an expert prompt engineer. Your task is to write a high-quality prompt that precisely serves the user's request, using the provided reference templates as supplementary reference only.
-
-## User's Original Request
-{translated_input}
-
-## Rewritten (Clarified) Prompt
-{rewritten_prompt}
-
-## Output Format
-Output only the final prompt in Korean. Do not include any titles, labels, descriptions, or explanatory text outside the prompt content itself. No language other than Korean is permitted.
-
-## Instructions
-Write a prompt that fully reflects the user's intent based on the **User's Original Request** and the **Rewritten (Clarified) Prompt**. Use the reference templates below only as supplementary inspiration — the user's request takes priority over everything in the templates.
-
-## Reference Prompt Templates (Top {len(templates)} Most Relevant)
-
+    
+    ## User's Original Request
+    {translated_input}
+    
+    ## Rewritten (Clarified) Prompt
+    {rewritten_prompt}
+    
+    ## Output Format
+    Output only the final prompt in Korean. Do not include any titles, labels, descriptions, or explanatory text outside the prompt content itself. No language other than Korean is permitted.
+    
+    ## Instructions
+    Write a prompt that fully reflects the user's intent based on the **User's Original Request** and the **Rewritten (Clarified) Prompt**.
+    
+    The reference templates below are retrieved results that have been empirically validated and are widely recognized as high-performing prompt patterns. Treat them as a reliable source of structural and stylistic techniques — learn from their composition, phrasing, and format where applicable. However, the user's specific request always takes priority: adapt and extract only what genuinely serves the user's goal, and discard anything that does not align with their intent.
+    
+    ## Reference Prompt Templates (Top {len(templates)} Most Relevant)
+    ※ These templates are retrieved based on relevance and represent proven, effective prompt structures. Use them as inspiration for crafting the optimal prompt — not as rigid templates to copy.
+  
 {blocks}
 """
+ 
 
 def generate(translated_input: str, rewritten_prompt: str, templates: list[str]) -> dict[str, Any]:
     """(4단계) 번역된 원문 + 정제 프롬프트 + 후보 템플릿들로 최종 적응 프롬프트를 생성한다.
