@@ -64,7 +64,7 @@ function actionLink(icon, label, command, args) {
   return "[$(" + icon + ") " + label + "](command:" + command + "?" + q + ")";
 }
 
-// R-EX-11 통신 실패 시 쓰는 축소 액션 집합(원본 전송 / 취소). 신뢰 명령 목록으로도 쓴다.
+// R-24 통신 실패 시 쓰는 축소 액션 집합(원본 전송 / 취소). 신뢰 명령 목록으로도 쓴다.
 const FALLBACK_COMMANDS = [
   "swbcPromptRefiner.refineUseOriginal",
   "swbcPromptRefiner.refineTryAgain",
@@ -78,7 +78,7 @@ function renderFailureButtons(stream, original) {
   stream.button({ command: "swbcPromptRefiner.refineCancel", title: "취소 (cancel)", arguments: [original] });
 }
 
-// R-EX-11: 정제 서버 타임아웃/오류 시 — 무한 로딩 없이 '에러 메시지 + Use original/재시도/Cancel'
+// R-24: 정제 서버 타임아웃/오류 시 — 무한 로딩 없이 '에러 메시지 + Use original/재시도/Cancel'
 // Fallback UI를 띄운다. throw하지 않는다(fail-open). 재시도는 동일 원본으로 정제 서버에 다시 요청한다.
 function renderFailureFallback(stream, original) {
   stream.markdown("⚠️ 정제 서버 호출에 **실패**했습니다(타임아웃 또는 오류). 무한 로딩 없이 아래에서 선택하세요.\n\n");
@@ -169,7 +169,7 @@ async function handler(request, context, stream, token) {
     }
     const result = await refinePrompt(text);
     if (!result || result.ok === false) {
-      // R-EX-11: 정제 서버 실패 -> 에러 메시지 + Use original/Cancel Fallback UI.
+      // R-24: 정제 서버 실패 -> 에러 메시지 + Use original/Cancel Fallback UI.
       renderFailureFallback(stream, text);
       return;
     }

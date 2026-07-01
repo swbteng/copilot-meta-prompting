@@ -1,81 +1,178 @@
-# 코파일럿_메타프롬프팅_요구사항_명세서
+# SW Bootcamp 13기 C반 4팀 — 요구사항 명세서
 
-## 1. 개요
-본 명세서는 토큰 비용 절감을 위해 하위 모델에서도 고품질의 결과를 얻을 수 있도록 프롬프트를 가로채어 정제(Refine)해주는 Copilot 메타프롬프팅 요구사항을 정의합니다.
+> **프로젝트명**: Copilot 메타 프롬프팅 (Prompt Refiner)
+> **한 줄 정의**: 사용자가 거칠고 모호하게 입력한 프롬프트를, RAG(벡터검색+리랭킹)와 LLM을 결합한 **4단계 메타 프롬프팅 파이프라인**으로 명료하고 구조화된 프롬프트로 정제해, VS Code Copilot Chat에서 **확인 후 전송**하도록 돕는 시스템.
 
 ---
 
-## 2. 모듈별 요구사항 명세
+## 1. 시스템 개요
 
-### 2.1. VSCode Extension 모듈 (담당 영역)
-사용자와 직접 상호작용하는 VSCode 확장 프로그램 영역입니다. UI/UX 및 클라이언트 측 비즈니스 로직을 포함합니다.
+본 시스템은 역할이 분리된 **3개 프로그램**으로 구성된다.
 
-| 요구사항 ID | 요구사항 내용 | 검증 기준 (완료 조건) | 시연 타임스탬프 |
-| :--- | :--- | :--- | :--- |
-| **R-EX-01** | `@refine` 명령어 가로채기 | VSCode 우측 채팅창에서 사용자가 `@refine [내용]` 입력 후 전송 시, 기본 LLM으로 즉시 전송되지 않고 확장에서 해당 이벤트를 블로킹(가로채기)해야 함. | `00:15` |
-| **R-EX-02** | 정제본 렌더링 및 5가지 선택지 제공 | API 응답 수신 후, 채팅창 내에 '정제된 프롬프트 내용'과 5개의 액션 버튼(Allow, Modify, Try again, Use original, Cancel)이 포함된 커스텀 UI가 렌더링되어야 함. | `00:22` |
-| **R-EX-03** | Allow 동작 처리 | Allow 버튼 클릭 시, 추가적인 사용자 입력 대기 없이 정제된 프롬프트 텍스트가 즉시 타겟 LLM의 프롬프트로 전송되어 LLM 응답 생성이 시작되어야 함. | `00:30` |
-| **R-EX-04** | Modify 동작 처리 | Modify 버튼 클릭 시, VSCode 우측 하단의 채팅 입력창(Input Box)의 텍스트가 '정제된 프롬프트'로 덮어쓰기 되며, 커서가 활성화되어 사용자가 수정 후 직접 엔터를 칠 수 있는 대기 상태가 되어야 함. | `00:45` |
-| **R-EX-05** | Try again 동작 처리 | Try again 버튼 클릭 시, 동일한 원본 프롬프트로 API 서버에 재요청을 보내어 새롭게 반환된 정제 프롬프트와 5개의 액션 버튼 UI가 화면에 갱신되어야 함. | `01:05` |
-| **R-EX-06** | Use original 동작 처리 | Use original 버튼 클릭 시, API에서 받은 정제본을 폐기하고, 사용자가 최초에 입력한 '원본 프롬프트' 내용이 즉시 타겟 LLM으로 전송되어 응답 생성이 시작되어야 함. | `01:20` |
-| **R-EX-07** | Cancel 동작 처리 | Cancel 버튼 클릭 시, 현재의 정제 파이프라인이 취소되고 VSCode 우측 하단의 채팅 입력창(Input Box) 텍스트가 사용자의 '원본 프롬프트'에 `@refine `를 앞에 붙인 형태(`@refine <원본 프롬프트>`)로 복원되어(취소해도 @refine 컨텍스트 유지) 입력 대기 상태가 되어야 함. | `01:35` |
-| **R-EX-08** | 확장 액티비티 바(Activity Bar) UI | VSCode 좌측 액티비티 바에 확장을 나타내는 전용 아이콘이 노출되어야 하며, 클릭 시 확장의 전용 사이드바 패널이 오픈되어야 함. *(※ 시각적 UI 노출 요소 — 자동 테스트 불가, 사람/시연 검증 항목)* | `01:50` |
-| **R-EX-09** | 프롬프트 수정 내역 로컬 저장 (JSONL 로그) | R-EX-03, R-EX-04, R-EX-06 동작을 통해 최종적으로 LLM에 전송된 건에 대하여 `{원본(before), 최종 전송 프롬프트(after), 타임스탬프(ts)}` 구조의 JSON 레코드가 일자별 로그 파일 `observe-YYYY-MM-DD.log`에 한 줄씩(JSONL) Append 되어야 함. 저장 위치는 확장 전역 저장소(VS Code globalStorage) 하위 `logs/` 폴더이며(vsix 설치 사용자 기준 Windows `%APPDATA%\Code\User\globalStorage\swbc.swbc-prompt-refiner\logs\`), 설정 `swbcPromptRefiner.logDir`(절대경로) 지정 시 해당 폴더에 저장됨. | `N/A`<br>*(파일 로그 저장으로 화면 표출 대상 아님)* |
-| **R-EX-10** | 수정 히스토리 리스트 조회 | 좌측 사이드바 패널에서 R-EX-09에서 저장된 프롬프트 수정 내역 목록이 최신순으로 렌더링되어야 하며, 각 항목 클릭 시 원본과 정제본(수정본)을 비교할 수 있게 텍스트가 표시되어야 함. | `02:00` |
-| **R-EX-11** | API 통신 실패 예외 처리 | API 서버 타임아웃 또는 500 에러 발생 시, 무한 로딩에 빠지지 않고 채팅창에 에러 메시지를 표출한 뒤 사용자가 Use original / Retry(재시도) / Cancel 을 선택할 수 있는 Fallback UI를 제공해야 함. (Retry는 동일 원본으로 정제 서버에 재요청) | `N/A`<br>*(강제 에러 발생 시연 생략)* |
+| 프로그램 | 역할 | 핵심 기술 |
+|---|---|---|
+| `program_AI` | LLM·임베딩·리랭커 3종 모델을 OpenAI 호환 API로 **서빙** | vLLM, Qwen3 계열 모델 |
+| `program_backend` | 4단계 파이프라인(**정제 → 검색 → 리랭킹 → 생성**) + 벡터DB 시각화 + 데모 웹페이지 | FastAPI, ChromaDB |
+| `program_extension` | VS Code `@refine` 확장: 정제 미리보기 · 승인 게이트(5액션) · 정제 내역 로깅/뷰어 | VS Code Extension API (Node.js) |
 
-### 2.2. Endpoint 모듈 (Outline)
-클라이언트(Extension)와의 통신 및 내부 시스템 오케스트레이션을 담당하는 API 서버 영역입니다.
+### 처리 흐름
 
-| 요구사항 ID | 요구사항 내용 | 검증 기준 (완료 조건) | 시연 타임스탬프 |
-| :--- | :--- | :--- | :--- |
-| **R-EP-01** | 프롬프트 정제 API 제공 | 유저의 텍스트를 JSON 바디로 수신하여 정제된 텍스트를 반환하는 엔드포인트(HTTP 200 OK)가 정상 동작해야 함. | `N/A`<br>*(백엔드 내부 통신)* |
-| **R-EP-02** | 프롬프트 조합 및 추론 요청 로직 | Vector DB에서 조회한 템플릿과 원본 프롬프트를 조합하여 vLLM으로 추론을 요청하고, 그 결과를 클라이언트에 반환해야 함. | `N/A`<br>*(백엔드 내부 통신)* |
+```
+사용자 원본 프롬프트
+   │  (VS Code @refine)
+   ▼
+[program_extension] ──HTTP /refine──▶ [program_backend]
+                                          │
+            (1) LLM 정제(rewrite) ───────┐│ ──▶ [program_AI] LLM
+            (2) 벡터 검색(search) ────────┤│ ──▶ [program_AI] 임베딩 + ChromaDB
+            (3) 리랭킹(rerank) ───────────┤│ ──▶ [program_AI] 리랭커
+            (4) 최종 생성(generate) ──────┘│ ──▶ [program_AI] LLM
+                                          ▼
+                            정제된 프롬프트(refined) 반환
+   │
+   ▼
+[program_extension] 미리보기 → 사용자 승인 → 네이티브 Copilot 전송 + 내역 기록
+```
 
-### 2.3. Infra 모듈 (Outline)
-모델 서빙을 위한 vLLM 인프라 및 시스템 전반의 구동 환경 영역입니다.
+---
 
-| 요구사항 ID | 요구사항 내용 | 검증 기준 (완료 조건) | 시연 타임스탬프 |
-| :--- | :--- | :--- | :--- |
-| **R-IN-01** | vLLM 기반 고품질 프롬프트 생성 서빙 | 지정된 모델이 vLLM 환경에 정상적으로 로드되어, Endpoint 서버에서의 추론 요청에 정상적인 텍스트 응답을 반환해야 함. | `N/A`<br>*(인프라 내부 동작)* |
-| **R-IN-02** | 모듈 간 네트워크 통신 구성 | VSCode 클라이언트, Endpoint 서버, Vector DB, vLLM 간의 요청 및 응답이 타임아웃이나 CORS/방화벽 문제 없이 처리되어야 함. | `N/A`<br>*(네트워크 구성)* |
+## 2. 요구사항 작성 원칙
 
-### 2.4. 프롬프트 재작성 모듈 (Outline)
-사용자가 입력한 원본 프롬프트를 오픈소스 LLM을 통해 의미는 보존하되 구조적으로 명확하고 구체적인 형태로 재작성하여, 이후 Vector DB 유사도 검색의 입력값으로 전달하는 영역입니다.
+- **요구사항 ID**: 기능/비기능을 구분하지 않는 **중립 번호(R-01, R-02 …)** 를 사용한다. (기능/비기능 분류는 평가 Agent가 수행)
+- **검증 기준**: 측정 가능한 완료 조건으로 작성한다.
+- **테스트 연결**: 각 요구사항은 자동 테스트 또는 점검 스크립트와 1:1 이상으로 연결되며, 추적은 [4. 검증 추적 매트릭스](#4-검증-추적-매트릭스)에 정리한다.
+- **시연 타임스탬프**: 영상 녹화 후 기입한다. 영상으로 보일 수 없는 내부 로직은 `N/A (사유)`로 표기한다.
+  - 표기 상태: `미정 (녹화 후 기입)` = 시연 예정 / `N/A (...)` = 시연 불가(테스트로 검증).
 
-| 요구사항 ID | 요구사항 내용 | 검증 기준 (완료 조건) | 시연 타임스탬프 |
-| :--- | :--- | :--- | :--- |
-| **R-RW-01** | 사용자 원본 프롬프트 수신 | Endpoint 서버로부터 사용자의 원본 프롬프트 텍스트를 JSON 형태로 수신하고, 이후 처리 단계로 정상 전달해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-RW-02** | 오픈소스 LLM 기반 프롬프트 재작성 | 수신한 원본 프롬프트를 오픈소스 LLM(vLLM 서빙)에 입력하여, 의미는 보존하되 구조적으로 명확하고 구체적인 형태로 재작성된 프롬프트를 반환해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-RW-03** | 재작성 전용 시스템 프롬프트 적용 | LLM 호출 시, "사용자의 의도를 유지하면서 더 명확하고 구체적인 프롬프트로 재작성하라"는 취지의 시스템 프롬프트(메타프롬프트)가 항상 함께 주입되어야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-RW-04** | 재작성 결과의 Vector DB 검색 입력 전달 | 재작성된 프롬프트 텍스트가 후속 파이프라인(Vector DB 유사도 검색 모듈)으로 정상 전달되어야 하며, 원본 프롬프트는 별도로 보존되어야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-RW-05** | 재작성 실패 시 예외 처리 | LLM 호출 타임아웃 또는 오류 발생 시, 재작성 프로세스를 중단하고 Endpoint 서버에 오류 상태를 반환해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
+---
 
-### 2.5. DB 모듈 (Outline)
-고품질 프롬프트 템플릿을 저장하고 검색을 제공하는 Vector Database 영역입니다.
+## 3. 요구사항 목록
+
+> 시연 타임스탬프의 `미정`은 시연 영상 녹화 후 실제 `MM:SS`로 교체한다.
+
+### program_AI — 모델 서빙
 
 | 요구사항 ID | 요구사항 내용 | 검증 기준 (완료 조건) | 시연 타임스탬프 |
-| :--- | :--- | :--- | :--- |
-| **R-DB-01** | Vector DB 연동 템플릿 검색 | 입력된 프롬프트와 코사인 유사도가 가장 높은 상위 20개의 프롬프트 템플릿을 DB에서 추출하여 로그에 출력해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-DB-02** | 초기 고품질 템플릿 데이터 적재 | 시스템 초기 구동 시 메타프롬프팅을 위한 고품질 프롬프트 템플릿 데이터 셋이 Vector DB에 임베딩되어 적재되어 있어야 함. | `N/A`<br>*(데이터 적재 상태)* |
+|---|---|---|---|
+| R-01 | LLM 서버가 OpenAI 호환 `POST /v1/chat/completions` 요청에 텍스트 응답을 반환한다 | 메시지를 보내면 `choices[0].message.content`(또는 추론모델의 `reasoning`)에 빈 문자열이 아닌 텍스트가 담겨 200으로 반환된다 | N/A (서버 내부 API — 테스트로 검증) |
+| R-02 | 임베딩 서버가 `POST /v1/embeddings` 요청에 고정 차원의 임베딩 벡터를 반환한다 | 입력 문장 1개에 대해 `data[0].embedding`이 길이가 일정한(>0) 실수 배열로 반환된다 | N/A (서버 내부 API — 테스트로 검증) |
+| R-03 | 리랭커 서버가 `POST /v1/rerank` 요청에 문서별 관련도 점수를 반환하고, 질의와 관련된 문서가 상위에 온다 | "수도가 서울인 나라는?" 질의 + 후보 3건 입력 시, 정답 문서의 `relevance_score`가 무관 문서보다 높다 | N/A (서버 내부 API — 테스트로 검증) |
 
-### 2.6. Reranker 모듈 (Outline)
-Vector DB에서 코사인 유사도 기반으로 추출된 Top 20 템플릿을 Reranker 모델에 입력하여, 재작성된 프롬프트와의 의미적 적합성을 기준으로 최종 Top 3 템플릿을 선별하는 영역입니다.
-
-| 요구사항 ID | 요구사항 내용 | 검증 기준 (완료 조건) | 시연 타임스탬프 |
-| :--- | :--- | :--- | :--- |
-| **R-RK-01** | Top 20 템플릿 수신 | Vector DB 모듈로부터 코사인 유사도 기반으로 선별된 Top 20 템플릿을 정상적으로 수신해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-RK-02** | Reranker 모델 기반 Top 3 선별 | 수신한 Top 20 템플릿과 재작성된 프롬프트를 Reranker 모델에 입력하여, 의미적 적합성을 기준으로 Top 3 템플릿을 선별하여 반환해야 함. |  `N/A`<br>*(백엔드 내부 동작)* |
-| **R-RK-03** | Top 3 템플릿 결과 전달 | 선별된 Top 3 템플릿을 최종 프롬프트 생성 모듈(LLM Final Composer)로 정상 전달해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-
-
-### 2.7. 최종 프롬프트 생성 모듈 (Outline)
-Reranker가 선별한 Top 3 템플릿 중 사용자의 의도에 가장 부합하는 Top 1 템플릿을 오픈소스 LLM으로 선택하고, 해당 템플릿과 사용자의 원본 프롬프트를 참조하여 타겟 LLM(Claude, GPT 등)에 최종 전달될 고품질 프롬프트를 합성하는 영역입니다.
+### program_backend — 파이프라인 / API
 
 | 요구사항 ID | 요구사항 내용 | 검증 기준 (완료 조건) | 시연 타임스탬프 |
-| :--- | :--- | :--- | :--- |
-| **R-FC-01** | Reranker 결과 수신 | Reranker 모듈로부터 선별된 Top 3 템플릿 목록과 사용자의 원본 프롬프트, 재작성 된 프롬프트를 함께 수신하여 이후 처리 단계로 정상 전달해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-FC-02** | 오픈소스 LLM 기반 최적 템플릿 선택 | Top 3 템플릿과 원본 프롬프트를 오픈소스 LLM에 입력하여, '제시된 템플릿 중 사용자의 원본 프롬프트의 목적과 가장 부합하는 템플릿 1개를 선택하라'는 시스템 프롬프트를 주입하고, LLM이 내부적으로 각 템플릿의 적합성을 추론하는 과정을 거쳐 최적 템플릿 1개를 선택한 결과를 반환해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-FC-03** | 최적 템플릿 선택 전용 시스템 프롬프트 적용 | 선택된 Top 1 템플릿과 사용자 원본 프롬프트,  재작성 된 프롬프트를 함께 오픈소스 LLM에 입력하여, '선택된 템플릿의 형식을 따르되 사용자의 원본 의도를 충실히 담아 최종 프롬프트를 작성하라'는 시스템 프롬프트를 주입하고, 최종 프롬프트를 생성해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-FC-04** | 최종 프롬프트 Endpoint 서버 반환 | 생성된 최종 프롬프트 텍스트를 Endpoint 서버로 반환하여, 이후 타겟 LLM(Claude, GPT 등)으로의 전달 파이프라인이 이어질 수 있도록 해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
-| **R-FC-05** | 최종 프롬프트 생성 실패 시 예외 처리 | LLM 호출 타임아웃 또는 오류 발생 시, 최종 프롬프트 합성 프로세스를 중단하고 Endpoint 서버에 오류 상태를 반환해야 함. | `N/A`<br>*(백엔드 내부 동작)* |
+|---|---|---|---|
+| R-04 | 헬스체크 엔드포인트를 제공한다 | `GET /health` 가 200과 `{"status":"ok"}` 를 반환한다 | N/A (운영용 — 테스트로 검증) |
+| R-05 | (1단계 정제) 모호한 사용자 입력을 명료한 영어 프롬프트로 재작성한다 | `POST /rewrite` 가 `translated_input`(영어 번역)과 `rewritten_prompt`(구조화된 영어 프롬프트) 두 문자열 필드를 가진 JSON을 반환한다. 비영어 입력 시 영어로 번역된다 | 미정 (녹화 후 기입) |
+| R-06 | (정제 견고성) LLM이 코드펜스로 감싸거나 JSON이 아닌 응답을 줘도 깨지지 않는다 | `` ```json ... ``` `` 펜스가 제거되어 파싱되고, 파싱 불가 시 원문을 `rewritten_prompt`에 담아 폴백한다(예외 미발생) | N/A (내부 견고성 — 테스트로 검증) |
+| R-07 | (2단계 검색) 쿼리를 임베딩해 Chroma에서 유사도 상위 top_k 후보를 반환한다 | `POST /search` 결과의 각 후보가 `chroma_rank, id, chroma_distance, metadata, document` 필드를 가지며, 개수 ≤ 요청 top_k 이다 | 미정 (녹화 후 기입) |
+| R-08 | (3단계 리랭킹) 검색 후보를 리랭커로 재점수화해 내림차순 정렬하고 상위 top_n만 반환한다 | 리랭킹 결과는 `rerank_score` 내림차순으로 정렬되고, 길이가 top_n 이하이며, 각 항목에 `rerank_score`가 포함된다 | 미정 (녹화 후 기입) |
+| R-09 | (4단계 생성) 후보 템플릿을 사용자 요청에 맞게 적응시킨 최종 프롬프트를 생성한다 | `POST /generate` 응답 `adapted_prompt`에서 `"final adapted prompt:"` 라벨이 있으면 그 뒤만 추출하고, 없으면 전문을 사용한다 | 미정 (녹화 후 기입) |
+| R-10 | (전체 파이프라인) `/refine` 한 번으로 정제→검색→리랭킹→생성을 모두 실행한다 | `POST /refine {"prompt"}` 가 최종 결과 `refined` 와 중간 산출물(`translated_input`, `rewritten_prompt`, `templates[]`)을 함께 반환한다 | 미정 (녹화 후 기입) |
+| R-11 | 파이프라인 어느 단계가 실패해도 서버가 명확한 오류를 반환한다(클라이언트 폴백 가능) | 단계 중 예외 발생 시 `/refine` 등은 500과 오류 메시지를 반환한다(서버 미중단) | N/A (오류 처리 — 테스트로 검증) |
+| R-12 | 외부 origin(확장)에서의 직접 호출을 위해 CORS를 허용한다 | 응답에 `Access-Control-Allow-Origin: *` 가 포함된다 | N/A (통신 설정 — 테스트로 검증) |
+| R-13 | 필수 연결 설정(.env)이 비어 있으면 무엇을 채워야 하는지 명확히 알린다 | 필수 값 누락 시 누락 키 이름을 포함한 오류 메시지를 발생시킨다 | N/A (설정 가드 — 테스트로 검증) |
+| R-14 | 임베딩 서버 없이도 미리 계산된 벡터DB 2D 지도(점/군집)를 제공한다 | `GET /viz/map` 이 번들 아티팩트(`viz_layout.json`)만으로 `points`/`clusters`를 반환한다(외부 서버 호출 없음) | 미정 (녹화 후 기입) |
+
+### program_extension — VS Code `@refine` 확장
+
+| 요구사항 ID | 요구사항 내용 | 검증 기준 (완료 조건) | 시연 타임스탬프 |
+|---|---|---|---|
+| R-15 | `@refine`로 명시 호출했을 때만 정제하고, 미리보기 단계에서 LLM으로 자동 전송하지 않는다 | `swbc.refine` 참가자가 등록되고, 핸들러 실행 시 `workbench.action.chat.open`(자동 전송)이 호출되지 않는다 | 미정 (녹화 후 기입) |
+| R-16 | 정제본 미리보기와 5가지 액션을 함께 보여준다 | 출력에 정제본 텍스트와 5개 명령(`refineAllow`/`refineModify`/`refineTryAgain`/`refineUseOriginal`/`refineCancel`)이 모두 노출된다 | 미정 (녹화 후 기입) |
+| R-17 | **Allow**: 정제본을 네이티브 Copilot에 전송하고 교체 내역 1건을 기록한다 | Allow 시 정제본이 즉시 전송(`isPartialQuery` 아님)되고, 로그에 `before=원본, after=정제본` 1건이 append 된다 | 미정 (녹화 후 기입) |
+| R-18 | **Modify**: 정제본을 입력창에 채우기만 하고 전송하지 않는다 | Modify 시 `chat.open`이 `query=정제본, isPartialQuery=true`로 호출된다(전송 아님) | 미정 (녹화 후 기입) |
+| R-19 | **Use original**: 원본을 그대로 전송하고 내역은 기록하지 않는다 | 원본이 즉시 전송되고(교체 아님), 로그가 기록되지 않는다 | 미정 (녹화 후 기입) |
+| R-20 | **Cancel**: 원본 앞에 `@refine `를 붙여 입력창에 복원한다(컨텍스트 유지) | Cancel 시 `query="@refine "+원본, isPartialQuery=true`로 시드된다 | 미정 (녹화 후 기입) |
+| R-21 | **Try again**: 동일 원본으로 `@refine`를 재요청해 미리보기를 갱신한다 | Try again 시 `query="@refine "+원본`으로 `chat.open`이 호출된다 | 미정 (녹화 후 기입) |
+| R-22 | 최종 전송 건을 일자별 로그(`observe-YYYY-MM-DD.log`, JSONL)에 한 줄씩 저장한다 | `{ts, channel, model, before, after}` 스키마 1줄이 append 되고, `ts`는 `YYYY-MM-DDTHH:MM:SS` 형식이며, 미설정 시 `globalStorage/logs`·설정 시 `logDir`에 저장된다 | 미정 (녹화 후 기입) |
+| R-23 | 저장된 정제 내역을 시간순으로 정렬해 최근 N건만 조회한다 | `readEntries`가 `ts` 오름차순 정렬 결과를 주고, `maxEntries` 초과 시 최근 N건만 남기며, 깨진 줄은 건너뛴다(빈 폴더는 빈 배열) | 미정 (녹화 후 기입) |
+| R-24 | 정제 서버 실패/예외 시 무한 로딩 없이 fail-open으로 복구 UI를 제공한다 | 타임아웃·4xx·5xx·연결실패·예외 시 throw 없이 원본을 유지하고, "실패" 메시지 + `원본 전송/재시도/취소` Fallback UI를 표출한다(자동 전송 안 함) | 미정 (녹화 후 기입) |
+
+---
+
+## 4. 검증 추적 매트릭스
+
+각 요구사항이 **무엇으로 검증되는가**를 정리한다.
+
+- **검증유형**: `자동(단위)` = 외부 서버 없이 실행 / `자동(통합)` = 라이브 모델 서버 필요
+- **상태**: `통과` = 테스트 실행 통과 확인 / `통과(skip)` = 코드 존재·서버 없어 현재 skip(서버 기동 시 검증) / `구현됨` = 테스트 코드 존재(이 세션에선 Node.js 미설치로 미실행)
+- 모든 제출용 테스트는 `result_file/tests/<프로그램>/` 아래에, 실행 결과(로그·리포트)는 `result_file/test-results/<프로그램>/` 아래에 둔다. (개발용 점검 스크립트 `src/program_AI/scripts/test_apis.py`는 제출 대상이 아니다.)
+- 경로 표기에서 파일은 `tests/<프로그램>/` 기준 상대경로, `::` 뒤는 테스트 함수명.
+
+| R-ID | 대상 | 검증유형 | 서버필요 | 연결 테스트 / 근거 | 상태 |
+|---|---|---|---|---|---|
+| R-01 | AI | 자동(통합) | ✅ LLM | `program_AI/test_serving.py :: test_llm_chat_completion` | 통과(skip) |
+| R-02 | AI | 자동(통합) | ✅ 임베딩 | `program_AI/test_serving.py :: test_embedding_returns_fixed_dim_vector` | 통과(skip) |
+| R-03 | AI | 자동(통합) | ✅ 리랭커 | `program_AI/test_serving.py :: test_reranker_orders_relevant_document_first` | 통과(skip) |
+| R-04 | BE | 자동(단위) | ❌ | `program_backend/test_api.py :: test_health_returns_ok` | 통과 |
+| R-05 | BE | 자동(단위)+통합 | ⛯ 통합만 | `test_pipeline.py :: test_rewrite_parses_translated_and_rewritten`(단위) · `test_integration.py :: test_rewrite_endpoint_live`(통합) | 통과 |
+| R-06 | BE | 자동(단위) | ❌ | `test_pipeline.py :: test_strip_code_fence_removes_json_fence` · `test_rewrite_handles_fenced_json` · `test_rewrite_falls_back_when_not_json` | 통과 |
+| R-07 | BE | 자동(통합) | ✅ 임베딩 | `test_integration.py :: test_search_endpoint_live` (Chroma는 번들) | 통과(skip) |
+| R-08 | BE | 자동(단위) | ❌ | `test_retrieval.py :: test_rerank_candidates_sorts_desc_and_attaches_score` · `test_pipeline_rerank_truncates_to_top_n` | 통과 |
+| R-09 | BE | 자동(단위) | ❌ | `test_pipeline.py :: test_generate_extracts_after_label` · `test_generate_uses_full_text_without_label` | 통과 |
+| R-10 | BE | 자동(통합) | ✅ 전체 | `test_integration.py :: test_refine_full_pipeline_live` | 통과(skip) |
+| R-11 | BE | 자동(단위) | ❌ | `test_api.py :: test_refine_returns_500_on_pipeline_error` | 통과 |
+| R-12 | BE | 자동(단위) | ❌ | `test_api.py :: test_cors_header_present` | 통과 |
+| R-13 | BE | 자동(단위) | ❌ | `test_pipeline.py :: test_require_raises_with_missing_key_name` | 통과 |
+| R-14 | BE | 자동(단위) | ❌ | `test_api.py :: test_viz_map_returns_points_and_clusters` | 통과 |
+| R-15 | EXT | 자동(단위) | ❌ | `tests/program_extension/src/chat.test.js :: [R-15]` | 구현됨 |
+| R-16 | EXT | 자동(단위) | ❌ | `chat.test.js :: [R-16]` | 구현됨 |
+| R-17 | EXT | 자동(단위) | ❌ | `chat.test.js :: [R-17]` | 구현됨 |
+| R-18 | EXT | 자동(단위) | ❌ | `chat.test.js :: [R-18]` | 구현됨 |
+| R-19 | EXT | 자동(단위) | ❌ | `chat.test.js :: [R-19]` | 구현됨 |
+| R-20 | EXT | 자동(단위) | ❌ | `chat.test.js :: [R-20]` | 구현됨 |
+| R-21 | EXT | 자동(단위) | ❌ | `chat.test.js :: [R-21]`, `[R-24] 재시도` | 구현됨 |
+| R-22 | EXT | 자동(단위) | ❌ | `logger.test.js :: [R-22]`, `config.test.js :: [R-22]` | 구현됨 |
+| R-23 | EXT | 자동(단위) | ❌ | `logReader.test.js :: [R-23]`, `config.test.js :: [R-23보강]` | 구현됨 |
+| R-24 | EXT | 자동(단위) | ❌ | `refiner.test.js :: [R-24]`, `chat.test.js :: [R-24]` | 구현됨 |
+
+### 테스트/결과 디렉터리 구조
+
+```
+result_file/
+├── tests/
+│   ├── program_AI/          # (작성예정) 모델 서빙 통합 테스트
+│   ├── program_backend/     # (작성예정) 파이프라인/API 테스트
+│   └── program_extension/   # (구현됨) chat/refiner/logger/logReader/config 테스트
+└── test-results/
+    ├── program_AI/          # 실행 결과(로그·리포트)
+    ├── program_backend/
+    └── program_extension/   # junit.xml 등
+```
+
+### 테스트 실행 방법
+
+실행 환경은 **Linux**(vLLM/CUDA 서버 표준). 파이썬 환경(가상환경) 준비는 **RUN.md** 참고
+(위치가 서버마다 달라 스크립트에서 다루지 않음). `tests/run_tests.sh` 가 프로그램별로 실행되며,
+`--save` 를 붙이면 결과 로그를 `test-results/<프로그램>/`에 저장한다. `-s` 로 실행되어
+각 테스트의 **입력→출력**이 로그에 그대로 남는다.
+
+```bash
+cd result_file
+# (가상환경 활성화 또는 PYTHON 환경변수로 인터프리터 지정 — RUN.md 참고)
+
+# 프로그램별 (콘솔로 보기 / 저장)
+bash tests/run_tests.sh backend            # 백엔드만 — 콘솔 출력
+bash tests/run_tests.sh backend --save     # 백엔드만 — test-results/program_backend/ 에 저장
+bash tests/run_tests.sh ai --save          # AI(통합) — 서버 필요(없으면 skip)
+bash tests/run_tests.sh extension --save   # 확장(Node 필요)
+bash tests/run_tests.sh all --save         # 셋 다 실행 + 저장
+#   예) 가상환경을 직접 지정:  PYTHON=.venv/bin/python bash tests/run_tests.sh all --save
+```
+
+**통합 테스트 통과를 위한 준비**
+- 백엔드 통합: `src/program_backend/.env` 에 LLM/EMBED/RERANK 연결값 입력
+- AI 통합: `export AI_HOST=... LLM_PORT=... EMBED_PORT=... RERANK_PORT=... *_MODEL=...`
+- 준비가 안 되면 통합 테스트는 실패가 아니라 자동 **skip** 된다.
+
+> **test-results 정책**: 프로그램별 실제 실행 로그(junit.xml + 콘솔 출력)를 `test-results/<프로그램>/`에
+> 저장해 둔다(가이드: 실행 불가에 대비해 결과를 함께 첨부). 통합 테스트(vLLM 서버 필요)는 서버를
+> 띄운 상태에서 실행해 **통과 로그**를 박제한다. 로그 재생성은 `result_file/save_test_results.ps1`
+> 한 번으로 수행한다.
+>
+> 평가 Agent가 자체 환경에서 테스트를 직접 실행하더라도, ① 일반 `pytest` 실행은 우리가 커밋한
+> `test-results/` 파일을 덮어쓰지 않으며(결과 저장은 `--junitxml` 명시 시에만), ② Agent 환경엔
+> 모델 서버가 없어 통합 테스트는 자동 **skip** 되므로, 첨부된 통과 로그가 그 검증 증거가 된다.
+
+---

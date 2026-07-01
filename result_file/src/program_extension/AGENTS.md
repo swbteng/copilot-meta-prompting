@@ -48,8 +48,8 @@
 | 파일 | 핵심 |
 |---|---|
 | `extension.js` | 진입점. 사이드바(WebviewView) 등록 + `registerChat(context)`. |
-| `chat.js` | **`@refine` 참가자**. `refinePrompt()`(=`refineDetailed` 우선)로 정제 -> 성공이면 미리보기(`stream.markdown`) + **가로 액션 바**(codicon 커맨드 링크 5개, 신뢰 `MarkdownString`; 막히면 `stream.button` 폴백) + 5명령. **실패(`ok:false`)/예외면 R-EX-11 Fallback UI**(에러 메시지 + Use original/재시도/Cancel). 전송은 `workbench.action.chat.open`. |
-| `refiner.js` | **유일한 refiner**. `refineDetailed()`(성공/실패 `{text, ok, reason}` 구분 — R-EX-11 Fallback 판단 근거) / `refine()`(그 얇은 래퍼, 문자열만), `callRefineApi()`(http/https, **4xx·5xx는 실패로 처리**). 서버 URL 우선순위 = `process.env` > `env.generated.js`(빌드 굽기) > 코드 내장 기본값. `appendQuestionDefinition()`(`${var}` 정의 덧붙임)은 BE 서버가 처리하기로 해 **주석/보류**. |
+| `chat.js` | **`@refine` 참가자**. `refinePrompt()`(=`refineDetailed` 우선)로 정제 -> 성공이면 미리보기(`stream.markdown`) + **가로 액션 바**(codicon 커맨드 링크 5개, 신뢰 `MarkdownString`; 막히면 `stream.button` 폴백) + 5명령. **실패(`ok:false`)/예외면 R-24 Fallback UI**(에러 메시지 + Use original/재시도/Cancel). 전송은 `workbench.action.chat.open`. |
+| `refiner.js` | **유일한 refiner**. `refineDetailed()`(성공/실패 `{text, ok, reason}` 구분 — R-24 Fallback 판단 근거) / `refine()`(그 얇은 래퍼, 문자열만), `callRefineApi()`(http/https, **4xx·5xx는 실패로 처리**). 서버 URL 우선순위 = `process.env` > `env.generated.js`(빌드 굽기) > 코드 내장 기본값. `appendQuestionDefinition()`(`${var}` 정의 덧붙임)은 BE 서버가 처리하기로 해 **주석/보류**. |
 | `env.generated.js` | **빌드 산출물**(커밋 금지, `.gitignore`). `build.sh`가 `.env`의 `REFINE_API_URL`을 구워 넣어 `.vsix`에 동봉(없으면 미생성, 코드 내장 기본값으로). `.vscodeignore`에서 **제외 금지**. |
 | `logger.js` | `@refine` allow 시 `observe-YYYY-MM-DD.log`에 **JSONL 한 줄 append**(스키마 동결, fail-open). |
 | `config.js` | `resolveLogDir(context)`(쓰는 쪽·읽는 쪽 단일 소스) / `getMaxEntries()`. |
@@ -84,7 +84,7 @@
   `appendQuestionDefinition()`은 `src/refiner.js`에 **주석 처리/보류**로 남아 있다 — 서버가 못 채우게 되면
   그 함수 + `refine()`의 호출 + `module.exports`를 함께 되살린다(특정 변수명 하드코딩 금지).
 - 응답 스키마가 바뀌면 `callRefineApi()`의 요청/응답 키만 맞춘다(나머지는 fail-open이 흡수).
-- **성공/실패 구분(R-EX-11)**: `refineDetailed()`가 `{text, ok, reason}`을 돌려준다 — 빈입력/URL미설정은
+- **성공/실패 구분(R-24)**: `refineDetailed()`가 `{text, ok, reason}`을 돌려준다 — 빈입력/URL미설정은
   `ok:true`(정상 흐름), 타임아웃·4xx·5xx·연결실패·빈응답·예외는 `ok:false`(원본 유지). chat.js는
   `ok:false`일 때만 **에러 메시지 + Use original/재시도/Cancel Fallback UI**를 띄운다(무한 로딩 금지). `refine()`는
   `refineDetailed().text`만 돌려주는 하위호환 래퍼(계약 불변).

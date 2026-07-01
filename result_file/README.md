@@ -153,7 +153,7 @@ result_file/                         # ← 결과파일.zip 루트
 
 | 프로그램 | 검증 방식 | 결과 |
 |---|---|---|
-| program_extension | **Node 자동 테스트 25개**(요구사항 `R-EX-*` 매핑). 외부 의존성 0. | **25/25 통과** — [`test-results/program_extension/`](test-results/program_extension/) |
+| program_extension | **Node 자동 테스트 25개**(요구사항 `R-15`~`R-24` 매핑). 외부 의존성 0. | **25/25 통과** — [`test-results/program_extension/`](test-results/program_extension/) |
 | program_backend | 스모크 테스트(`/health`·`/refine` curl). 실모델 서버 필요. | [`tests/program_backend/README.md`](tests/program_backend/README.md) |
 | program_AI | 스모크 테스트(`scripts/test_apis.py`). GPU·서빙 모델 필요. | [`tests/program_AI/README.md`](tests/program_AI/README.md) |
 

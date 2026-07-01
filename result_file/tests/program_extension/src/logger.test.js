@@ -1,5 +1,5 @@
 // logger.test.js — 프롬프트 수정 내역 로컬 저장(JSONL) 검증
-// 대응 요구사항: R-EX-09 (최종 전송 건을 observe-YYYY-MM-DD.log에 한 줄씩 Append)
+// 대응 요구사항: R-22 (최종 전송 건을 observe-YYYY-MM-DD.log에 한 줄씩 Append)
 //
 // 검증 대상: src/program_extension/src/logger.js (appendRewrite) — vscode 비의존 순수 모듈.
 const test = require("node:test");
@@ -18,7 +18,7 @@ function todayFile(dir) {
   return path.join(dir, "observe-" + logger._today(new Date()) + ".log");
 }
 
-test("[R-EX-09] {before, after, ts} 구조의 JSON 레코드가 일자별 로그에 1줄 기록된다", () => {
+test("[R-22] {before, after, ts} 구조의 JSON 레코드가 일자별 로그에 1줄 기록된다", () => {
   const dir = tmpDir();
   const ok = logger.appendRewrite(dir, { channel: "@refine", before: "원본A", after: "정제A" });
   assert.strictEqual(ok, true);
@@ -38,7 +38,7 @@ test("[R-EX-09] {before, after, ts} 구조의 JSON 레코드가 일자별 로그
   assert.match(rec.ts, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/);
 });
 
-test("[R-EX-09] 여러 건은 같은 파일에 누적(Append)된다", () => {
+test("[R-22] 여러 건은 같은 파일에 누적(Append)된다", () => {
   const dir = tmpDir();
   logger.appendRewrite(dir, { before: "b1", after: "a1" });
   logger.appendRewrite(dir, { before: "b2", after: "a2" });
@@ -49,7 +49,7 @@ test("[R-EX-09] 여러 건은 같은 파일에 누적(Append)된다", () => {
   assert.strictEqual(JSON.parse(lines[2]).after, "a3");
 });
 
-test("[R-EX-09] 폴더가 없으면 생성하고, 잘못된 입력은 throw 없이 false(fail-open)", () => {
+test("[R-22] 폴더가 없으면 생성하고, 잘못된 입력은 throw 없이 false(fail-open)", () => {
   const dir = path.join(tmpDir(), "nested", "logs"); // 미존재 경로
   assert.strictEqual(logger.appendRewrite(dir, { before: "x", after: "y" }), true);
   assert.ok(fs.existsSync(todayFile(dir)));

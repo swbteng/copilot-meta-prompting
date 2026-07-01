@@ -28,7 +28,11 @@ PYTHON="${PYTHON:-python}"
 
 TARGET="${1:-all}"
 SAVE=""
-[ "${2:-}" = "--save" ] && SAVE="yes"
+COVERAGE=""
+for arg in "${@:2}"; do
+  [ "$arg" = "--save" ]     && SAVE="yes"
+  [ "$arg" = "--coverage" ] && COVERAGE="yes"
+done
 
 check_python() {
   if ! "$PYTHON" -c "import pytest" >/dev/null 2>&1; then
@@ -54,15 +58,21 @@ run_py() {  # $1=테스트 디렉터리, $2=test-results 하위 폴더명
 }
 
 run_ext() {  # 확장(Node) — 모델 서버 불필요
-  if ! command -v npm >/dev/null 2>&1; then
+  if ! command -v node >/dev/null 2>&1; then
     echo "Node.js 미설치 — 확장 테스트 건너뜀 (Node 설치 후 다시 실행)."
     return
   fi
+  local test_files=(tests/program_extension/src/*.test.js)
+  local cov_flags=(--experimental-test-coverage)
   if [ "$SAVE" = "yes" ]; then
     mkdir -p test-results/program_extension
-    npm run test:extension:junit 2>&1 | tee test-results/program_extension/output.txt
+    node --test "${cov_flags[@]}" \
+      --test-reporter=lcov --test-reporter-destination=test-results/program_extension/coverage.lcov \
+      --test-reporter=junit --test-reporter-destination=test-results/program_extension/junit.xml \
+      --test-reporter=spec  --test-reporter-destination=stdout \
+      "${test_files[@]}" 2>&1 | tee test-results/program_extension/output.txt
   else
-    npm run test:extension
+    node --test "${cov_flags[@]}" --test-reporter=spec "${test_files[@]}"
   fi
 }
 
