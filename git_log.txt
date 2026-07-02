@@ -1,0 +1,723 @@
+commit 7f51f2f607a1065b8a276fe83ea4ba8c64cd04e2
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Thu Jul 2 00:11:00 2026 +0000
+
+    docs: add result files
+
+commit 142398905213a4eda58ce4ee154ce2b8add70707
+Author: cp.hong <cp.hong@lge.com>
+Date:   Thu Jul 2 09:07:13 2026 +0900
+
+    1
+
+commit 7002e492e62ab99de8bdb4e54e589a8d0a5f4c6e
+Author: cp.hong <cp.hong@lge.com>
+Date:   Thu Jul 2 09:04:51 2026 +0900
+
+    1.0.1
+
+commit 569f59bf0a0ca4184d7a3776750a5d960a460ca8
+Author: cp.hong <cp.hong@lge.com>
+Date:   Thu Jul 2 08:56:44 2026 +0900
+
+    0
+
+commit d96b62ed00b50c0b47e24c950f49f0f9570b0b1e
+Author: cp.hong <cp.hong@lge.com>
+Date:   Thu Jul 2 08:51:44 2026 +0900
+
+    urlChange
+
+commit 23c00968a6475a9618533f9a8b8d7af65979c696
+Author: cp.hong <cp.hong@lge.com>
+Date:   Thu Jul 2 08:44:11 2026 +0900
+
+    deleted redundant placeholders
+
+commit b855a770eba925989e752940aa45fffd0fc5bc1f
+Author: 김민정/연구원/ES AX/데이터플랫폼팀 <kmj.kim@lge.com>
+Date:   Thu Jul 2 08:37:42 2026 +0900
+
+    Add final report video
+
+commit 0a971a422c1f3bdcb5f8307459af61270170d73f
+Author: swbteng <swbteng@gmail.com>
+Date:   Thu Jul 2 08:21:57 2026 +0900
+
+    add final report
+
+commit 69ea436a7ffd2d74c519ced111d742470cca791a
+Author: 김민정/연구원/ES AX/데이터플랫폼팀 <kmj.kim@lge.com>
+Date:   Thu Jul 2 00:03:50 2026 +0900
+
+    Add timestamp note to requirements specification
+
+commit dde2c33479041cb49bee704e2dc7c0d8a8ea0210
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 17:15:03 2026 +0900
+
+    Delete result_file/src/program_backend/docs directory
+
+commit ff5e4c339017b6fa11aa6c4feeb9d19a565b5a22
+Merge: 6f56551 ee69416
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Wed Jul 1 16:36:19 2026 +0900
+
+    Merge pull request #23 from swbteng/extension
+    
+    delete redundants
+
+commit ee694162d78da525801c1b7127c8ab0755bbcd6d
+Merge: cac3f61 6f56551
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 16:34:20 2026 +0900
+
+    Merge branch 'main' of github.com:swbteng/copilot-meta-prompting into extension
+
+commit cac3f61c75a75e815f433b8b2c229361ab7f450c
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 16:33:32 2026 +0900
+
+    Update .gitignore and clear cache
+
+commit 6f5655172ed26c04b44fa478b6a93b48714c2123
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 07:31:49 2026 +0000
+
+    remove: backup file
+
+commit 52a395d2731730cf0d98313063f5d61cc5824a37
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 07:27:30 2026 +0000
+
+    remove : docs
+
+commit 816c7c40d1c85f8db1a571d55ee23425f93f2ee0
+Merge: 9e165ee 9e89cf6
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 16:20:14 2026 +0900
+
+    Merge pull request #22 from swbteng/extension
+    
+    fileNameChanged, finalPosterAdded
+
+commit 9e89cf60f7f11b33b892669da8fa7a0a8a0b02da
+Merge: 4dd08d8 9e165ee
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 16:09:03 2026 +0900
+
+    Merge branch 'main' of github.com:swbteng/copilot-meta-prompting into extension
+
+commit 4dd08d86d71cba4cb5dbb8b0787b30b27105488e
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 16:08:00 2026 +0900
+
+    finalPoster
+
+commit 9e165ee6f718bdc9cac8a8252eff99a44135211e
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 07:07:24 2026 +0000
+
+    remove : remove README.md
+
+commit 8c58b16d2486d833534a6e0b1decba9626cc677d
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 07:02:48 2026 +0000
+
+    remove : remove temp files
+
+commit caa629c6a8a6c964462df7f8d4c351de78a356c4
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 06:52:25 2026 +0000
+
+    feat : llm prompt update
+
+commit 82f2b548046e00b315df538ad471e66fcd4bbb59
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 06:10:00 2026 +0000
+
+    change favicon.ico
+
+commit bfc032ca85b5d73b665de5c5c5360220e01b9ad3
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 05:41:41 2026 +0000
+
+    Add favicon to a web
+
+commit 5ee194991c37fd2fa4d76f76b7d210b52c6e2fc5
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 05:22:35 2026 +0000
+
+    remove .env from .gitignore
+
+commit f26338949a6f75af1fc971628dc0f90c9b123715
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 05:11:57 2026 +0000
+
+    Add backend env file
+
+commit 364d1740cfd4bb1c3c78d438d50a0d87ffc9d062
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 03:08:06 2026 +0000
+
+    환경 설정 예시 파일 및 관련 .env 항목 삭제
+
+commit c451bc1957f996902da1a7cbc6db20be2bb68755
+Merge: 43eaf62 2b563c7
+Author: swbteng <swbteng@gmail.com>
+Date:   Wed Jul 1 11:53:29 2026 +0900
+
+    Merge pull request #21 from swbteng/extension
+    
+    versionUp + gitignore
+
+commit 2b563c7a16097b267e6aa694a70fd5baa40d14f2
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 11:47:32 2026 +0900
+
+    env uploaded
+
+commit c1a7a439a8f8f0c3c4ed9dd2c4440485b9cfa344
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 11:44:29 2026 +0900
+
+    visx
+
+commit 384255fd12007610d409944a10665cbe803ebb67
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 11:42:01 2026 +0900
+
+    versionUp
+
+commit 43eaf627c7c40ba464b7e69404e63a9adafbaaa8
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 02:22:29 2026 +0000
+
+    docs : Fix typo in RUN.md
+
+commit 8aa1aeccbe7e42972ab5e36cb98a4536e9cbc020
+Merge: 6ab4975 dcae83d
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 11:16:36 2026 +0900
+
+    Merge branch 'main' of github.com:swbteng/copilot-meta-prompting into extension
+
+commit 6ab4975c74ae53e55b886281e2fb38e3f28f7777
+Merge: 4c5e52a f84bd07
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 11:16:02 2026 +0900
+
+    Merge branch 'main' of github.com:swbteng/copilot-meta-prompting into extension
+
+commit dcae83d723fac50d15d01ae4b400a2ebe49ce313
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 02:03:20 2026 +0000
+
+    docs : Fix typo in README.md
+
+commit 4c5e52ae024fd0e052021d2a6a75bca8f07dc6d0
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 10:57:46 2026 +0900
+
+    apply gitignore rules to subdirectories
+
+commit f84bd0754d443468fe33f1e4ba74be96f9ce929f
+Merge: b54d305 10d4427
+Author: swbteng <swbteng@gmail.com>
+Date:   Wed Jul 1 01:52:43 2026 +0000
+
+    Merge remote-tracking branch 'origin/main'
+    
+    # Conflicts:
+    #       result_file/README.md
+
+commit b54d305bad077f98f451855ac6be6ad3438402f9
+Author: swbteng <swbteng@gmail.com>
+Date:   Wed Jul 1 01:48:54 2026 +0000
+
+    testcode update
+
+commit 10d4427689e44d237d2f0b2fbaf2078bc4d21970
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 01:46:00 2026 +0000
+
+    Update result file docs
+
+commit b91beba21e3a0c2e2ee7631f64da78dd6957fbf6
+Merge: 6f560c0 c369bcb
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Wed Jul 1 09:52:37 2026 +0900
+
+    Merge pull request #20 from swbteng/testcode
+    
+    add test code
+
+commit c369bcb0a93f157620c37c7e711873a9bc7cbd02
+Merge: bfe9f1b 6f560c0
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Wed Jul 1 09:52:16 2026 +0900
+
+    Merge branch 'main' into testcode
+
+commit 6f560c0fc99a1938a3dc43227cd90d74bc8ce36c
+Merge: 7d94ea6 986fc57
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Wed Jul 1 09:50:20 2026 +0900
+
+    Merge pull request #19 from swbteng/extension
+    
+    merge extension testCoverage update
+
+commit bfe9f1bbf30c1f797df469e991bd40690b3cc8dd
+Author: swbteng <swbteng@gmail.com>
+Date:   Wed Jul 1 00:48:59 2026 +0000
+
+    add test code
+
+commit 986fc575e3d0acc4d049a5dede3b30d138e2b45f
+Merge: 9acb852 7d94ea6
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 08:46:56 2026 +0900
+
+    testCoverage updated
+
+commit 9acb852aeb83205f17553cb813de84f74f284b12
+Author: cp.hong <cp.hong@lge.com>
+Date:   Wed Jul 1 08:46:34 2026 +0900
+
+    testCoverage updated
+
+commit 0e5f2bea900aec8ab66a2164a9556ee260cfd3d1
+Author: cp.hong <cp.hong@lge.com>
+Date:   Tue Jun 30 17:12:21 2026 +0900
+
+    build.sh modified'
+
+commit 7d94ea664f64f4554ea375bddc25bf3bf65555ea
+Merge: 9fa4320 3efda4f
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Tue Jun 30 16:21:07 2026 +0900
+
+    Merge pull request #18 from swbteng/extension
+    
+    server url updated
+
+commit 3efda4fa686a1e3a0379e7d536b04ca1c1785e88
+Author: cp.hong <cp.hong@lge.com>
+Date:   Tue Jun 30 16:19:00 2026 +0900
+
+    server url updated
+
+commit 9fa4320576b76dbb648bc9ed814145dfd5b61685
+Merge: 9336065 edb396a
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Tue Jun 30 15:52:23 2026 +0900
+
+    bugFix
+    
+    Extension
+
+commit 93360658e9a7c44a844cb308efeb17cce56141e4
+Merge: b35d9e0 e990375
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Tue Jun 30 15:51:45 2026 +0900
+
+    initial poster
+    
+    initial poster
+
+commit edb396ab7bfeb09ec18d130e82236e6e0cf93cd6
+Merge: 2ec272d fb8e2c6
+Author: cp.hong <cp.hong@lge.com>
+Date:   Tue Jun 30 15:49:48 2026 +0900
+
+    bugFix
+
+commit 2ec272dc1097345bbdf4b55c00f20d0453f73bad
+Author: cp.hong <cp.hong@lge.com>
+Date:   Tue Jun 30 15:48:07 2026 +0900
+
+    bugFix
+
+commit fb8e2c6602dfa355de4ec3714ccf5ed663326cc1
+Author: cp.hong <cp.hong@lge.com>
+Date:   Tue Jun 30 15:48:07 2026 +0900
+
+    --amend
+
+commit 9fddbaec98cdc9ec48691de3de82735257413ee5
+Author: cp.hong <cp.hong@lge.com>
+Date:   Tue Jun 30 15:40:11 2026 +0900
+
+    bugFix
+
+commit e990375e81adae7b750e68c6a1a5a06aa6c28ae2
+Author: cp.hong <cp.hong@lge.com>
+Date:   Tue Jun 30 11:45:05 2026 +0900
+
+    initial poster
+
+commit b35d9e003b815a6b4f41b1d583694eeaa72de626
+Merge: 34197a5 a7a54ab
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Tue Jun 30 11:34:45 2026 +0900
+
+    Merge pull request #15 from swbteng/report
+    
+    initial report
+
+commit a7a54abb3f416b6b13d8f9a21c2a9461abc86b19
+Author: cp.hong <cp.hong@lge.com>
+Date:   Tue Jun 30 10:55:19 2026 +0900
+
+    initial report
+
+commit 34197a5a1696a6ca6d3e3c6d61ca7bfc59365553
+Merge: 16d5564 dc435aa
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Mon Jun 29 17:16:09 2026 +0900
+
+    Merge pull request #13 from swbteng/extension
+    
+    extension test code added
+
+commit 16d5564a3d89a951fdec86dd8098a10b0783724c
+Merge: e57b809 1b77863
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Mon Jun 29 16:23:40 2026 +0900
+
+    Merge pull request #14 from swbteng/rag
+    
+    Move output format instruction before instructions in pipeline prompt
+
+commit 1b77863354db6de764ee84108a4a2303618c9879
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 07:08:45 2026 +0000
+
+    Move output format instruction before instructions in pipeline prompt
+    
+    🤖 Generated with Claude Code
+
+commit e57b809643684d31afeab66e6de1d24df3c65e51
+Merge: a75359d 4cc4d12
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Mon Jun 29 15:48:21 2026 +0900
+
+    Merge pull request #12 from swbteng/rag
+    
+    Upload raw data for DB creation
+
+commit dc435aa3c6b80109cca4b6c7d984cd16792608af
+Merge: dca7d20 a75359d
+Author: cp.hong <cp.hong@lge.com>
+Date:   Mon Jun 29 15:29:03 2026 +0900
+
+    Merge branch 'main' of github.com:swbteng/copilot-meta-prompting into extension
+
+commit dca7d20a9b74ec44d23d70e5fe2d00d1ae82ede5
+Author: cp.hong <cp.hong@lge.com>
+Date:   Mon Jun 29 15:25:03 2026 +0900
+
+    testCode
+
+commit 4cc4d12f403ab06ca06b10e7432d04902ad12e0a
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 06:13:36 2026 +0000
+
+    Refine prompt output format instruction in pipeline
+    
+    🤖 Generated with Claude Code
+
+commit 25a11481204c9f412b2ed8dd49ba5897dbdb2ddb
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 06:07:43 2026 +0000
+
+    Reorganize backend markdown data layout
+
+commit 92f0d5d673b4afc59831ba81e05ad931377f65e6
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 05:54:57 2026 +0000
+
+    Add program backend prompt data set
+
+commit a75359da8845155013d3feee14dca6549ef26b09
+Author: cp.hong <cp.hong@lge.com>
+Date:   Mon Jun 29 11:09:46 2026 +0900
+
+    updated to use actual api endpoint + minor UI improvements
+
+commit 630de0a169b94389e0999021e903dad05fb57a6f
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 04:59:06 2026 +0000
+
+    Refine prompt output format instruction in pipeline
+    
+    🤖 Generated with Claude Code
+
+commit af2c907ced532dade6deb35882589f4bd7753d4b
+Merge: 704f867 aca968d
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Mon Jun 29 12:04:53 2026 +0900
+
+    Merge pull request #11 from swbteng/web
+    
+    Add vector DB visualization tab to web demo
+
+commit aca968db5054b481945c8a8d799665789ee2c097
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 03:00:31 2026 +0000
+
+    Add vector DB visualization tab to web demo
+
+commit 704f86718d42b97e8c32d75f3ee5d764c2c5917f
+Merge: d52825b 3d3811f
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Mon Jun 29 11:11:04 2026 +0900
+
+    Merge pull request #9 from swbteng/rag
+    
+    add web demo
+
+commit 13226cf1aa03dcb842980f5caa310213a1159156
+Author: cp.hong <cp.hong@lge.com>
+Date:   Mon Jun 29 11:09:46 2026 +0900
+
+    updated to use actual api endpoint + minor UI improvements
+
+commit 3d3811f302d6c4c7f5c6fc77bba3c5fa4674a15c
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 02:02:44 2026 +0000
+
+    Add pipeline visualization web demo
+
+commit d52825bac820e5715a2f289b2f23bfdae9dda412
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 01:43:57 2026 +0000
+
+    Consolidate program backend requirements
+
+commit f559dfdd864938f10718b74c91af3666c0de8654
+Author: swbteng <swbteng@gmail.com>
+Date:   Mon Jun 29 01:43:57 2026 +0000
+
+    Consolidate program backend requirements
+
+commit 20787b5ddd2a349a27e98096e996043109945696
+Merge: 1dcef8f 6489192
+Author: itsme-hr <hyerim@snu.ac.kr>
+Date:   Mon Jun 29 09:21:43 2026 +0900
+
+    Merge pull request #7 from swbteng/extension
+    
+    Extension only front
+
+commit 64891922eefcf11748b93e1ce0b84ec6c351e70e
+Merge: f3518b1 1dcef8f
+Author: 홍창표 <cp.hong@lge.com>
+Date:   Mon Jun 29 08:56:19 2026 +0900
+
+    Merge branch 'main' into extension
+
+commit 1dcef8fb3330152beb9c5ec100eeaf3f0db8cfe1
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Fri Jun 26 16:05:17 2026 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+    
+    순서 변경
+
+commit 53c787bb3e95ffe967bb52f4264f7a85a92587de
+Merge: ccb3ff9 14f238c
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Fri Jun 26 16:02:37 2026 +0900
+
+    Merge pull request #6 from swbteng/endpoint
+    
+    Endpoint
+
+commit ccb3ff9a76ac002f140771cefcab98e4d04e0314
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Fri Jun 26 16:01:41 2026 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+
+commit 14f238cb098e280c50c27af8b6c2efaae3869e4c
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 06:56:20 2026 +0000
+
+    Add program_AI gitignore and update RAG doc paths
+
+commit cda2359bfeea253e2fe84b4febad0d651eca705d
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 06:53:45 2026 +0000
+
+    Rename test folders to new module names
+
+commit 645aa20166053fae67fdb8775f8f917439d7d12e
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 06:52:19 2026 +0000
+
+    Merge program_db into program_backend with self-contained retrieval
+
+commit 989d60aecd2b854b5f7283cd2f86e43ff902de73
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 06:42:18 2026 +0000
+
+    Rename modules to program_backend, program_extension, program_AI
+
+commit d34d2788728ec36cbedb2914fac34690cfc9e3d7
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 06:29:45 2026 +0000
+
+    Pin vLLM requirements to installed versions
+
+commit 33b1ce88b4b3d4f0d814fd517d80ff11084cc84e
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Fri Jun 26 15:24:46 2026 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+    
+    2.6. 최종 프롬프트 생성 모듈 (LLM Final Composer) 추가 및 일부 수정
+
+commit 3dc4122974a37a64d9d445180f4cfd68da96bd3e
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Fri Jun 26 15:03:25 2026 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+    
+    오류 수정
+
+commit 787405532f117da91f22ff873a2db9622b5fd023
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Fri Jun 26 15:01:34 2026 +0900
+
+    Update SW_Bootcamp_13기_C반_4팀_요구사항_명세서.md
+    
+    2.5. 프롬프트 재작성 모듈 (LLM Rewriter) 부분 추가
+
+commit 6b621ba16a664bd5486006c1bf4f5d370d03e367
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 05:48:31 2026 +0000
+
+    Add endpoint run and RunPod deploy docs
+
+commit b488d06fa2ea376321b9fda0e83899de1e500313
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 05:45:31 2026 +0000
+
+    Add infra requirements
+
+commit 348026c65a49529814d7903bb23387e14f6f1741
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 05:44:52 2026 +0000
+
+    Move root demo scripts to tmp, refactor into endpoint pipeline
+
+commit 69c4e8b9a21d24980f16ac1eeb5abfb6dbc88db2
+Author: swbteng <swbteng@gmail.com>
+Date:   Fri Jun 26 05:42:55 2026 +0000
+
+    Add endpoint meta-prompting API server
+
+commit 0916f9de65e7f748ed869340a594d328a8d49074
+Merge: 0233a35 d490f82
+Author: minjung1998 <kmj.kim@lge.com>
+Date:   Fri Jun 26 09:54:26 2026 +0900
+
+    Merge pull request #5 from swbteng/rag
+    
+    Add program DB RAG reranking pipeline
+
+commit 0233a35d83f8015e030a1c936960b6244aa4a626
+Author: mj <kasamdi170@gmail.com>
+Date:   Thu Jun 25 08:07:55 2026 +0000
+
+    Add LLM prompt rewriting and picking scripts
+    
+    Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+
+commit 2fa05fa36b709a0b66b7083b511daaa9d147bb86
+Author: kimtaeyong98 <kasamdi5@naver.com>
+Date:   Thu Jun 25 17:00:32 2026 +0900
+
+    feat(infra): add model serving scripts for LLM, embedding, reranker
+
+commit f3518b128795ee86dbf776b0f5ddf00cc0044b80
+Merge: f240f50 e99cf59
+Author: cp.hong <cp.hong@lge.com>
+Date:   Thu Jun 25 17:23:32 2026 +0900
+
+    Merge remote-tracking branch 'origin/extension' into extension
+
+commit f240f502610bd86dec48713fc63efb3e9a7d1fbe
+Merge: 5262b80 7c96ad3
+Author: cp.hong <cp.hong@lge.com>
+Date:   Thu Jun 25 17:16:57 2026 +0900
+
+    Merge branch 'main' of github.com:swbteng/copilot-meta-prompting into extension
+
+commit d490f82c99147654311f8efaee9f8f305b6b8a62
+Author: Codex <codex@example.local>
+Date:   Thu Jun 25 08:03:51 2026 +0000
+
+    Add program DB RAG reranking pipeline
+
+commit 5262b809490a32cdc97c76e13eb64cf831644dd7
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 17:04:48 2026 +0900
+
+    extension-only
+
+commit e99cf599fbd510f2f2e4a4b6e9f029bd191ede6c
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 16:47:20 2026 +0900
+
+    extension-only-front
+
+commit 7c96ad3f5214c8f875e490ce2517ea473823c558
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 11:05:22 2026 +0900
+
+    requirements specification initial commit
+
+commit d3621950759cf0bdbca1ed5ebac5588b88025b7d
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 10:06:49 2026 +0900
+
+    proxy extension initial commit
+
+commit ccf76cb741061154144762ed1e5ef52e41f682ed
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 11:05:22 2026 +0900
+
+    requirements specification initial commit
+
+commit 4185d1563c2ba017b0cd907704d2e05659b90313
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 10:06:49 2026 +0900
+
+    proxy extension initial commit
+
+commit 1967ffc6cb49848c26603dd890dc44f46dcf247b
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 09:32:03 2026 +0900
+
+    initial src structure
+
+commit c2fe9fd7a4c469889b98ff4b879cea635255d062
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 09:26:45 2026 +0900
+
+    initial structure
+
+commit 60b5dbdef83123a16ab6a7f768fd3bf09ae5e6e6
+Author: 홍창표/연구원/OCp.hongO서비스개발팀 <cp.hong@lge.com>
+Date:   Thu Jun 25 09:23:27 2026 +0900
+
+    initial structure
+
+commit ec09e5d1f3ab916d6eb892417ffa4a6a294ae772
+Author: swbteng <swbteng@gmail.com>
+Date:   Tue Jun 23 11:04:06 2026 +0900
+
+    Initial commit
