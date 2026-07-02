@@ -2,7 +2,7 @@
   "name": "copilot-meta-prompting-refiner",
   "displayName": "Prompt Refiner",
   "description": "VS Code Copilot Chat에 @refine를 추가: 프롬프트를 정제해 미리 보여주고 확인 후 전송하며, 정제 내역을 사이드바에 표시합니다.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "teamPara",
   "private": true,
   "license": "UNLICENSED",
